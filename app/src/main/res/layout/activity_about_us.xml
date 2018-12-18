@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/simple_background"
-    tools:context=".AboutUsActivity">
+    tools:context=".UI.AboutUsActivity">
 
     <include layout="@layout/app_bar"
         android:id="@+id/tool_bar"/>

@@ -1,9 +1,12 @@
-package com.example.hpur.spr;
+package com.example.hpur.spr.UI;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
+
+import com.example.hpur.spr.R;
 
 public class MessagingActivity extends AppCompatActivity {
 
@@ -16,6 +19,7 @@ public class MessagingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_messaging);
 
         findViews();
+        setupOnClick();
     }
 
     @Override
@@ -34,4 +38,24 @@ public class MessagingActivity extends AppCompatActivity {
         this.mPhone.setClickable(true);
         this.mVideo.setClickable(true);
     }
+
+    private void setupOnClick() {
+        this.mPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MessagingActivity.this, "mPhone clicked", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        this.mVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MessagingActivity.this, "mVideo clicked", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+
 }

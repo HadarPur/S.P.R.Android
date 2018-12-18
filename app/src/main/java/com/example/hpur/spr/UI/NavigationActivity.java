@@ -1,7 +1,9 @@
-package com.example.hpur.spr;
+package com.example.hpur.spr.UI;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.hpur.spr.R;
 
 public class NavigationActivity extends AppCompatActivity {
 

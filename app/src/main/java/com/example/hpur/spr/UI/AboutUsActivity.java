@@ -1,10 +1,12 @@
-package com.example.hpur.spr;
+package com.example.hpur.spr.UI;
 
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
+
+import com.example.hpur.spr.R;
 
 public class AboutUsActivity extends AppCompatActivity {
     private TextView tv;

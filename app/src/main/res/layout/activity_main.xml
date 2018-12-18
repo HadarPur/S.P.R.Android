@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:background="@drawable/spr_background"
-    tools:context=".MainActivity">
+    tools:context=".UI.MainActivity">
 
     <Button
         android:id="@+id/chat"

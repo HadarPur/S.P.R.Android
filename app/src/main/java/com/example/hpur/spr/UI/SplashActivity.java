@@ -1,4 +1,4 @@
-package com.example.hpur.spr;
+package com.example.hpur.spr.UI;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+
+import com.example.hpur.spr.R;
 
 public class SplashActivity extends AppCompatActivity {
 

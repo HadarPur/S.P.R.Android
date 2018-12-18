@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="@drawable/spr_background"
-    tools:context=".MainActivity">
+    tools:context=".UI.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

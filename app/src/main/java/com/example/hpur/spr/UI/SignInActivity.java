@@ -1,4 +1,4 @@
-package com.example.hpur.spr;
+package com.example.hpur.spr.UI;
 
 import android.app.ProgressDialog;
 import android.support.annotation.NonNull;
@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.hpur.spr.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -132,7 +134,7 @@ public class SignInActivity extends AppCompatActivity {
         }
 
         if (this.mPass.length() <= 6) {
-            Toast.makeText(getApplicationContext(), "Password need to be at least 6 characters", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Password need to be at least 6 characters", Toast.LENGTH_SHORT).show();
             return;
         }
 
