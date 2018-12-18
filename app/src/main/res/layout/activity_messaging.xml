@@ -5,8 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/spr_background"
-    tools:context=".MainActivity">
+    tools:context=".MessagingActivity">
 
+
+    <include layout="@layout/app_bar"
+        android:id="@+id/tool_bar"/>
 
 </LinearLayout>
