@@ -11,7 +11,7 @@
 
     <Button
         android:id="@+id/chat"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:background="@drawable/custom_button"
         android:fontFamily="serif"
@@ -25,7 +25,7 @@
 
     <Button
         android:id="@+id/shelter"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
         android:background="@drawable/custom_button"
@@ -39,7 +39,7 @@
 
     <Button
         android:id="@+id/about_us"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:background="@drawable/custom_button"
         android:fontFamily="serif"
