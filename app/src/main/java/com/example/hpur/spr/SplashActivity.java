@@ -9,10 +9,11 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
 public class SplashActivity extends AppCompatActivity {
+
     public static int SPLASH_OUT=2000;
     private ImageView loading;
-
     public RotateAnimation rotate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
