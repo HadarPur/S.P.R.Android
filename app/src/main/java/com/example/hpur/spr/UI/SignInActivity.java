@@ -1,6 +1,7 @@
 package com.example.hpur.spr.UI;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,14 +12,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.hpur.spr.Queries.CheckUserCallback;
 import com.example.hpur.spr.R;
+import com.example.hpur.spr.Storage.FireBaseAuthenticationUsers;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class SignInActivity extends AppCompatActivity {
+public class SignInActivity extends AppCompatActivity implements CheckUserCallback {
 
     private static final String TAG = SignInActivity.class.getSimpleName();
     private Button mSignInBtn;
@@ -28,8 +31,9 @@ public class SignInActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private String mEmail;
     private String mPass;
+    private boolean mUserExist;
     private ProgressDialog mProgressDialog;
-
+    private FireBaseAuthenticationUsers mUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,8 @@ public class SignInActivity extends AppCompatActivity {
         this.mProgressDialog = new ProgressDialog(this);
         this.mProgressDialog.setCancelable(false);
 
+        this.mUsers = new FireBaseAuthenticationUsers();
+        this.mUserExist = false;
         findViews();
         setupOnClick();
     }
@@ -67,7 +73,6 @@ public class SignInActivity extends AppCompatActivity {
                 userLogin();
             }
         });
-
         this.mSignUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,6 +111,7 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                            mUsers.checkUser(user.getUid(), user.getEmail(), SignInActivity.this);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -120,7 +126,6 @@ public class SignInActivity extends AppCompatActivity {
     private void userSignUp() {
         this.mEmail = this.mEmailEditText.getText().toString().trim();
         this.mPass = this.mPasswordEditText.getText().toString().trim();
-
 
 
         if (TextUtils.isEmpty(this.mEmail)) {
@@ -148,6 +153,9 @@ public class SignInActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                            mUsers.writeUserToDataBase(user.getUid(), user.getEmail());
+                            Toast.makeText(SignInActivity.this, "Sign up successfully.", Toast.LENGTH_SHORT).show();
+
                         } else {
                             // If sign in fails, display a message to the user.
                             // If sign in fails, display a message to the user.
@@ -170,4 +178,15 @@ public class SignInActivity extends AppCompatActivity {
         mProgressDialog.dismiss();
     }
 
+    @Override
+    public void performQuery(boolean result) {
+        if (result) {
+            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }
+        else {
+            Toast.makeText(SignInActivity.this, "The user do not exist", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
