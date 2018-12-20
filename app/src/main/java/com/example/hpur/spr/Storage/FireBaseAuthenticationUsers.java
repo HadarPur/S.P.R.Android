@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 public class FireBaseAuthenticationUsers implements Serializable {
+    private final int RESET=0, SIGN=1;
     private DatabaseReference mRef;
 
     public FireBaseAuthenticationUsers() {
@@ -23,7 +24,7 @@ public class FireBaseAuthenticationUsers implements Serializable {
         this.mRef.child(uid).setValue(email);
     }
 
-    public void checkUser(final String uid, final String email, final CheckUserCallback queryCallback) {
+    public void checkUser(final int type,final String email, final CheckUserCallback queryCallback) {
         this.mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -35,7 +36,15 @@ public class FireBaseAuthenticationUsers implements Serializable {
                         break;
                     }
                 }
-                queryCallback.performQuery(userExist);
+
+                switch (type) {
+                    case SIGN:
+                        queryCallback.CheckUserCallback(userExist);
+                        break;
+                    case RESET:
+                        queryCallback.CheckUserExistResetCallBack(userExist);
+                        break;
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

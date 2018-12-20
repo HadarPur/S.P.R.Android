@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.hpur.spr.Queries.CheckUserCallback;
@@ -22,10 +24,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity implements CheckUserCallback {
-
+    private final int RESET=0, SIGN=1;
     private static final String TAG = SignInActivity.class.getSimpleName();
     private Button mSignInBtn;
     private Button mSignUpBtn;
+    private Button mPasswordresetBtn;
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
     private FirebaseAuth mFirebaseAuth;
@@ -34,6 +37,12 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private boolean mUserExist;
     private ProgressDialog mProgressDialog;
     private FireBaseAuthenticationUsers mUsers;
+
+
+    private EditText mEmailReset;
+    private Button mGoBack;
+    private Button mResetBtn;
+    private LinearLayout mResetView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +73,12 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mSignUpBtn = findViewById(R.id.signup);
         this.mEmailEditText = findViewById(R.id.email);
         this.mPasswordEditText = findViewById(R.id.password);
+        this.mPasswordresetBtn = findViewById(R.id.passwordreset);
+
+        this.mEmailReset = findViewById(R.id.emailreset);
+        this.mGoBack = findViewById(R.id.close);
+        this.mResetBtn = findViewById(R.id.resetbtn);
+        this.mResetView = findViewById(R.id.resetview);
     }
 
     private void setupOnClick() {
@@ -79,8 +94,39 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                 userSignUp();
             }
         });
+        this.mPasswordresetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mResetView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        this.mGoBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mResetView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        this.mEmailReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetPassword();
+            }
+        });
     }
 
+    private void resetPassword() {
+        this.mEmail = this.mEmailReset.getText().toString().trim();
+
+        if (TextUtils.isEmpty(this.mEmail)) {
+            Toast.makeText(this, "Please enter email", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        showProgressDialog("Please wait...");
+        mUsers.checkUser(RESET, this.mEmail, SignInActivity.this);
+    }
 
     // log in a user to brand's conversation
     private void userLogin() {
@@ -111,7 +157,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                            mUsers.checkUser(user.getUid(), user.getEmail(), SignInActivity.this);
+                            mUsers.checkUser(SIGN, user.getEmail(), SignInActivity.this);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -179,14 +225,33 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     }
 
     @Override
-    public void performQuery(boolean result) {
+    public void CheckUserCallback(boolean result) {
         if (result) {
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
         else {
-            Toast.makeText(SignInActivity.this, "The user do not exist", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignInActivity.this, "The user does not exist", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void CheckUserExistResetCallBack(boolean result) {
+        hideProgressDialog();
+        if (result) {
+            mFirebaseAuth.sendPasswordResetEmail(mEmail)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(SignInActivity.this, "Email sent.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+        else {
+            Toast.makeText(SignInActivity.this, "The user does not exist", Toast.LENGTH_SHORT).show();
         }
     }
 }

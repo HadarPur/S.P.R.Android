@@ -1,5 +1,7 @@
 package com.example.hpur.spr.Queries;
 
 public interface CheckUserCallback {
-    void performQuery(boolean result);
+    void CheckUserCallback(boolean result);
+    void CheckUserExistResetCallBack(boolean result);
+
 }

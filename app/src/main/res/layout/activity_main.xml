@@ -15,10 +15,11 @@
         android:layout_height="wrap_content"
         android:background="@drawable/custom_button"
         android:fontFamily="serif"
-        android:text="Start Chat"
+        android:text="Start chat"
         android:textColor="@android:color/white"
         android:textSize="20dp"
         android:textStyle="bold"
+        android:textAllCaps="false"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="221dp" />
@@ -30,10 +31,11 @@
         android:layout_marginTop="17dp"
         android:background="@drawable/custom_button"
         android:fontFamily="serif"
-        android:text="find Shelter"
+        android:text="Find Shelter"
         android:textColor="@android:color/white"
         android:textSize="20dp"
         android:textStyle="bold"
+        android:textAllCaps="false"
         android:layout_below="@+id/button1"
         android:layout_alignStart="@+id/button1" />
 
@@ -43,10 +45,11 @@
         android:layout_height="wrap_content"
         android:background="@drawable/custom_button"
         android:fontFamily="serif"
-        android:text="about us"
+        android:text="About us"
         android:textColor="@android:color/white"
         android:textSize="20dp"
         android:textStyle="bold"
+        android:textAllCaps="false"
         android:layout_below="@+id/button3"
         android:layout_alignStart="@+id/button3"
         android:layout_marginTop="20dp" />
