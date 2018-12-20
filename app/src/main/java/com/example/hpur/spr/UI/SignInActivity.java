@@ -11,13 +11,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.hpur.spr.Queries.CheckUserCallback;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.Storage.FireBaseAuthenticationUsers;
+import com.example.hpur.spr.Storage.SharedPreferencesStorage;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,22 +26,22 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity implements CheckUserCallback {
     private final int RESET=0, SIGN=1;
+
     private static final String TAG = SignInActivity.class.getSimpleName();
     private Button mSignInBtn;
     private Button mSignUpBtn;
-    private Button mPasswordresetBtn;
+    private Button mPasswordResetBtn;
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
     private FirebaseAuth mFirebaseAuth;
     private String mEmail;
     private String mPass;
-    private boolean mUserExist;
     private ProgressDialog mProgressDialog;
     private FireBaseAuthenticationUsers mUsers;
-
+    private FirebaseUser mCurrentUser;
 
     private EditText mEmailReset;
-    private Button mGoBack;
+    private Button mGoBackBtn;
     private Button mResetBtn;
     private LinearLayout mResetView;
 
@@ -55,7 +56,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mProgressDialog.setCancelable(false);
 
         this.mUsers = new FireBaseAuthenticationUsers();
-        this.mUserExist = false;
+
         findViews();
         setupOnClick();
     }
@@ -63,9 +64,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
-//        updateUI(currentUser);
     }
 
     private void findViews() {
@@ -73,10 +71,10 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mSignUpBtn = findViewById(R.id.signup);
         this.mEmailEditText = findViewById(R.id.email);
         this.mPasswordEditText = findViewById(R.id.password);
-        this.mPasswordresetBtn = findViewById(R.id.passwordreset);
+        this.mPasswordResetBtn = findViewById(R.id.passwordreset);
 
         this.mEmailReset = findViewById(R.id.emailreset);
-        this.mGoBack = findViewById(R.id.close);
+        this.mGoBackBtn = findViewById(R.id.close);
         this.mResetBtn = findViewById(R.id.resetbtn);
         this.mResetView = findViewById(R.id.resetview);
     }
@@ -94,21 +92,21 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                 userSignUp();
             }
         });
-        this.mPasswordresetBtn.setOnClickListener(new View.OnClickListener() {
+        this.mPasswordResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mResetView.setVisibility(View.VISIBLE);
             }
         });
 
-        this.mGoBack.setOnClickListener(new View.OnClickListener() {
+        this.mGoBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mResetView.setVisibility(View.INVISIBLE);
             }
         });
 
-        this.mEmailReset.setOnClickListener(new View.OnClickListener() {
+        this.mResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resetPassword();
@@ -161,7 +159,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(SignInActivity.this, "Email/Password is not correct, please try again", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         hideProgressDialog();
                     }
@@ -198,19 +196,38 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                            mUsers.writeUserToDataBase(user.getUid(), user.getEmail());
-                            Toast.makeText(SignInActivity.this, "Sign up successfully.", Toast.LENGTH_SHORT).show();
+                            sendEmailVerification();
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SignInActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         hideProgressDialog();
                     }
                 });
+    }
+
+    private void sendEmailVerification () {
+        this.mCurrentUser = mFirebaseAuth.getCurrentUser();
+        this.mCurrentUser.sendEmailVerification();
+        Toast.makeText(SignInActivity.this, "Email verification sent successfully.", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void checkEmailVerification() {
+        Task usertask = this.mCurrentUser.reload();
+        usertask.addOnSuccessListener(new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+                if (mCurrentUser.isEmailVerified()) {
+                    mUsers.writeUserToDataBase(mCurrentUser.getUid(), mCurrentUser.getEmail());
+                }
+                else {
+                    Toast.makeText(SignInActivity.this, "Email verification failed.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     // show progress dialog
@@ -232,7 +249,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
         else {
-            Toast.makeText(SignInActivity.this, "The user does not exist", Toast.LENGTH_SHORT).show();
+            checkEmailVerification();
         }
     }
 
