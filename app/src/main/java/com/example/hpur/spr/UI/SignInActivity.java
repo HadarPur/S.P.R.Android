@@ -25,6 +25,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity implements CheckUserCallback {
+    private static final String KEY = "connect", IS_FIRST_INSTALLATION = "false";
+
     private final int RESET=0, SIGN=1;
 
     private static final String TAG = SignInActivity.class.getSimpleName();
@@ -45,6 +47,9 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private Button mResetBtn;
     private LinearLayout mResetView;
 
+    private SharedPreferencesStorage mSharedPreferences;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +61,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mProgressDialog.setCancelable(false);
 
         this.mUsers = new FireBaseAuthenticationUsers();
+
+        mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
 
         findViews();
         setupOnClick();
@@ -244,6 +251,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     @Override
     public void CheckUserCallback(boolean result) {
         if (result) {
+            mSharedPreferences.saveData(IS_FIRST_INSTALLATION, KEY);
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

@@ -12,7 +12,7 @@ import com.example.hpur.spr.R;
 import com.example.hpur.spr.Storage.SharedPreferencesStorage;
 
 public class SplashActivity extends AppCompatActivity {
-    private static final String KEY = "first_installation", IS_FIRST_INSTALLATION = "false";
+    private static final String KEY = "connect", IS_FIRST_INSTALLATION = "false";
 
     public static int SPLASH_OUT=2000;
     private ImageView loading;
@@ -42,7 +42,6 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (mSharedPreferences.readData(KEY, "true").equals("true")) {
-                    mSharedPreferences.saveData(IS_FIRST_INSTALLATION, KEY);
                     Intent intent = new Intent(SplashActivity.this, SignInActivity.class);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
