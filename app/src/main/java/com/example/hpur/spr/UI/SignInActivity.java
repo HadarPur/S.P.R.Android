@@ -133,6 +133,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         mUsers.checkUser(RESET, this.mEmail, SignInActivity.this);
     }
 
+
     // log in a user to brand's conversation
     private void userLogin() {
         this.mEmail = this.mEmailEditText.getText().toString().trim();
@@ -255,6 +256,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         }
         else {
             checkEmailVerification();
