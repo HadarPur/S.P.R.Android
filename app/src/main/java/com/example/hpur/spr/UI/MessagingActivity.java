@@ -11,6 +11,7 @@ public class MessagingActivity extends AppCompatActivity {
 
     private ImageButton mPhone;
     private ImageButton mVideo;
+    private ImageButton mBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +28,11 @@ public class MessagingActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
+    //find views from xml with listeners
     private void findViews() {
         this.mPhone = findViewById(R.id.phone);
         this.mVideo = findViewById(R.id.video);
+        this.mBack = findViewById(R.id.backbtn);
 
         this.mPhone.setVisibility(View.VISIBLE);
         this.mVideo.setVisibility(View.VISIBLE);
@@ -38,6 +41,7 @@ public class MessagingActivity extends AppCompatActivity {
         this.mVideo.setClickable(true);
     }
 
+    // setup all button events when they clicked
     private void setupOnClick() {
         this.mPhone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +56,14 @@ public class MessagingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(MessagingActivity.this, "mVideo clicked", Toast.LENGTH_SHORT).show();
 
+            }
+        });
+
+        this.mBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
     }

@@ -34,8 +34,13 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private Button mSignInBtn;
     private Button mSignUpBtn;
     private Button mPasswordResetBtn;
+    private Button mGoBackBtn;
+    private Button mResetBtn;
+
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
+    private EditText mEmailReset;
+
     private FirebaseAuth mFirebaseAuth;
     private String mEmail;
     private String mPass;
@@ -43,9 +48,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private FireBaseAuthenticationUsers mUsers;
     private FirebaseUser mCurrentUser;
     private boolean mForgetPassword;
-    private EditText mEmailReset;
-    private Button mGoBackBtn;
-    private Button mResetBtn;
+
     private LinearLayout mResetView;
 
     private SharedPreferencesStorage mSharedPreferences;
@@ -113,6 +116,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                 Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
                 mResetView.startAnimation(aniFade);
                 mResetView.setVisibility(View.VISIBLE);
+                disableMainButtons();
             }
         });
 
@@ -123,6 +127,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                 Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
                 mResetView.startAnimation(aniFade);
                 mResetView.setVisibility(View.INVISIBLE);
+                enableMainButtons();
             }
         });
 
@@ -275,6 +280,18 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         mProgressDialog.dismiss();
     }
 
+    private void disableMainButtons(){
+        this.mSignInBtn.setClickable(false);
+        this.mSignUpBtn.setClickable(false);
+        this.mPasswordResetBtn.setClickable(false);
+    }
+
+    private void enableMainButtons(){
+        this.mSignInBtn.setClickable(true);
+        this.mSignUpBtn.setClickable(true);
+        this.mPasswordResetBtn.setClickable(true);
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////// *************** firebase callbacks *************** ///////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -314,4 +331,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             Toast.makeText(SignInActivity.this, "The user does not exist", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 }
