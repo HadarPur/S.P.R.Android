@@ -92,6 +92,7 @@
         android:layout_centerVertical="true"
         layout="@layout/reset_password_view"
         android:layout_height="550dp"
+        android:visibility="invisible"
         android:layout_width="350dp"/>
 
 </RelativeLayout>
