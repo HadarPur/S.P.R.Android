@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -108,6 +110,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             @Override
             public void onClick(View v) {
                 mForgetPassword = true;
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+                mResetView.startAnimation(aniFade);
                 mResetView.setVisibility(View.VISIBLE);
             }
         });
@@ -116,6 +120,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             @Override
             public void onClick(View v) {
                 mForgetPassword = false;
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
+                mResetView.startAnimation(aniFade);
                 mResetView.setVisibility(View.INVISIBLE);
             }
         });

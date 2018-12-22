@@ -44,7 +44,6 @@
                 android:id="@+id/spinner1"
                 android:layout_width="180dp"
                 android:layout_height="30dp"
-                android:dropDownVerticalOffset="85dp"
                 android:background="@drawable/border"
                 android:popupBackground="@drawable/border"
                 android:spinnerMode="dropdown"
