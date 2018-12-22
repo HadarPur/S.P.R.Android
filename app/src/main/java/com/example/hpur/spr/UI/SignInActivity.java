@@ -11,8 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.hpur.spr.Queries.CheckUserCallback;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.Storage.FireBaseAuthenticationUsers;
@@ -26,7 +26,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity implements CheckUserCallback {
     private static final String KEY = "connect", IS_FIRST_INSTALLATION = "false";
-
     private final int RESET=0, SIGN=1;
 
     private static final String TAG = SignInActivity.class.getSimpleName();
@@ -41,7 +40,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private ProgressDialog mProgressDialog;
     private FireBaseAuthenticationUsers mUsers;
     private FirebaseUser mCurrentUser;
-
+    private boolean mForgetPassword;
     private EditText mEmailReset;
     private Button mGoBackBtn;
     private Button mResetBtn;
@@ -62,7 +61,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
         this.mUsers = new FireBaseAuthenticationUsers();
 
-        mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
+        this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
+        this.mForgetPassword = false;
 
         findViews();
         setupOnClick();
@@ -73,6 +73,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         super.onStart();
     }
 
+    // find all views from xml by id
     private void findViews() {
         this.mSignInBtn = findViewById(R.id.sign_in);
         this.mSignUpBtn = findViewById(R.id.signup);
@@ -84,8 +85,12 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mGoBackBtn = findViewById(R.id.close);
         this.mResetBtn = findViewById(R.id.resetbtn);
         this.mResetView = findViewById(R.id.resetview);
+
+        this.mEmailEditText.setText(mSharedPreferences.readData("Email"), TextView.BufferType.EDITABLE);
+        this.mEmailReset.setText(mSharedPreferences.readData("Email"), TextView.BufferType.EDITABLE);
     }
 
+    // setup all button events when they clicked
     private void setupOnClick() {
         this.mSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +107,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mPasswordResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mForgetPassword = true;
                 mResetView.setVisibility(View.VISIBLE);
             }
         });
@@ -109,6 +115,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mGoBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mForgetPassword = false;
                 mResetView.setVisibility(View.INVISIBLE);
             }
         });
@@ -121,6 +128,18 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mForgetPassword) {
+            mGoBackBtn.callOnClick();
+        }
+        else {
+            finish();
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }
+    }
+
+    // reset password for email function
     private void resetPassword() {
         this.mEmail = this.mEmailReset.getText().toString().trim();
 
@@ -134,7 +153,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     }
 
 
-    // log in a user to brand's conversation
+    // log in a user to app
     private void userLogin() {
         this.mEmail = this.mEmailEditText.getText().toString().trim();
         this.mPass = this.mPasswordEditText.getText().toString().trim();
@@ -174,7 +193,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                 });
     }
 
-    // sign up a user that does not exist on firebase's storage
+    // sign up a user to the app
     private void userSignUp() {
         this.mEmail = this.mEmailEditText.getText().toString().trim();
         this.mPass = this.mPasswordEditText.getText().toString().trim();
@@ -216,13 +235,14 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                 });
     }
 
+    // after user signed up, email verification send
     private void sendEmailVerification () {
         this.mCurrentUser = mFirebaseAuth.getCurrentUser();
         this.mCurrentUser.sendEmailVerification();
         Toast.makeText(SignInActivity.this, "Email verification sent successfully.", Toast.LENGTH_SHORT).show();
     }
 
-
+    // checked if email was verified
     private void checkEmailVerification() {
         Task usertask = this.mCurrentUser.reload();
         usertask.addOnSuccessListener(new OnSuccessListener() {
@@ -249,10 +269,17 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         mProgressDialog.dismiss();
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////// *************** firebase callbacks *************** ///////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     public void CheckUserCallback(boolean result) {
         if (result) {
             mSharedPreferences.saveData(IS_FIRST_INSTALLATION, KEY);
+            mSharedPreferences.saveData(this.mEmail, "Email");
+            mSharedPreferences.saveData("true", "SignedIn");
+
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
-
 import com.example.hpur.spr.R;
 
 public class AboutUsActivity extends AppCompatActivity {
@@ -15,11 +14,12 @@ public class AboutUsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_us);
+
+        findViews();
     }
 
     protected void onStart() {
         super.onStart();
-        findViews();
     }
 
     @Override
@@ -28,7 +28,7 @@ public class AboutUsActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
-    //find view by id and set text
+    // find all views from xml by id
     public void findViews() {
         tv = findViewById(R.id.aboutus);
         tv.setBackgroundColor(Color.argb(150, 255,255,255));

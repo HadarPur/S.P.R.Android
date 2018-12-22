@@ -9,6 +9,7 @@
     android:background="@drawable/spr_background"
     tools:context=".UI.MainActivity">
 
+
     <Button
         android:id="@+id/chat"
         android:layout_width="250dp"
@@ -53,5 +54,17 @@
         android:layout_below="@+id/button3"
         android:layout_alignStart="@+id/button3"
         android:layout_marginTop="20dp" />
+
+    <Button
+        android:id="@+id/signout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textAllCaps="false"
+        android:text="Need a break? Sign out"
+        android:textColor="#d7363e"
+        android:textSize="5pt"
+        android:background="@android:color/transparent"
+        android:gravity="center"/>
 
 </LinearLayout>

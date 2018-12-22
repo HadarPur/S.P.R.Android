@@ -6,7 +6,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.io.Serializable;
 import java.util.Iterator;
 
@@ -14,16 +13,19 @@ public class FireBaseAuthenticationUsers implements Serializable {
     private final int RESET=0, SIGN=1;
     private DatabaseReference mRef;
 
+
+    // c'tor
     public FireBaseAuthenticationUsers() {
         FirebaseDatabase data = FirebaseDatabase.getInstance();
         this.mRef = data.getReference("Users");
     }
 
-    //write into fire base
+    //write user into fire base
     public void writeUserToDataBase(String uid, String email) {
         this.mRef.child(uid).setValue(email);
     }
 
+    // check if user exist
     public void checkUser(final int type,final String email, final CheckUserCallback queryCallback) {
         this.mRef.addValueEventListener(new ValueEventListener() {
             @Override

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import com.example.hpur.spr.R;
 
 public class MessagingActivity extends AppCompatActivity {

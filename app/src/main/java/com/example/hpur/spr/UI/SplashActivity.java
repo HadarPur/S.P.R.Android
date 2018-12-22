@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
-
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.Storage.SharedPreferencesStorage;
 
@@ -24,15 +23,23 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
+
+        rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF,
+                0.5f,  Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(SPLASH_OUT/2);
+
+        findViews();
+
+    }
+
+    // find all views from xml by id
+    private void findViews() {
+        loading = findViewById(R.id.imageView);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        loading = (ImageView)findViewById(R.id.imageView);
-        rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF,
-                0.5f,  Animation.RELATIVE_TO_SELF, 0.5f);
-        rotate.setDuration(SPLASH_OUT/2);
     }
 
     @Override
@@ -41,7 +48,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mSharedPreferences.readData(KEY, "true").equals("true")) {
+                if (mSharedPreferences.readData("SignedIn").equals("") || mSharedPreferences.readData("SignedIn").equals("false")) {
                     Intent intent = new Intent(SplashActivity.this, SignInActivity.class);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -51,8 +58,13 @@ public class SplashActivity extends AppCompatActivity {
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 }
+//
+//                Intent intent = new Intent(SplashActivity.this, NavigationActivity.class);
+//                startActivity(intent);
+//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         }, SPLASH_OUT);
         loading.startAnimation(rotate);
     }
+
 }
