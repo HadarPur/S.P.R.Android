@@ -23,15 +23,16 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDEfjWmDDTyqjSbPR9tmfWtpyG5dk9YGW8" />
 
-        <mActivity android:name=".UI.MainActivity"
+        <activity android:name=".UI.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </mActivity>
-        <mActivity android:name=".UI.MessagingActivity"
+        </activity>
+
+        <activity android:name=".UI.MessagingActivity"
             android:noHistory="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -39,18 +40,18 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </mActivity>
+        </activity>
 
-        <mActivity android:name=".UI.SignInActivity"
+        <activity android:name=".UI.SignInActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </mActivity>
+        </activity>
 
-        <mActivity
+        <activity
             android:name=".UI.SplashActivity"
             android:noHistory="true"
             android:screenOrientation="portrait">
@@ -59,9 +60,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </mActivity>
+        </activity>
 
-        <mActivity
+        <activity
             android:name=".UI.AboutUsActivity"
             android:noHistory="true"
             android:screenOrientation="portrait">
@@ -70,9 +71,9 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </mActivity>
+        </activity>
 
-        <mActivity android:name=".UI.NavigationActivity"
+        <activity android:name=".UI.NavigationActivity"
             android:noHistory="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -80,7 +81,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </mActivity>
+        </activity>
     </application>
 
 </manifest>
