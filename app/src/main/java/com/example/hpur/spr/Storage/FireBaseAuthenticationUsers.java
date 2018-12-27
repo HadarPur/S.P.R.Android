@@ -30,6 +30,7 @@ public class FireBaseAuthenticationUsers implements Serializable {
         this.mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                //Checks if user already exists in the system
                 boolean userExist = false;
                 Iterator<DataSnapshot> itr = dataSnapshot.getChildren().iterator();
                 while(itr.hasNext()) {

@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity implements CheckUserCallback {
     private static final String KEY = "connect", IS_FIRST_INSTALLATION = "false";
+    private final int MIN_PASS_LEN = 6;
     private final int RESET=0, SIGN=1;
 
     private static final String TAG = SignInActivity.class.getSimpleName();
@@ -179,8 +180,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             return;
         }
 
-        if (this.mPass.length() <= 6) {
-            Toast.makeText(getApplicationContext(), "Password need to be at least 6 characters", Toast.LENGTH_SHORT).show();
+        if (this.mPass.length() <= MIN_PASS_LEN) {
+            Toast.makeText(getApplicationContext(), "Password need to be at least " + MIN_PASS_LEN + " characters", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -220,8 +221,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             return;
         }
 
-        if (this.mPass.length() <= 6) {
-            Toast.makeText(this, "Password need to be at least 6 characters", Toast.LENGTH_SHORT).show();
+        if (this.mPass.length() <= MIN_PASS_LEN) {
+            Toast.makeText(this, "Password need to be at least " + MIN_PASS_LEN + " characters", Toast.LENGTH_SHORT).show();
             return;
         }
 

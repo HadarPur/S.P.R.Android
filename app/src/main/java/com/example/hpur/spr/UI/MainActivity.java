@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.Storage.SharedPreferencesStorage;
 
@@ -15,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mAboutUs;
     private Button mSignOut;
     private SharedPreferencesStorage mSharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
