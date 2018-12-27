@@ -1,6 +1,6 @@
 package com.example.hpur.spr.Storage;
 
-import com.example.hpur.spr.Queries.CheckUserCallback;
+import com.example.hpur.spr.Logic.Queries.CheckUserCallbacks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -12,7 +12,6 @@ import java.util.Iterator;
 public class FireBaseAuthenticationUsers implements Serializable {
     private final int RESET=0, SIGN=1;
     private DatabaseReference mRef;
-
 
     // c'tor
     public FireBaseAuthenticationUsers() {
@@ -26,7 +25,7 @@ public class FireBaseAuthenticationUsers implements Serializable {
     }
 
     // check if user exist
-    public void checkUser(final int type,final String email, final CheckUserCallback queryCallback) {
+    public void checkUser(final int type,final String email, final CheckUserCallbacks queryCallback) {
         this.mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -41,10 +40,10 @@ public class FireBaseAuthenticationUsers implements Serializable {
 
                 switch (type) {
                     case SIGN:
-                        queryCallback.CheckUserCallback(userExist);
+                        queryCallback.checkUserFirebaseCallback(userExist);
                         break;
                     case RESET:
-                        queryCallback.CheckUserExistResetCallBack(userExist);
+                        queryCallback.checkUserExistResetCallBack(userExist);
                         break;
                 }
             }

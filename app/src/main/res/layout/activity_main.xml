@@ -10,62 +10,81 @@
     android:background="@drawable/spr_background"
     tools:context=".UI.MainActivity">
 
-
-    <Button
-        android:id="@+id/chat"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/custom_button"
-        android:fontFamily="serif"
-        android:text="Start chat"
-        android:textColor="@android:color/white"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:textAllCaps="false"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="221dp" />
-
-    <Button
-        android:id="@+id/shelter"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:background="@drawable/custom_button"
-        android:fontFamily="serif"
-        android:text="Find Shelter"
-        android:textColor="@android:color/white"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:textAllCaps="false"
-        android:layout_below="@+id/button1"
-        android:layout_alignStart="@+id/button1" />
-
-    <Button
-        android:id="@+id/about_us"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/custom_button"
-        android:fontFamily="serif"
-        android:text="About us"
-        android:textColor="@android:color/white"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:textAllCaps="false"
-        android:layout_below="@+id/button3"
-        android:layout_alignStart="@+id/button3"
-        android:layout_marginTop="20dp" />
-
-    <Button
-        android:id="@+id/signout"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textAllCaps="false"
-        android:text="Need a break? Sign out"
-        android:textColor="#d7363e"
-        android:textSize="5pt"
-        android:background="@android:color/transparent"
-        android:gravity="center"/>
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/chat"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button"
+                android:fontFamily="serif"
+                android:text="Start chat"
+                android:textColor="@android:color/white"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="150dp" />
+
+            <Button
+                android:id="@+id/shelter"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:background="@drawable/custom_button"
+                android:fontFamily="serif"
+                android:text="Find Shelter"
+                android:textColor="@android:color/white"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:layout_below="@+id/button1"
+                android:layout_alignStart="@+id/button1" />
+
+            <Button
+                android:id="@+id/about_us"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button"
+                android:fontFamily="serif"
+                android:text="About us"
+                android:textColor="@android:color/white"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:layout_below="@+id/button3"
+                android:layout_alignStart="@+id/button3"
+                android:layout_marginTop="20dp" />
+
+            <Button
+                android:id="@+id/signout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textAllCaps="false"
+                android:text="Need a break? Sign out"
+                android:textColor="#d7363e"
+                android:textSize="5pt"
+                android:background="@android:color/transparent"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <include
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            layout="@layout/loading_view"
+            android:visibility="invisible"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

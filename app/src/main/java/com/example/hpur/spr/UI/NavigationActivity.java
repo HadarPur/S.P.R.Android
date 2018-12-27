@@ -3,39 +3,65 @@ package com.example.hpur.spr.UI;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-
+import com.example.hpur.spr.Logic.GPSTracker;
+import com.example.hpur.spr.Logic.Map;
+import com.example.hpur.spr.Logic.Shelter;
+import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
 import com.google.android.gms.maps.SupportMapFragment;
 import java.util.ArrayList;
 
 public class NavigationActivity extends AppCompatActivity {
-    private Spinner mSpinner;
-    private SupportMapFragment mapFragment;
-    private int position;
-    private Button mSearchBtn;
-    private Bundle ex;
-    private int count_wait=0;
-    private String streetName;
-    private boolean isFirst=true, isLoading;
-    private ArrayList<String> names;
+    private static final String TAG = NavigationActivity.class.getSimpleName();
+    private Map mMap;
     private RelativeLayout mLoadingBack;
-    private ArrayAdapter adapter;
-    private boolean firstAsk=false;
-    private double latitude, longitude;
+    private ArrayList<Shelter>[] mShelterData;
+    private ShelterInstance mShelterInfo;
+    private boolean mFirstAsk =false;
+    private double mLatitude, mLongitude;
     private ImageButton mBack;
+    private GPSTracker mGpsTracker;
+    private SupportMapFragment mMapFragment;
+    private Spinner mSpinner;
+    private Button mSearchBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
+
+        this.mGpsTracker = new GPSTracker(this, mFirstAsk);
+        if(this.mGpsTracker.getGPSEnable()&& mGpsTracker.getPosition()!=null){
+            this.mLatitude = this.mGpsTracker.getPosition().getLatitude();
+            this.mLongitude = this.mGpsTracker.getPosition().getLongitude();
+            //if location wasn't enable and now it's enable
+            this.mGpsTracker.initLocation();
+        }
+        else if (!this.mGpsTracker.getGPSEnable()){
+            this.mLatitude = 0;
+            this.mLongitude = 0;
+        }
+
+        Log.d(TAG, "mLatitude: " + this.mLatitude + " mLongitude: " + this.mLongitude);
+
         findViews ();
         setupOnClick();
+
+        this.mShelterInfo = ShelterInstance.getInstance();
+        this.mShelterData = this.mShelterInfo.getData();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        showCurrentPosOnMap();
     }
 
     @Override
@@ -44,20 +70,22 @@ public class NavigationActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
+
     //find views from xml with listeners
     public void findViews () {
-        this.mLoadingBack = findViewById(R.id.load);
         this.mBack = findViewById(R.id.backbtn);
         this.mSpinner = findViewById(R.id.spinner1);
         this.mSearchBtn = findViewById(R.id.search);
 
-        //mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        this.mLoadingBack = findViewById(R.id.load);
+        this.mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.cities_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinner.setAdapter(adapter);
 
+        this.mSpinner.setAdapter(adapter);
     }
 
     // setup all button events when they clicked
@@ -69,5 +97,27 @@ public class NavigationActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
+
+        this.mSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String spinnerPosText = mSpinner.getSelectedItem().toString();
+                int spinnerPos = mSpinner.getSelectedItemPosition();
+
+                Log.d(TAG, "spinnerPosText: " + spinnerPosText + " position : " + spinnerPos);
+
+                showOnMap(spinnerPos);
+            }
+        });
+    }
+
+    //set shelter location markers on map
+    public void showOnMap(int position) {
+        this.mMap.showShelters(mShelterData[position], this);
+    }
+
+    //set user current location marker on the map
+    public void showCurrentPosOnMap() {
+        this.mMap = new Map(mMapFragment, mLatitude, mLongitude, this.getApplicationContext());
     }
 }
