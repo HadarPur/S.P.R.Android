@@ -38,14 +38,14 @@ public class AboutUsActivity extends AppCompatActivity {
         this.mAboutUsTextView = findViewById(R.id.aboutus);
         this.mBack = findViewById(R.id.backbtn);
 
-        mAboutUsTextView.setBackgroundColor(Color.argb(150, 255,255,255));
+        this.mAboutUsTextView.setBackgroundColor(Color.argb(150, 255,255,255));
 
-        mAboutUsTextView.setText("S.P.R: Saving population at risk\n\n" +
+        this.mAboutUsTextView.setText("S.P.R: Saving population at risk\n\n" +
         "S.P.R main goal is to provide a simplified and easiest platform for youth at risk, who needs an immediate help, especially on late hours.\n\n" +
                 "In our app youth at risk can to chat with human agent volunteer who make a proper training, this agent will be personally assigned to him by artificial intelligence for maximum results.\n\n"+
         "Also, if the user does not feel in comfortable to chat with an agent and want to get help in a shelters, he could navigate to closest shelter from his location.");
-        mAboutUsTextView.setMovementMethod(new ScrollingMovementMethod());
-        mAboutUsTextView.setTextColor(Color.BLACK);
+        this.mAboutUsTextView.setMovementMethod(new ScrollingMovementMethod());
+        this.mAboutUsTextView.setTextColor(Color.BLACK);
 
     }
 

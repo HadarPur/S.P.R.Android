@@ -12,29 +12,27 @@ import com.example.hpur.spr.Storage.SharedPreferencesStorage;
 
 public class SplashActivity extends AppCompatActivity {
     private static final String KEY = "connect", IS_FIRST_INSTALLATION = "false";
-
     public static int SPLASH_OUT=2000;
-    private ImageView loading;
-    public RotateAnimation rotate;
+    private ImageView mLoading;
+    public RotateAnimation mRotate;
     private SharedPreferencesStorage mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
+        this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
 
-        rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF,
+        this.mRotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF,
                 0.5f,  Animation.RELATIVE_TO_SELF, 0.5f);
-        rotate.setDuration(SPLASH_OUT/2);
+        this.mRotate.setDuration(SPLASH_OUT/2);
 
         findViews();
-
     }
 
     // find all views from xml by id
     private void findViews() {
-        loading = findViewById(R.id.imageView);
+        this.mLoading = findViewById(R.id.imageView);
     }
 
     @Override
@@ -58,13 +56,10 @@ public class SplashActivity extends AppCompatActivity {
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 }
-//
-//                Intent intent = new Intent(SplashActivity.this, NavigationActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
             }
         }, SPLASH_OUT);
-        loading.startAnimation(rotate);
+        this.mLoading.startAnimation(mRotate);
     }
 
 }

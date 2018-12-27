@@ -61,49 +61,30 @@
                 android:background="@drawable/custom_button"
                 android:fontFamily="serif"
                 android:text="Search"
+                android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:textSize="20dp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
-            <!--android:id="@+id/map"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_alignParentStart="true"-->
-            <!--android:layout_below="@+id/linearLayout2"/>-->
-
-        <!--take from external library https://github.com/ybq/Android-SpinKit -->
-        <RelativeLayout
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:id="@+id/map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/linearLayout2"/>
+
+        <!--take from external library https://github.com/ybq/Android-SpinKit -->
+
+        <include
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            layout="@layout/loading_view"
+            android:layout_height="match_parent"
             android:visibility="invisible"
-            android:id="@+id/load">
+            android:layout_width="match_parent"/>
 
-            <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/spin_kit"
-                style="@style/SpinKitView.Large.Circle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center"
-                app:SpinKit_Color="#d7363e" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/spin_kit"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center"
-                android:fontFamily="serif"
-                android:text="Loading..."
-                android:textColor="#d7363e"
-                android:textSize="18dp" />
-
-        </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

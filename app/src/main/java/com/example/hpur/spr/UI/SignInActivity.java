@@ -1,6 +1,5 @@
 package com.example.hpur.spr.UI;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +14,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.hpur.spr.Queries.CheckUserCallback;
+import com.example.hpur.spr.Logic.Queries.CheckUserCallbacks;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.Storage.FireBaseAuthenticationUsers;
 import com.example.hpur.spr.Storage.SharedPreferencesStorage;
+import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -26,33 +26,28 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class SignInActivity extends AppCompatActivity implements CheckUserCallback {
+public class SignInActivity extends AppCompatActivity implements CheckUserCallbacks {
     private static final String KEY = "connect", IS_FIRST_INSTALLATION = "false";
     private final int RESET=0, SIGN=1;
-
     private static final String TAG = SignInActivity.class.getSimpleName();
+
     private Button mSignInBtn;
     private Button mSignUpBtn;
     private Button mPasswordResetBtn;
     private Button mGoBackBtn;
     private Button mResetBtn;
-
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
     private EditText mEmailReset;
-
     private FirebaseAuth mFirebaseAuth;
     private String mEmail;
     private String mPass;
-    private ProgressDialog mProgressDialog;
     private FireBaseAuthenticationUsers mUsers;
     private FirebaseUser mCurrentUser;
     private boolean mForgetPassword;
-
     private LinearLayout mResetView;
-
     private SharedPreferencesStorage mSharedPreferences;
-
+    private UtilitiesFunc mUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +56,12 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
         this.mFirebaseAuth = FirebaseAuth.getInstance();
 
-        this.mProgressDialog = new ProgressDialog(this);
-        this.mProgressDialog.setCancelable(false);
-
         this.mUsers = new FireBaseAuthenticationUsers();
 
         this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
         this.mForgetPassword = false;
+
+        this.mUtils = new UtilitiesFunc(this);
 
         findViews();
         setupOnClick();
@@ -141,11 +135,11 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
     @Override
     public void onBackPressed() {
-        if (mForgetPassword) {
-            mGoBackBtn.callOnClick();
+        if (this.mForgetPassword) {
+            this.mGoBackBtn.callOnClick();
         }
         else {
-            finish();
+            super.onBackPressed();
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
     }
@@ -159,8 +153,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             return;
         }
 
-        showProgressDialog("Please wait...");
-        mUsers.checkUser(RESET, this.mEmail, SignInActivity.this);
+        this.mUtils.showProgressDialog("Please wait...");
+        this.mUsers.checkUser(RESET, this.mEmail, SignInActivity.this);
     }
 
 
@@ -184,9 +178,9 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             return;
         }
 
-        showProgressDialog("Registering, please wait...");
+        this.mUtils.showProgressDialog("Registering, please wait...");
 
-        mFirebaseAuth.signInWithEmailAndPassword(this.mEmail, this.mPass)
+        this.mFirebaseAuth.signInWithEmailAndPassword(this.mEmail, this.mPass)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -199,7 +193,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        hideProgressDialog();
+                        mUtils.hideProgressDialog();
                     }
                 });
     }
@@ -225,9 +219,9 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             return;
         }
 
-        showProgressDialog("Signing up, please wait...");
+        this.mUtils.showProgressDialog("Signing up, please wait...");
 
-        mFirebaseAuth.createUserWithEmailAndPassword(this.mEmail, this.mPass)
+        this.mFirebaseAuth.createUserWithEmailAndPassword(this.mEmail, this.mPass)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -241,7 +235,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        hideProgressDialog();
+                        mUtils.hideProgressDialog();
                     }
                 });
     }
@@ -269,17 +263,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         });
     }
 
-    // show progress dialog
-    private void showProgressDialog(String message) {
-        mProgressDialog.setMessage(message);
-        mProgressDialog.show();
-    }
-
-    // hide progress dialog
-    private void hideProgressDialog() {
-        mProgressDialog.dismiss();
-    }
-
     private void disableMainButtons(){
         this.mSignInBtn.setClickable(false);
         this.mSignUpBtn.setClickable(false);
@@ -297,11 +280,11 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void CheckUserCallback(boolean result) {
+    public void checkUserFirebaseCallback(boolean result) {
         if (result) {
-            mSharedPreferences.saveData(IS_FIRST_INSTALLATION, KEY);
-            mSharedPreferences.saveData(this.mEmail, "Email");
-            mSharedPreferences.saveData("true", "SignedIn");
+            this.mSharedPreferences.saveData(IS_FIRST_INSTALLATION, KEY);
+            this.mSharedPreferences.saveData(this.mEmail, "Email");
+            this.mSharedPreferences.saveData("true", "SignedIn");
 
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
             startActivity(intent);
@@ -314,10 +297,10 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     }
 
     @Override
-    public void CheckUserExistResetCallBack(boolean result) {
-        hideProgressDialog();
+    public void checkUserExistResetCallBack(boolean result) {
+        this.mUtils.hideProgressDialog();
         if (result) {
-            mFirebaseAuth.sendPasswordResetEmail(mEmail)
+            this.mFirebaseAuth.sendPasswordResetEmail(this.mEmail)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -331,6 +314,4 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             Toast.makeText(SignInActivity.this, "The user does not exist", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 }
