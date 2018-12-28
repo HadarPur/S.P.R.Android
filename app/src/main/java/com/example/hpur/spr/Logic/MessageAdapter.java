@@ -1,6 +1,7 @@
 package com.example.hpur.spr.Logic;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.example.hpur.spr.R;
 import java.util.List;
 
 public class MessageAdapter extends ArrayAdapter<ChatBubble> {
+    private final String TAG = "MessageAdapter:";
     private Activity activity;
     private List<ChatBubble> messages;
 
@@ -27,12 +29,14 @@ public class MessageAdapter extends ArrayAdapter<ChatBubble> {
         LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
         int layoutResource = 0; // determined by view type
-        ChatBubble ChatBubble = getItem(position);
+        ChatBubble chatBubble = getItem(position);
         int viewType = getItemViewType(position);
 
-        if (ChatBubble.myMessage()) {
+        if (chatBubble.getmMyMessage()) {
+            Log.d(TAG,"left chat bubble layout");
             layoutResource = R.layout.left_chat_bubble;
         } else {
+            Log.d(TAG,"right chat bubble layout");
             layoutResource = R.layout.right_chat_bubble;
         }
 
@@ -45,7 +49,7 @@ public class MessageAdapter extends ArrayAdapter<ChatBubble> {
         }
 
         //set message content
-        holder.msg.setText(ChatBubble.getContent());
+        holder.msg.setText(chatBubble.getmTextMessage());
 
         return convertView;
     }
