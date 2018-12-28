@@ -34,7 +34,7 @@ public class MessagingActivity extends AppCompatActivity {
     private View mSendBtn;
     private EditText mEditText;
     boolean mMyMessage = true;
-    private String mUserName = "Anonymouse";
+    private String mUserName = "AnonymousAgent";
     private List<ChatBubble> mChatBubbles;
     private ArrayAdapter<ChatBubble> mChatAdapter;
 
@@ -58,13 +58,22 @@ public class MessagingActivity extends AppCompatActivity {
 
         findViews();
         setupOnClick();
-        setListener();
 
-        //set ListView adapter first
-        this.mChatAdapter = new MessageAdapter(MessagingActivity.this, R.layout.left_chat_bubble, mChatBubbles);
+        this.mChatAdapter = new MessageAdapter(MessagingActivity.this, R.layout.right_chat_bubble, mChatBubbles);
         this.mListView.setAdapter(mChatAdapter);
+    }
 
-        this.mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        attachDatabaseReadListener();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        detachDatabaseReadListener();
+        mChatAdapter.clear();
     }
 
     public void onBackPressed(){
@@ -129,51 +138,55 @@ public class MessagingActivity extends AppCompatActivity {
         });
     }
 
-
-    private void setListener() {
-        //Notify each time there is a change in messaging node in the DB
-        this.mChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //Called in the start for each child in the node + every time a child inserted to the DB
-                ChatBubble curBubbleMessage = dataSnapshot.getValue(ChatBubble.class);
-                //chat bubble layout decision depends on the source of the message.
-                if(!(curBubbleMessage.getmUserName().equals(mUserName))) {
-                    Log.d(TAG, "line 108");
-                    curBubbleMessage.setmMyMessage(false);
+    private void attachDatabaseReadListener() {
+        if(mChildEventListener == null)
+        {
+            //Notify each time there is a change in messaging node in the DB
+            this.mChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    //Called in the start for each child in the node + every time a child inserted to the DB
+                    ChatBubble curBubbleMessage = dataSnapshot.getValue(ChatBubble.class);
+                    //chat bubble layout decision depends on the source of the message.
+                    if(!(curBubbleMessage.getmUserName().equals(mUserName))) {
+                        Log.d(TAG, "another user message");
+                        curBubbleMessage.setmMyMessage(false);
+                    }
+                    else{
+                        Log.d(TAG,"own user message");
+                        curBubbleMessage.setmMyMessage(true);
+                    }
+                    mChatAdapter.add(curBubbleMessage);
                 }
-                else{
-                    Log.d(TAG,"line 110");
-                    curBubbleMessage.setmMyMessage(true);
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) { }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    //When some sort of error occurred when there is try to make changes/read data
                 }
+            };
 
-
-                mChatAdapter.add(curBubbleMessage);
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                //When some sort of error occurred when there is try to make changes/read data
-
-            }
-        };
+            //sign listener to the db reference
+            this.mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
+        }
     }
+
+    private void detachDatabaseReadListener(){
+        if(mChildEventListener != null){
+            this.mMessagesDatabaseReference.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
+        }
+
+    }
+
     private void alertGotOut() {
         new AlertDialog.Builder(this)
                 .setTitle("Really Exit?")

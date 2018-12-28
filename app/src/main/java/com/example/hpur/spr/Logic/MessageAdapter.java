@@ -30,23 +30,30 @@ public class MessageAdapter extends ArrayAdapter<ChatBubble> {
 
         int layoutResource = 0; // determined by view type
         ChatBubble chatBubble = getItem(position);
-        int viewType = getItemViewType(position);
+//        int viewType = getItemViewType(position);
 
         if (chatBubble.getmMyMessage()) {
-            Log.d(TAG,"left chat bubble layout");
-            layoutResource = R.layout.left_chat_bubble;
-        } else {
             Log.d(TAG,"right chat bubble layout");
             layoutResource = R.layout.right_chat_bubble;
+        } else {
+            Log.d(TAG,"left chat bubble layout");
+            layoutResource = R.layout.left_chat_bubble;
         }
 
-        if (convertView != null) {
-            holder = (ViewHolder) convertView.getTag();
-        } else {
-            convertView = inflater.inflate(layoutResource, parent, false);
-            holder = new ViewHolder(convertView);
-            convertView.setTag(holder);
-        }
+        convertView = inflater.inflate(layoutResource, parent, false);
+        holder = new ViewHolder(convertView);
+        convertView.setTag(holder);
+
+
+//        if (convertView != null) {
+//            Log.d(TAG,"converview != null");
+//            holder = (ViewHolder) convertView.getTag();
+//        } else {
+//            Log.d(TAG,"else");
+//            convertView = inflater.inflate(layoutResource, parent, false);
+//            holder = new ViewHolder(convertView);
+//            convertView.setTag(holder);
+//        }
 
         //set message content
         holder.msg.setText(chatBubble.getmTextMessage());
@@ -54,18 +61,18 @@ public class MessageAdapter extends ArrayAdapter<ChatBubble> {
         return convertView;
     }
 
-    @Override
-    public int getViewTypeCount() {
-        // return the total number of view types. this value should never change
-        // at runtime. Value 2 is returned because of left and right views.
-        return 2;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        // return a value between 0 and (getViewTypeCount - 1)
-        return position % 2;
-    }
+//    @Override
+//    public int getViewTypeCount() {
+//        // return the total number of view types. this value should never change
+//        // at runtime. Value 2 is returned because of left and right views.
+//        return 2;
+//    }
+//
+//    @Override
+//    public int getItemViewType(int position) {
+//        // return a value between 0 and (getViewTypeCount - 1)
+//        return position % 2;
+//    }
 
     private class ViewHolder {
         private TextView msg;
