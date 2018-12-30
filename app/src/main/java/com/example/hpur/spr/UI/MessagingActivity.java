@@ -1,6 +1,8 @@
 package com.example.hpur.spr.UI;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,9 +13,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.hpur.spr.Logic.ChatBubble;
 import com.example.hpur.spr.Logic.ChatBubbleAdapter;
 import com.example.hpur.spr.R;
@@ -22,7 +24,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.ArrayList;
 import java.util.List;
 import android.widget.ImageButton;
@@ -65,6 +66,25 @@ public class MessagingActivity extends AppCompatActivity {
         //Bind the RecycleView with the current application layout
         this.mRecycleView.setLayoutManager(layoutManager);
         this.mRecycleView.setAdapter(mChatAdapter);
+
+        if (Build.VERSION.SDK_INT >= 11) {
+            mRecycleView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v,
+                                           int left, int top, int right, int bottom,
+                                           int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    if (bottom < oldBottom) {
+                        mRecycleView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRecycleView.smoothScrollToPosition(
+                                        mRecycleView.getAdapter().getItemCount() - 1);
+                            }
+                        }, 1);
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -98,6 +118,15 @@ public class MessagingActivity extends AppCompatActivity {
 
         this.mPhone.setClickable(true);
         this.mVideo.setClickable(true);
+
+        this.mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
     }
 
     // setup all button events when they clicked
@@ -167,7 +196,7 @@ public class MessagingActivity extends AppCompatActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mRecycleView.smoothScrollToPosition(mChatBubbles.size());
+                            mRecycleView.smoothScrollToPosition(mChatBubbles.size()-1);
                         }
                     }, 1);
                 }
@@ -212,6 +241,11 @@ public class MessagingActivity extends AppCompatActivity {
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     }
                 }).create().show();
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
 
