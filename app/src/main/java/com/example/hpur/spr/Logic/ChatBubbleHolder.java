@@ -1,0 +1,28 @@
+package com.example.hpur.spr.Logic;
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
+
+import com.example.hpur.spr.R;
+
+public class ChatBubbleHolder extends RecyclerView.ViewHolder {
+
+    private final TextView mTxtMessage;
+    private Context mContext;
+    private ChatBubble mChatBubble;
+
+    public ChatBubbleHolder(Context context,@NonNull View itemView) {
+        super(itemView);
+        this.mContext = context;
+
+        this.mTxtMessage = (TextView)itemView.findViewById(R.id.txt_msg);
+    }
+
+    public void bindChatBubble(ChatBubble chatBubble){
+        this.mChatBubble = chatBubble;
+        this.mTxtMessage.setText(mChatBubble.getmTextMessage());
+    }
+}

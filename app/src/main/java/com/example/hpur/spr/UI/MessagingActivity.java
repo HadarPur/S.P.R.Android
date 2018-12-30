@@ -1,20 +1,21 @@
 package com.example.hpur.spr.UI;
 
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.hpur.spr.Logic.ChatBubble;
-import com.example.hpur.spr.Logic.MessageAdapter;
+import com.example.hpur.spr.Logic.ChatBubbleAdapter;
 import com.example.hpur.spr.R;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -30,13 +31,13 @@ import android.widget.ImageButton;
 public class MessagingActivity extends AppCompatActivity {
 
     private final String TAG = "MessagingActivity:";
-    private ListView mListView;
+    private RecyclerView mRecycleView;
     private View mSendBtn;
     private EditText mEditText;
     boolean mMyMessage = true;
-    private String mUserName = "AnonymousAgent";
+    private String mUserName = "AnonymousTeenager";
     private List<ChatBubble> mChatBubbles;
-    private ArrayAdapter<ChatBubble> mChatAdapter;
+    private ChatBubbleAdapter mChatAdapter;
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mMessagesDatabaseReference;
@@ -59,8 +60,11 @@ public class MessagingActivity extends AppCompatActivity {
         findViews();
         setupOnClick();
 
-        this.mChatAdapter = new MessageAdapter(MessagingActivity.this, R.layout.right_chat_bubble, mChatBubbles);
-        this.mListView.setAdapter(mChatAdapter);
+        this.mChatAdapter = new ChatBubbleAdapter(getApplicationContext(), R.layout.right_chat_bubble, mChatBubbles);
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        //Bind the RecycleView with the current application layout
+        this.mRecycleView.setLayoutManager(layoutManager);
+        this.mRecycleView.setAdapter(mChatAdapter);
     }
 
     @Override
@@ -72,8 +76,8 @@ public class MessagingActivity extends AppCompatActivity {
     @Override
     protected void onPause(){
         super.onPause();
+        mChatBubbles.clear();
         detachDatabaseReadListener();
-        mChatAdapter.clear();
     }
 
     public void onBackPressed(){
@@ -81,7 +85,7 @@ public class MessagingActivity extends AppCompatActivity {
     }
 
     private void findViews(){
-        this.mListView = findViewById(R.id.list_msg);
+        this.mRecycleView = findViewById(R.id.recycleView_msg);
         this. mSendBtn = findViewById(R.id.btn_chat_send);
         this.mEditText = findViewById(R.id.msg_type);
 
@@ -148,15 +152,24 @@ public class MessagingActivity extends AppCompatActivity {
                     //Called in the start for each child in the node + every time a child inserted to the DB
                     ChatBubble curBubbleMessage = dataSnapshot.getValue(ChatBubble.class);
                     //chat bubble layout decision depends on the source of the message.
-                    if(!(curBubbleMessage.getmUserName().equals(mUserName))) {
+                    if (!(curBubbleMessage.getmUserName().equals(mUserName))) {
                         Log.d(TAG, "another user message");
                         curBubbleMessage.setmMyMessage(false);
-                    }
-                    else{
-                        Log.d(TAG,"own user message");
+                    } else {
+                        Log.d(TAG, "own user message");
                         curBubbleMessage.setmMyMessage(true);
                     }
-                    mChatAdapter.add(curBubbleMessage);
+                    //Add a new chatBubble(Message) into the list.
+                    mChatBubbles.add(curBubbleMessage);
+                    //Notify the Adapter to create a new view to the current received message
+                    mChatAdapter.notifyItemInserted(mChatBubbles.size());
+                    //Scroll the layout to the current received message
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRecycleView.smoothScrollToPosition(mChatBubbles.size());
+                        }
+                    }, 1);
                 }
 
                 @Override
