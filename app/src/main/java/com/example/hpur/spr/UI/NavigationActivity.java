@@ -1,6 +1,8 @@
 package com.example.hpur.spr.UI;
 
 import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +33,7 @@ public class NavigationActivity extends AppCompatActivity {
     private SupportMapFragment mMapFragment;
     private Spinner mSpinner;
     private Button mSearchBtn;
+    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +89,8 @@ public class NavigationActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         this.mSpinner.setAdapter(adapter);
+
+        this.mFab = findViewById(R.id.fab);
     }
 
     // setup all button events when they clicked
@@ -107,6 +112,14 @@ public class NavigationActivity extends AppCompatActivity {
                 Log.d(TAG, "spinnerPosText: " + spinnerPosText + " position : " + spinnerPos);
 
                 showOnMap(spinnerPos);
+            }
+        });
+
+        this.mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
     }
