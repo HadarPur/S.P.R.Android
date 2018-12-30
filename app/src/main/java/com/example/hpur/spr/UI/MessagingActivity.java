@@ -53,7 +53,7 @@ public class MessagingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_messaging);
 
         this.mFirebaseDatabase = FirebaseDatabase.getInstance();
-        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("Messages");
 
         this.mChatBubbles = new ArrayList<>();
 
