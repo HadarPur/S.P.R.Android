@@ -83,8 +83,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_gravity="end|bottom"
-            android:layout_marginEnd="31dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginEnd="171dp"
+            android:layout_marginBottom="24dp"
             android:src="@drawable/ic_find" />
 
         <!--take from external library https://github.com/ybq/Android-SpinKit -->
