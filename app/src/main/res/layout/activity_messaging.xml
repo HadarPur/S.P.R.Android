@@ -33,12 +33,11 @@
 
         <Button
             android:id="@+id/btn_chat_send"
-            android:layout_width="70dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:background="@color/background_floating_material_dark"
-            android:text="Send"
+            android:background="@drawable/ic_send"
             android:textColor="@color/background_material_light" />
 
         <android.support.v7.widget.RecyclerView
