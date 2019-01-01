@@ -13,8 +13,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.example.hpur.spr.Logic.ChatBubble;
 import com.example.hpur.spr.Logic.ChatBubbleAdapter;
@@ -47,6 +50,9 @@ public class MessagingActivity extends AppCompatActivity {
     private ImageButton mPhone;
     private ImageButton mVideo;
     private ImageButton mBack;
+    private LinearLayout mAudioView;
+    private LinearLayout mVideoView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +119,9 @@ public class MessagingActivity extends AppCompatActivity {
         this.mVideo = findViewById(R.id.video);
         this.mBack = findViewById(R.id.backbtn);
 
+        this.mAudioView = findViewById(R.id.audioview);
+        this.mVideoView = findViewById(R.id.videoview);
+
         this.mPhone.setVisibility(View.VISIBLE);
         this.mVideo.setVisibility(View.VISIBLE);
 
@@ -136,6 +145,9 @@ public class MessagingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(MessagingActivity.this, "mPhone clicked", Toast.LENGTH_SHORT).show();
 
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+                mAudioView.startAnimation(aniFade);
+                mAudioView.setVisibility(View.VISIBLE);
             }
         });
 
@@ -143,6 +155,10 @@ public class MessagingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MessagingActivity.this, "mVideo clicked", Toast.LENGTH_SHORT).show();
+
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+                mVideoView.startAnimation(aniFade);
+                mVideoView.setVisibility(View.VISIBLE);
 
             }
         });

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/simple_background"
@@ -8,57 +8,80 @@
     <include layout="@layout/app_bar"
         android:id="@+id/tool_bar"/>
 
-    <RelativeLayout
-        android:id="@+id/container"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:clickable="true"
-        android:focusableInTouchMode="true"
-        android:padding="10dp">
+        android:layout_below="@+id/tool_bar">
 
-        <Button
-            android:id="@+id/add_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:background="@drawable/ic_add"
-            android:layout_marginBottom="6dp"
-            android:textColor="@color/background_material_light" />
-
-        <EditText
-            android:id="@+id/msg_type"
-            android:layout_width="290dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/btn_chat_send"
-            android:layout_weight="0.7"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:hint="Input message" />
-
-        <Button
-            android:id="@+id/btn_chat_send"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/ic_send"
-            android:textColor="@color/background_material_light" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycleView_msg"
+        <RelativeLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/msg_type"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentTop="false"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="10dp"
-            android:divider="@null"
-            android:listSelector="@android:color/transparent"
-            android:transcriptMode="alwaysScroll" />
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusableInTouchMode="true"
+            android:padding="10dp">
 
-    </RelativeLayout>
-</LinearLayout>
+            <Button
+                android:id="@+id/add_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/ic_add"
+                android:layout_marginBottom="6dp"
+                android:textColor="@color/background_material_light" />
+
+            <EditText
+                android:id="@+id/msg_type"
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/btn_chat_send"
+                android:layout_weight="0.7"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:hint="Input message" />
+
+            <Button
+                android:id="@+id/btn_chat_send"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/ic_send"
+                android:textColor="@color/background_material_light" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycleView_msg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/msg_type"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentTop="false"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+                android:divider="@null"
+                android:listSelector="@android:color/transparent"
+                android:transcriptMode="alwaysScroll" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <include
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        layout="@layout/audio_view"
+        android:layout_height="550dp"
+        android:visibility="invisible"
+        android:layout_width="350dp"/>
+
+    <include
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        layout="@layout/video_view"
+        android:layout_height="550dp"
+        android:visibility="invisible"
+        android:layout_width="350dp"/>
+
+</RelativeLayout>
