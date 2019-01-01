@@ -1,27 +1,45 @@
-<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingVertical="10dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="60dp"
+    android:clipToPadding="false">
 
-    <LinearLayout
-        android:id="@+id/linearId"
+    <View
+        android:id="@+id/avatar"
+        android:layout_alignParentLeft="true"
+        android:scaleType="centerInside"
+        android:background="@drawable/circle"
+        android:layout_width="34dp"
+        android:layout_height="34dp" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@+id/avatar"
+        android:layout_alignTop="@+id/avatar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:paddingBottom="4dp"
+        android:text="Agent"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name"
         android:background="@drawable/speech_bubble_nine_patch_agent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:paddingRight="20dp"
-        android:paddingLeft="20dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="20dp">
+        android:layout_alignLeft="@+id/name"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp">
 
-        <TextView
-            android:id="@+id/txt_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxWidth="100dp"
-            android:textColor="#FFFFFF" />
-
+    <TextView
+        android:id="@+id/txt_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="100dp"
+        android:textColor="#FFFFFF"
+        />
     </LinearLayout>
-
 </RelativeLayout>
