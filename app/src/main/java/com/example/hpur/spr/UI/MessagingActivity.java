@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -50,6 +51,10 @@ public class MessagingActivity extends AppCompatActivity {
     private ImageButton mPhone;
     private ImageButton mVideo;
     private ImageButton mBack;
+
+    private Button mEndAudioCall;
+    private Button mEndVideoCall;
+
     private LinearLayout mAudioView;
     private LinearLayout mVideoView;
 
@@ -122,6 +127,9 @@ public class MessagingActivity extends AppCompatActivity {
         this.mAudioView = findViewById(R.id.audioview);
         this.mVideoView = findViewById(R.id.videoview);
 
+        this.mEndAudioCall = findViewById(R.id.endcallaudio);
+        this.mEndVideoCall = findViewById(R.id.endcallvideo);
+
         this.mPhone.setVisibility(View.VISIBLE);
         this.mVideo.setVisibility(View.VISIBLE);
 
@@ -185,6 +193,29 @@ public class MessagingActivity extends AppCompatActivity {
                 }
             }
         });
+
+        this.mEndAudioCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MessagingActivity.this, "End Audio call", Toast.LENGTH_SHORT).show();
+
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
+                mAudioView.startAnimation(aniFade);
+                mAudioView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        this.mEndVideoCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MessagingActivity.this, "End Video call", Toast.LENGTH_SHORT).show();
+
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
+                mVideoView.startAnimation(aniFade);
+                mVideoView.setVisibility(View.INVISIBLE);
+            }
+        });
+
     }
 
     private void attachDatabaseReadListener() {

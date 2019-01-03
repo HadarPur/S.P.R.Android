@@ -34,6 +34,7 @@ public class NavigationActivity extends AppCompatActivity {
     private Spinner mSpinner;
     private Button mSearchBtn;
     private FloatingActionButton mFab;
+    private ArrayList<Shelter> mSheltersonRadar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,8 @@ public class NavigationActivity extends AppCompatActivity {
         }
 
         Log.d(TAG, "mLatitude: " + this.mLatitude + " mLongitude: " + this.mLongitude);
+
+        mSheltersonRadar = new ArrayList<>();
 
         findViews ();
         setupOnClick();
@@ -75,7 +78,7 @@ public class NavigationActivity extends AppCompatActivity {
 
 
     //find views from xml with listeners
-    public void findViews () {
+    private void findViews () {
         this.mBack = findViewById(R.id.backbtn);
         this.mSpinner = findViewById(R.id.spinner1);
         this.mSearchBtn = findViewById(R.id.search);
@@ -125,12 +128,12 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     //set shelter location markers on map
-    public void showOnMap(int position) {
+    private void showOnMap(int position) {
         this.mMap.showShelters(mShelterData[position], this);
     }
 
     //set user current location marker on the map
-    public void showCurrentPosOnMap() {
+    private void showCurrentPosOnMap() {
         this.mMap = new Map(mMapFragment, mLatitude, mLongitude, this.getApplicationContext());
     }
 }

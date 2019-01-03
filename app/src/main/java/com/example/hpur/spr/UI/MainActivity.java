@@ -14,16 +14,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
 import com.example.hpur.spr.Logic.GPSTracker;
+import com.example.hpur.spr.Logic.Queries.DateCallback;
 import com.example.hpur.spr.Logic.Shelter;
 import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
+import com.example.hpur.spr.Storage.FireBaseModifiedDate;
 import com.example.hpur.spr.Storage.SharedPreferencesStorage;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DateCallback{
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean mFirstAsk = true, mIsLoading;
     private Button mStartChat;
@@ -35,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout mLoadingBack;
     private SharedPreferencesStorage mSharedPreferences;
     private UtilitiesFunc mUtils;
+    private String mDate;
+    private FireBaseModifiedDate mModifiedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
+        this.mModifiedDate = new FireBaseModifiedDate();
+
+        this.mDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+
+        Toast.makeText(MainActivity.this, "Date: "+ mDate, Toast.LENGTH_SHORT).show();
 
         findViews();
         setupOnClick();
@@ -57,17 +70,7 @@ public class MainActivity extends AppCompatActivity {
             showConnectionInternetFailed();
         }
         else {
-            this.mShelterInfo = ShelterInstance.getInstance();
-            String[] cities = getResources().getStringArray(R.array.cities_array);
-            Log.d(TAG, "cities length: "+cities.length);
-            loadingPage();
-            this.mShelterInfo.readData(new ShelterInstance.Callback() {
-                @Override
-                public void onCallback(ArrayList<Shelter>[] cloudData) {
-                    mShelterInfo.setData(cloudData);
-                    doneLoadingPage();
-                }
-            }, cities);
+            mModifiedDate.ReadData(this);
         }
     }
 
@@ -138,8 +141,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // called just when the shelters list were updated
+    private void singletonShelters() {
+        this.mShelterInfo = ShelterInstance.getInstance();
+        String[] cities = getResources().getStringArray(R.array.cities_array);
+        Log.d(TAG, "cities length: " + cities.length);
+        loadingPage();
+        this.mShelterInfo.readData(new ShelterInstance.Callback() {
+            @Override
+            public void onCallback(ArrayList<Shelter>[] cloudData) {
+                mShelterInfo.setData(cloudData);
+                doneLoadingPage();
+            }
+        }, cities);
+    }
+
     //alert network not available
-    public void showConnectionInternetFailed() {
+    private void showConnectionInternetFailed() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Network Connection Failed");
         alertDialog.setMessage("Network is not enabled." +
@@ -161,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //alert for GPS connection
-    public void showSettingsAlert() {
+    private void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("GPS is settings");
         alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
@@ -192,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //check network connection
-    public static boolean isNetworkAvailable(Context ctx) {
+    private static boolean isNetworkAvailable(Context ctx) {
         ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         if ((connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE) != null
                 && connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED)
@@ -206,14 +224,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //start loading view fot the callback
-    public void loadingPage() {
+    private void loadingPage() {
         this.mLoadingBack.setVisibility(View.VISIBLE);
         this.mIsLoading =true;
     }
 
     //finish loading view fot the callback
-    public void doneLoadingPage() {
+    private void doneLoadingPage() {
         this.mLoadingBack.setVisibility(View.GONE);
         this.mIsLoading =false;
+    }
+
+    @Override
+    public void getModifiedDate(String date) {
+        singletonShelters();
+
+//        try {
+//            String lastDate = mSharedPreferences.readData("IsModified");
+//            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+//            if (lastDate.equals("") || sdf.parse(lastDate).getTime() < sdf.parse(date).getTime()) {
+//                mSharedPreferences.saveData(date, "IsModified");
+//                singletonShelters();
+//            }
+//            else {
+//                Toast.makeText(MainActivity.this, "calling from sp ", Toast.LENGTH_SHORT).show();
+//            }
+//
+//        }
+//        catch (ParseException e) {
+//            e.printStackTrace();
+//        }
     }
 }

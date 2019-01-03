@@ -69,7 +69,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
     }
 

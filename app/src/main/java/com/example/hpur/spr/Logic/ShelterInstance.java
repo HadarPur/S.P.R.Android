@@ -20,7 +20,8 @@ public class ShelterInstance {
     ArrayList<Shelter> mData[]; /** each index in the list refers to shelters for each city in israel. **/
 
     //c'tor
-    private ShelterInstance(){}
+    private ShelterInstance(){
+    }
 
     //init array
     public void initAll(){
