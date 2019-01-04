@@ -16,7 +16,7 @@ public class FireBaseAuthenticationUsers implements Serializable {
     // c'tor
     public FireBaseAuthenticationUsers() {
         FirebaseDatabase data = FirebaseDatabase.getInstance();
-        this.mRef = data.getReference("Users");
+        this.mRef = data.getReference("SPRApp").child("Users");
     }
 
     //write user into fire base

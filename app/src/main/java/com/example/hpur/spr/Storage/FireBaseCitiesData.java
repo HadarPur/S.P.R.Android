@@ -28,7 +28,7 @@ public class FireBaseCitiesData implements Serializable {
 
             this.mCities = cities;
             // gets the shelters node reference
-            this.mRef = data.getReference("Shelters");
+            this.mRef = data.getReference("SPRApp").child("Shelters");
 
             for(int i = 0; i < this.mRefChildren.length; i++ ){
                 Log.d(TAG, "City: "+this.mCities[i]);

@@ -14,8 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
 import com.example.hpur.spr.Logic.GPSTracker;
 import com.example.hpur.spr.Logic.Queries.DateCallback;
 import com.example.hpur.spr.Logic.Shelter;
@@ -54,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
 
         this.mDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
-        Toast.makeText(MainActivity.this, "Date: "+ mDate, Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "Date: "+ mDate);
 
         findViews();
         setupOnClick();
@@ -70,7 +68,9 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
             showConnectionInternetFailed();
         }
         else {
-            mModifiedDate.ReadData(this);
+            singletonShelters();
+
+//            mModifiedDate.ReadData(this);
         }
     }
 
@@ -223,13 +223,13 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
         }
     }
 
-    //start loading view fot the callback
+    //start loading view for the callback
     private void loadingPage() {
         this.mLoadingBack.setVisibility(View.VISIBLE);
         this.mIsLoading =true;
     }
 
-    //finish loading view fot the callback
+    //finish loading view for the callback
     private void doneLoadingPage() {
         this.mLoadingBack.setVisibility(View.GONE);
         this.mIsLoading =false;
@@ -237,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
 
     @Override
     public void getModifiedDate(String date) {
-        singletonShelters();
 
 //        try {
 //            String lastDate = mSharedPreferences.readData("IsModified");

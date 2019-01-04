@@ -158,7 +158,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mUsers.checkUser(RESET, this.mEmail, SignInActivity.this);
     }
 
-
     // log in a user to app
     private void userLogin() {
         this.mEmail = this.mEmailEditText.getText().toString().trim();

@@ -25,7 +25,7 @@ public class Shelter {
     }
 
     /** calculates the location of a street by name **/
-    public void findStreetLocation(Activity activity,String name){
+    public void findShelterLocation(Activity activity, String name){
         mShelterLocation = getLocation(name,activity);
     }
 
@@ -93,7 +93,6 @@ public class Shelter {
     public void setNumber(String mNumber) {
         this.Number = mNumber;
     }
-
 
     public ShelterLocation getShelterLocation() {
         return mShelterLocation;

@@ -1,5 +1,6 @@
 package com.example.hpur.spr.UI;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Build;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -31,11 +33,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 import android.widget.ImageButton;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+import com.opentok.android.Session;
+import com.opentok.android.Stream;
+import com.opentok.android.OpentokError;
 
-
-public class MessagingActivity extends AppCompatActivity {
+public class MessagingActivity extends AppCompatActivity implements Session.SessionListener {
 
     private final String TAG = "MessagingActivity:";
+    private final String AUDIO = "Audio";
+    private final String VIDEO = "Video";
+
     private RecyclerView mRecycleView;
     private View mSendBtn;
     private EditText mEditText;
@@ -55,8 +64,18 @@ public class MessagingActivity extends AppCompatActivity {
     private Button mEndAudioCall;
     private Button mEndVideoCall;
 
+    private enum mCallType { AUDIO ,VIDEO };
+    private String mCallTypeName;
     private LinearLayout mAudioView;
     private LinearLayout mVideoView;
+
+    // for tokbox session
+    private static String API_KEY = "46245052";
+    private static String SESSION_ID = "2_MX40NjI0NTA1Mn5-MTU0NjUxNjQyMTgwOX5WSy9yY3dQVk5oOTYzcWNVeDg2S3A1WHh-fg";
+    private static String TOKEN = "T1==cGFydG5lcl9pZD00NjI0NTA1MiZzaWc9MzZkYjExOWVhZmMyOWViMmJkNTU5ZjU4NmZkN2QzNmZkMmNjZTI0YzpzZXNzaW9uX2lkPTJfTVg0ME5qSTBOVEExTW41LU1UVTBOalV4TmpReU1UZ3dPWDVXU3k5eVkzZFFWazVvT1RZemNXTlZlRGcyUzNBMVdIaC1mZyZjcmVhdGVfdGltZT0xNTQ2NTE2NDYzJm5vbmNlPTAuNzcwOTA0NDc5MjE1ODY1NyZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNTQ5MTA4NDc3JmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9";
+    private static final int RC_SETTINGS_SCREEN_PERM = 123;
+    private static final int RC_VIDEO_APP_PERM = 124;
+    private Session mSession;
 
 
     @Override
@@ -65,7 +84,7 @@ public class MessagingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_messaging);
 
         this.mFirebaseDatabase = FirebaseDatabase.getInstance();
-        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("Messages");
+        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference("SPRApp").child("Messages");
 
         this.mChatBubbles = new ArrayList<>();
 
@@ -95,6 +114,40 @@ public class MessagingActivity extends AppCompatActivity {
                     }
                 }
             });
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @AfterPermissionGranted(RC_VIDEO_APP_PERM)
+    private void requestPermissions() {
+
+        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // initialize view objects from your layout
+            Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+
+            if (mCallTypeName == mCallType.AUDIO.name()) {
+                mAudioView.startAnimation(aniFade);
+                mAudioView.setVisibility(View.VISIBLE);
+            }
+            else if (mCallTypeName == mCallType.VIDEO.name()) {
+                mVideoView.startAnimation(aniFade);
+                mVideoView.setVisibility(View.VISIBLE);
+            }
+
+            // initialize and connect to the session
+            mSession = new Session.Builder(this, API_KEY, SESSION_ID).build();
+            mSession.setSessionListener(this);
+            mSession.connect(TOKEN);
+
+
+        } else {
+            EasyPermissions.requestPermissions(this, "This app needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);
         }
     }
 
@@ -151,23 +204,22 @@ public class MessagingActivity extends AppCompatActivity {
         this.mPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MessagingActivity.this, "mPhone clicked", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "mPhone clicked");
 
-                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
-                mAudioView.startAnimation(aniFade);
-                mAudioView.setVisibility(View.VISIBLE);
+//                disableButtons();
+//                mCallTypeName = mCallType.AUDIO.name();
+//                requestPermissions();
             }
         });
 
         this.mVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MessagingActivity.this, "mVideo clicked", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "mVideo clicked");
 
-                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
-                mVideoView.startAnimation(aniFade);
-                mVideoView.setVisibility(View.VISIBLE);
-
+//                disableButtons();
+//                mCallTypeName = mCallType.VIDEO.name();
+//                requestPermissions();
             }
         });
 
@@ -183,7 +235,7 @@ public class MessagingActivity extends AppCompatActivity {
         this.mSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mEditText.getText().toString().trim().equals("")) {
+                if (TextUtils.isEmpty(mEditText.getText().toString().trim())) {
                     Toast.makeText(MessagingActivity.this, "Please input some text...", Toast.LENGTH_SHORT).show();
                 } else {
                     //add message to list
@@ -194,22 +246,26 @@ public class MessagingActivity extends AppCompatActivity {
             }
         });
 
+        //event for button end call on audio view
         this.mEndAudioCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MessagingActivity.this, "End Audio call", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "End Audio call");
 
+                enableButtons();
                 Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
                 mAudioView.startAnimation(aniFade);
                 mAudioView.setVisibility(View.INVISIBLE);
             }
         });
 
+        //event for button end call on video view
         this.mEndVideoCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MessagingActivity.this, "End Video call", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "End Video call");
 
+                enableButtons();
                 Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
                 mVideoView.startAnimation(aniFade);
                 mVideoView.setVisibility(View.INVISIBLE);
@@ -294,6 +350,48 @@ public class MessagingActivity extends AppCompatActivity {
         InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    private void enableButtons() {
+        this.mPhone.setClickable(true);
+        this.mVideo.setClickable(true);
+        this.mSendBtn.setClickable(true);
+    }
+
+    private void disableButtons() {
+        this.mPhone.setClickable(false);
+        this.mVideo.setClickable(false);
+        this.mSendBtn.setClickable(false);
+    }
+
+    // ***************************************************************** //
+    // **************** SessionListener methods tokbox ***************** //
+    // ***************************************************************** //
+
+    @Override
+    public void onConnected(Session session) {
+        Log.i(TAG, "Session Connected");
+    }
+
+    @Override
+    public void onDisconnected(Session session) {
+        Log.i(TAG, "Session Disconnected");
+    }
+
+    @Override
+    public void onStreamReceived(Session session, Stream stream) {
+        Log.i(TAG, "Stream Received");
+    }
+
+    @Override
+    public void onStreamDropped(Session session, Stream stream) {
+        Log.i(TAG, "Stream Dropped");
+    }
+
+    @Override
+    public void onError(Session session, OpentokError opentokError) {
+        Log.e(TAG, "Session error: " + opentokError.getMessage());
+    }
+
 }
 
 

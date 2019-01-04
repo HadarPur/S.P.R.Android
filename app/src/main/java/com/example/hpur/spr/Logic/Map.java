@@ -18,6 +18,9 @@ import java.util.List;
 
 public class Map implements OnMapReadyCallback {
     private static final String TAG = "Map";
+    private static final int RADIUS = 200;
+    private static final String HOSPITAL = "hospital";
+    private static final String POLICE = "police";
     private double mLatitude, mLongitude;
     private SupportMapFragment mMapFragment;
     private GoogleMap mMap;
@@ -80,7 +83,7 @@ public class Map implements OnMapReadyCallback {
                 String add = shelters.get(i).getStreet() + " " + shelters.get(i).getNumber()+", "+shelters.get(i).getCity();
                 Log.d(TAG, "address: "+ add);
 
-                shelters.get(i).findStreetLocation(activity,add);
+                shelters.get(i).findShelterLocation(activity,add);
                 ShelterLocation loc = shelters.get(i).getShelterLocation();
                 Log.d(TAG, "loc.getLatitude(): "+ loc.getLatitude() + " loc.getLongitude(): " + loc.getLongitude());
 
@@ -105,6 +108,28 @@ public class Map implements OnMapReadyCallback {
         }
     }
 
+    public void showClosestShelters(ArrayList<Shelter>[] shelters, NavigationActivity activity)  {
+        try {
+
+            LatLng latLng = null;
+            setMyLocationOnTheMap();
+
+            ArrayList<Shelter> allShelters = new ArrayList<>();
+
+            for (int i=0; i<shelters.length; i++) {
+                for (int j=0; j<shelters[i].size(); j++) {
+                    allShelters.add(shelters[i].get(j));
+                }
+            }
+            Log.d(TAG,"allShelters size: "+ allShelters.size());
+
+            CalcDistance calcOnRadius = new CalcDistance(mMap, allShelters, activity, mLatitude, mLongitude);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     //geocode function return street name
     public String getLocationName(double latitude, double longitude) throws IOException {
         //to specific address
@@ -114,5 +139,17 @@ public class Map implements OnMapReadyCallback {
         String street = address.getAddressLine(0);
 
         return street;
+    }
+
+    //sends info near by places URL
+    private String getUrl(double latitude, double longitude, String nearbyPlace) {
+        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlacesUrl.append("location=" + latitude + "," + longitude);
+        googlePlacesUrl.append("&radius=" + RADIUS);
+        googlePlacesUrl.append("&type=" + nearbyPlace);
+        googlePlacesUrl.append("&sensor=true");
+        googlePlacesUrl.append("&key=" + "AIzaSyCdv0EMKx3KLjPWbDX_GpuE3UbniIh0a1o");
+        Log.d("getUrl", googlePlacesUrl.toString());
+        return (googlePlacesUrl.toString());
     }
 }

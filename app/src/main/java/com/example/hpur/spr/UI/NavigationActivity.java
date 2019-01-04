@@ -2,7 +2,6 @@ package com.example.hpur.spr.UI;
 
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +25,7 @@ public class NavigationActivity extends AppCompatActivity {
     private RelativeLayout mLoadingBack;
     private ArrayList<Shelter>[] mShelterData;
     private ShelterInstance mShelterInfo;
-    private boolean mFirstAsk =false;
+    private boolean mFirstAsk =false, mIsLoading;
     private double mLatitude, mLongitude;
     private ImageButton mBack;
     private GPSTracker mGpsTracker;
@@ -82,8 +81,9 @@ public class NavigationActivity extends AppCompatActivity {
         this.mBack = findViewById(R.id.backbtn);
         this.mSpinner = findViewById(R.id.spinner1);
         this.mSearchBtn = findViewById(R.id.search);
-
+        this.mFab = findViewById(R.id.fab);
         this.mLoadingBack = findViewById(R.id.load);
+
         this.mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
 
@@ -92,8 +92,6 @@ public class NavigationActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         this.mSpinner.setAdapter(adapter);
-
-        this.mFab = findViewById(R.id.fab);
     }
 
     // setup all button events when they clicked
@@ -109,31 +107,53 @@ public class NavigationActivity extends AppCompatActivity {
         this.mSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String spinnerPosText = mSpinner.getSelectedItem().toString();
-                int spinnerPos = mSpinner.getSelectedItemPosition();
+                if (mIsLoading == false) {
+                    String spinnerPosText = mSpinner.getSelectedItem().toString();
+                    int spinnerPos = mSpinner.getSelectedItemPosition();
 
-                Log.d(TAG, "spinnerPosText: " + spinnerPosText + " position : " + spinnerPos);
+                    Log.d(TAG, "spinnerPosText: " + spinnerPosText + " position : " + spinnerPos);
 
-                showOnMap(spinnerPos);
+                    showSheltersOnMap(spinnerPos);
+                }
             }
         });
 
         this.mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (mIsLoading == false) {
+                    loadingPage();
+                    showClosestSheltersOnMap();
+                }
             }
         });
     }
 
     //set shelter location markers on map
-    private void showOnMap(int position) {
+    private void showSheltersOnMap(int position) {
         this.mMap.showShelters(mShelterData[position], this);
+    }
+
+    //set the closest shelters on the map
+    private void showClosestSheltersOnMap() {
+        this.mMap.showClosestShelters(mShelterData, this);
     }
 
     //set user current location marker on the map
     private void showCurrentPosOnMap() {
         this.mMap = new Map(mMapFragment, mLatitude, mLongitude, this.getApplicationContext());
     }
+
+    //start loading view for the callback
+    private void loadingPage() {
+        this.mLoadingBack.setVisibility(View.VISIBLE);
+        this.mIsLoading =true;
+    }
+
+    //finish loading view for the callback
+    public void doneLoadingPage() {
+        this.mLoadingBack.setVisibility(View.GONE);
+        this.mIsLoading =false;
+    }
+
 }

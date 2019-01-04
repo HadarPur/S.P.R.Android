@@ -16,7 +16,7 @@ public class FireBaseModifiedDate {
         FirebaseDatabase data = FirebaseDatabase.getInstance();
 
         // gets the modified date reference
-        this.mRef = data.getReference("Modified Shelters");
+        this.mRef = data.getReference("SPRApp").child("Modified Shelters");
     }
 
 
