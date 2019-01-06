@@ -20,6 +20,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.example.hpur.spr.Logic.ChatBubble;
@@ -35,22 +36,38 @@ import java.util.List;
 import android.widget.ImageButton;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+
+import com.opentok.android.Publisher;
+import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.OpentokError;
+import com.opentok.android.Subscriber;
 
-public class MessagingActivity extends AppCompatActivity implements Session.SessionListener {
+public class MessagingActivity extends AppCompatActivity implements Session.SessionListener, PublisherKit.PublisherListener {
 
     private final String TAG = "MessagingActivity:";
     private final String AUDIO = "Audio";
     private final String VIDEO = "Video";
 
+    // for tokbox session
+    private static final int RC_SETTINGS_SCREEN_PERM = 123;
+    private static final int RC_VIDEO_APP_PERM = 124;
+    private static String API_KEY = "46245052";
+    private static String SESSION_ID = "2_MX40NjI0NTA1Mn5-MTU0NjUxNjQyMTgwOX5WSy9yY3dQVk5oOTYzcWNVeDg2S3A1WHh-fg";
+    private static String TOKEN = "T1==cGFydG5lcl9pZD00NjI0NTA1MiZzaWc9MzZkYjExOWVhZmMyOWViMmJkNTU5ZjU4NmZkN2QzNmZkMmNjZTI0YzpzZXNzaW9uX2lkPTJfTVg0ME5qSTBOVEExTW41LU1UVTBOalV4TmpReU1UZ3dPWDVXU3k5eVkzZFFWazVvT1RZemNXTlZlRGcyUzNBMVdIaC1mZyZjcmVhdGVfdGltZT0xNTQ2NTE2NDYzJm5vbmNlPTAuNzcwOTA0NDc5MjE1ODY1NyZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNTQ5MTA4NDc3JmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9";
+    private Session mSession;
+
+    private enum mCallType { AUDIO ,VIDEO }
+    private boolean mMyMessage = true;
+    private List<ChatBubble> mChatBubbles;
+    private String mCallTypeName;
+    private String mUserName = "AnonymousTeenager";
+
     private RecyclerView mRecycleView;
     private View mSendBtn;
+
     private EditText mEditText;
-    boolean mMyMessage = true;
-    private String mUserName = "AnonymousTeenager";
-    private List<ChatBubble> mChatBubbles;
     private ChatBubbleAdapter mChatAdapter;
 
     private FirebaseDatabase mFirebaseDatabase;
@@ -64,18 +81,14 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
     private Button mEndAudioCall;
     private Button mEndVideoCall;
 
-    private enum mCallType { AUDIO ,VIDEO };
-    private String mCallTypeName;
     private LinearLayout mAudioView;
     private LinearLayout mVideoView;
 
-    // for tokbox session
-    private static String API_KEY = "46245052";
-    private static String SESSION_ID = "2_MX40NjI0NTA1Mn5-MTU0NjUxNjQyMTgwOX5WSy9yY3dQVk5oOTYzcWNVeDg2S3A1WHh-fg";
-    private static String TOKEN = "T1==cGFydG5lcl9pZD00NjI0NTA1MiZzaWc9MzZkYjExOWVhZmMyOWViMmJkNTU5ZjU4NmZkN2QzNmZkMmNjZTI0YzpzZXNzaW9uX2lkPTJfTVg0ME5qSTBOVEExTW41LU1UVTBOalV4TmpReU1UZ3dPWDVXU3k5eVkzZFFWazVvT1RZemNXTlZlRGcyUzNBMVdIaC1mZyZjcmVhdGVfdGltZT0xNTQ2NTE2NDYzJm5vbmNlPTAuNzcwOTA0NDc5MjE1ODY1NyZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNTQ5MTA4NDc3JmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9";
-    private static final int RC_SETTINGS_SCREEN_PERM = 123;
-    private static final int RC_VIDEO_APP_PERM = 124;
-    private Session mSession;
+    private FrameLayout mPublisherViewContainer;
+    private FrameLayout mSubscriberViewContainer;
+
+    private Publisher mPublisher;
+    private Subscriber mSubscriber;
 
 
     @Override
@@ -165,7 +178,8 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
     }
 
     public void onBackPressed(){
-        alertGotOut();
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     private void findViews(){
@@ -182,6 +196,9 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
 
         this.mEndAudioCall = findViewById(R.id.endcallaudio);
         this.mEndVideoCall = findViewById(R.id.endcallvideo);
+
+        this.mPublisherViewContainer = findViewById(R.id.publisher_container);
+        this.mSubscriberViewContainer = findViewById(R.id.subscriber_container);
 
         this.mPhone.setVisibility(View.VISIBLE);
         this.mVideo.setVisibility(View.VISIBLE);
@@ -206,9 +223,9 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
             public void onClick(View v) {
                 Log.d(TAG, "mPhone clicked");
 
-//                disableButtons();
-//                mCallTypeName = mCallType.AUDIO.name();
-//                requestPermissions();
+                disableButtons();
+                mCallTypeName = mCallType.AUDIO.name();
+                requestPermissions();
             }
         });
 
@@ -217,9 +234,9 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
             public void onClick(View v) {
                 Log.d(TAG, "mVideo clicked");
 
-//                disableButtons();
-//                mCallTypeName = mCallType.VIDEO.name();
-//                requestPermissions();
+                disableButtons();
+                mCallTypeName = mCallType.VIDEO.name();
+                requestPermissions();
             }
         });
 
@@ -256,6 +273,8 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
                 Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
                 mAudioView.startAnimation(aniFade);
                 mAudioView.setVisibility(View.INVISIBLE);
+
+                mSession.disconnect();
             }
         });
 
@@ -269,6 +288,8 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
                 Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
                 mVideoView.startAnimation(aniFade);
                 mVideoView.setVisibility(View.INVISIBLE);
+
+                mSession.disconnect();
             }
         });
 
@@ -370,6 +391,14 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
     @Override
     public void onConnected(Session session) {
         Log.i(TAG, "Session Connected");
+
+        mPublisher = new Publisher.Builder(this).build();
+        mPublisher.setPublisherListener(this);
+
+        mPublisherViewContainer.addView(mPublisher.getView());
+
+        mSession.publish(mPublisher);
+
     }
 
     @Override
@@ -380,16 +409,46 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
     @Override
     public void onStreamReceived(Session session, Stream stream) {
         Log.i(TAG, "Stream Received");
+
+        if (mSubscriber == null) {
+            mSubscriber = new Subscriber.Builder(this, stream).build();
+            mSession.subscribe(mSubscriber);
+            mSubscriberViewContainer.addView(mSubscriber.getView());
+        }
     }
 
     @Override
     public void onStreamDropped(Session session, Stream stream) {
         Log.i(TAG, "Stream Dropped");
+
+        if (mSubscriber != null) {
+            mSubscriber = null;
+            mSubscriberViewContainer.removeAllViews();
+        }
     }
 
     @Override
     public void onError(Session session, OpentokError opentokError) {
         Log.e(TAG, "Session error: " + opentokError.getMessage());
+    }
+
+    // ***************************************************************** //
+    // *************** PublisherListener methods tokbox **************** //
+    // ***************************************************************** //
+
+    @Override
+    public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
+        Log.i(TAG, "Publisher onStreamCreated");
+    }
+
+    @Override
+    public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
+        Log.i(TAG, "Publisher onStreamDestroyed");
+    }
+
+    @Override
+    public void onError(PublisherKit publisherKit, OpentokError opentokError) {
+        Log.e(TAG, "Publisher error: " + opentokError.getMessage());
     }
 
 }

@@ -45,8 +45,8 @@
                 android:id="@+id/spinner1"
                 android:layout_width="180dp"
                 android:layout_height="30dp"
-                android:background="@drawable/border"
-                android:popupBackground="@drawable/border"
+                android:background="@drawable/edittext_border"
+                android:popupBackground="@drawable/edittext_border"
                 android:spinnerMode="dropdown"
                 android:fontFamily="serif" />
 

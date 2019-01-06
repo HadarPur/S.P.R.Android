@@ -31,7 +31,7 @@
         android:layout_below="@+id/name"
         android:background="@drawable/speech_bubble_nine_patch_agent"
         android:layout_alignLeft="@+id/name"
-        android:paddingVertical="12dp"
+        android:paddingVertical="16dp"
         android:paddingHorizontal="16dp">
 
     <TextView

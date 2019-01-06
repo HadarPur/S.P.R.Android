@@ -16,12 +16,12 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleHolder> {
     private static final int OTHER_MESSAGE = 2;
     private static final String TAG = "ChatBubbleAdapter:";
 
-    private Context context;
+    private Context mContext;
     private List<ChatBubble> mChatBubbles;
     private int mItemResource;
 
     public ChatBubbleAdapter(Context context, int resource, List<ChatBubble> chatBubbles) {
-        this.context = context;
+        this.mContext = context;
         this.mChatBubbles = chatBubbles;
         this.mItemResource = resource;
     }
@@ -39,10 +39,9 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleHolder> {
                 Log.d(TAG,"left chat bubble layout");
                 mItemResource = R.layout.left_chat_bubble;
         }
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(mItemResource, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(mItemResource, parent, false);
 
-        return new ChatBubbleHolder(this.context, view);
+        return new ChatBubbleHolder(this.mContext, view);
     }
 
     @Override

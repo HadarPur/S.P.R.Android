@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
-
 import com.example.hpur.spr.R;
 
 public class ChatBubbleHolder extends RecyclerView.ViewHolder {
@@ -18,7 +17,7 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
         super(itemView);
         this.mContext = context;
 
-        this.mTxtMessage = (TextView)itemView.findViewById(R.id.txt_msg);
+        this.mTxtMessage = itemView.findViewById(R.id.txt_msg);
     }
 
     public void bindChatBubble(ChatBubble chatBubble){

@@ -101,7 +101,7 @@ public class Map implements OnMapReadyCallback {
             }
 
             //move map camera
-            this.mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11), 5000, null);
+            this.mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 8), 5000, null);
         }
         catch (IOException e) {
             e.printStackTrace();

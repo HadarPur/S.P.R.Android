@@ -39,47 +39,35 @@
         android:width="@dimen/speech_bubble_corners"
         android:height="@dimen/speech_bubble_corners"
         android:bottom="@dimen/speech_bubble_spacing"
-        android:gravity="bottom|left">
-        <vector xmlns:android="http://schemas.android.com/apk/res/android"
-            android:width="@dimen/speech_bubble_corners"
-            android:height="@dimen/speech_bubble_corners"
-            android:viewportWidth="10.0"
-            android:viewportHeight="10.0">
-            <path
-                android:pathData="M0,0 A10,10 0 0,0 10,10 L10,0 Z"
-                android:fillColor="@color/colorAccent2"/>
-        </vector>
+        android:gravity="bottom|left"
+        tools:ignore="UnusedAttribute">
+        <shape android:shape="rectangle">
+            <corners android:bottomLeftRadius="10dp"/>
+            <solid android:color="@color/colorAccent2"/>
+        </shape>
     </item>
 
     <item
         android:width="@dimen/speech_bubble_corners"
         android:height="@dimen/speech_bubble_corners"
         android:right="@dimen/speech_bubble_spacing"
-        android:gravity="top|right">
-        <vector xmlns:android="http://schemas.android.com/apk/res/android"
-            android:width="@dimen/speech_bubble_corners"
-            android:height="@dimen/speech_bubble_corners"
-            android:viewportWidth="10.0"
-            android:viewportHeight="10.0">
-            <path
-                android:pathData="M10,10 A10,10 0 0,0 0,0 L0,10 Z"
-                android:fillColor="@color/colorAccent2"/>
-        </vector>
+        android:gravity="top|right"
+        tools:ignore="UnusedAttribute">
+        <shape android:shape="rectangle">
+            <corners android:topRightRadius="10dp"/>
+            <solid android:color="@color/colorAccent2"/>
+        </shape>
     </item>
 
     <item
         android:width="@dimen/speech_bubble_corners"
         android:height="@dimen/speech_bubble_corners"
-        android:gravity="top|left">
-        <vector xmlns:android="http://schemas.android.com/apk/res/android"
-            android:width="@dimen/speech_bubble_corners"
-            android:height="@dimen/speech_bubble_corners"
-            android:viewportWidth="10.0"
-            android:viewportHeight="10.0">
-            <path
-                android:pathData="M10,0 A10,10 0 0,0 0,10 L10,10 Z"
-                android:fillColor="@color/colorAccent2"/>
-        </vector>
+        android:gravity="top|left"
+        tools:ignore="UnusedAttribute">
+        <shape android:shape="rectangle">
+            <corners android:topLeftRadius="10dp"/>
+            <solid android:color="@color/colorAccent2"/>
+        </shape>
     </item>
 
     <item

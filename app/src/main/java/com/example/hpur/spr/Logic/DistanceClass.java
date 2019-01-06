@@ -7,7 +7,6 @@ import com.example.hpur.spr.Logic.Queries.CallableDistArr;
 public class DistanceClass implements Runnable{
     private static final String TAG = "DistanceClass";
     private Shelter mSheltersOld;
-    private Shelter mSheltersNew;
     private Activity mActivity;
     private CallableDistArr mCallArr;
     private int mNumOfShelters;
@@ -28,9 +27,8 @@ public class DistanceClass implements Runnable{
         shelter = mSheltersOld;
         String add = shelter.getStreet() + " " + shelter.getNumber()+", "+shelter.getCity();
         shelter.findShelterLocation(mActivity, add);
-        mSheltersNew = shelter;
         Log.d(TAG,"Shelter name size: "+shelter.getName() + " City: " + shelter.getCity());
 
-        mCallArr.filterDistance(mSheltersNew, mNumOfShelters);
+        mCallArr.filterDistance(shelter, mNumOfShelters);
     }
 }

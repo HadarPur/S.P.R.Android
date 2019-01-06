@@ -18,7 +18,6 @@ import java.util.concurrent.Executors;
 
 public class CalcDistance implements CallableDistArr {
     private static final String TAG ="Radar";
-    private static final int NUM_OF_THREADS = 14;
     private GoogleMap mMap;
     private ArrayList<Shelter> mShelters;
     private NavigationActivity mActivityShelters;
@@ -39,7 +38,7 @@ public class CalcDistance implements CallableDistArr {
         this.mLong = currentLongitude;
         this.mShelterOnRadar = new ArrayList<>();
         this.mCount = 0;
-        this.mTasks = new DistanceClass[NUM_OF_THREADS];
+        this.mTasks = new DistanceClass[mShelters.size()];
 
         findNearbyShelters(activity);
     }
@@ -65,7 +64,7 @@ public class CalcDistance implements CallableDistArr {
 
     //search the near by shelters
     private void findNearbyShelters(Activity activity){
-        ExecutorService ex = Executors.newFixedThreadPool(NUM_OF_THREADS);
+        ExecutorService ex = Executors.newFixedThreadPool(mShelters.size());
 
         for(int i=0; i< mShelters.size(); i++) {
             mTasks[i] = new DistanceClass(mShelters.get(i), activity,this);
@@ -87,7 +86,7 @@ public class CalcDistance implements CallableDistArr {
             Log.d(TAG,"mShelterOnRadar size: "+mShelterOnRadar.size());
 
             mTopFiveShelters = new ArrayList<>();
-            for (int i=0 ; i < numOfNeededShelters ; i++) {
+            for (int i=0 ; i < numOfNeededShelters && i < mShelterOnRadar.size() ; i++) {
                 mTopFiveShelters.add(mShelterOnRadar.get(i));
                 Log.d(TAG,"Shelter name size: "+mShelterOnRadar.get(i).getName() + " City: " + mShelterOnRadar.get(i).getCity());
             }

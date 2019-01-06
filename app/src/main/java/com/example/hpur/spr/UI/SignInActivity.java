@@ -1,5 +1,6 @@
 package com.example.hpur.spr.UI;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,8 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,23 +35,34 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private final int RESET=0, SIGN=1;
     private static final String TAG = SignInActivity.class.getSimpleName();
 
+    private String mEmail;
+    private String mPass;
+    private boolean mForgetPassword;
+
     private Button mSignInBtn;
     private Button mSignUpBtn;
     private Button mPasswordResetBtn;
     private Button mGoBackBtn;
     private Button mResetBtn;
+    private Button mAlertOkBtn;
+
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
     private EditText mEmailReset;
+
+    private TextView mAlertTittle;
+    private TextView mAlertText;
+    private TextView mLoadingViewText;
+
+    private LinearLayout mResetView;
+    private LinearLayout mAlertView;
+    private LinearLayout mLoadingView;
+
     private FirebaseAuth mFirebaseAuth;
-    private String mEmail;
-    private String mPass;
     private FireBaseAuthenticationUsers mUsers;
     private FirebaseUser mCurrentUser;
-    private boolean mForgetPassword;
-    private LinearLayout mResetView;
+
     private SharedPreferencesStorage mSharedPreferences;
-    private UtilitiesFunc mUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +75,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
         this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
         this.mForgetPassword = false;
-
-        this.mUtils = new UtilitiesFunc(this);
 
         findViews();
         setupOnClick();
@@ -85,6 +97,12 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mGoBackBtn = findViewById(R.id.close);
         this.mResetBtn = findViewById(R.id.resetbtn);
         this.mResetView = findViewById(R.id.resetview);
+        this.mAlertView = findViewById(R.id.alertview);
+        this.mAlertTittle = findViewById(R.id.alerttittle);
+        this.mAlertText = findViewById(R.id.msg);
+        this.mAlertOkBtn = findViewById(R.id.alert_def_btn);
+        this.mLoadingView = findViewById(R.id.loadingview);
+        this.mLoadingViewText = findViewById(R.id.progress_dialog_text);
 
         this.mEmailEditText.setText(mSharedPreferences.readData("Email"), TextView.BufferType.EDITABLE);
         this.mEmailReset.setText(mSharedPreferences.readData("Email"), TextView.BufferType.EDITABLE);
@@ -132,6 +150,16 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                 resetPassword();
             }
         });
+
+        this.mAlertOkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
+                mAlertView.startAnimation(aniFade);
+                mAlertView.setVisibility(View.INVISIBLE);
+                enableMainButtons();
+            }
+        });
     }
 
     @Override
@@ -154,7 +182,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             return;
         }
 
-        this.mUtils.showProgressDialog("Please wait...");
+        showProgressDialog("Please wait...");
         this.mUsers.checkUser(RESET, this.mEmail, SignInActivity.this);
     }
 
@@ -178,8 +206,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             return;
         }
 
-        this.mUtils.showProgressDialog("Registering, please wait...");
-
+        showProgressDialog("Registering, please wait...");
         this.mFirebaseAuth.signInWithEmailAndPassword(this.mEmail, this.mPass)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -193,7 +220,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        mUtils.hideProgressDialog();
+                        hideProgressDialog();
+
                     }
                 });
     }
@@ -219,8 +247,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             return;
         }
 
-        this.mUtils.showProgressDialog("Signing up, please wait...");
-
+        showProgressDialog("Signing up, please wait...");
         this.mFirebaseAuth.createUserWithEmailAndPassword(this.mEmail, this.mPass)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -235,7 +262,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        mUtils.hideProgressDialog();
+                        hideProgressDialog();
                     }
                 });
     }
@@ -244,7 +271,15 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private void sendEmailVerification () {
         this.mCurrentUser = mFirebaseAuth.getCurrentUser();
         this.mCurrentUser.sendEmailVerification();
-        Toast.makeText(SignInActivity.this, "Email verification sent successfully.", Toast.LENGTH_SHORT).show();
+        String msg = "We've sent a confirmation email to: " + this.mEmail+"\nTo get started, check your email and click the verification link.\n";
+
+        mAlertTittle.setText("Email verification");
+        mAlertText.setText(msg);
+        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+        mAlertView.startAnimation(aniFade);
+        mAlertView.setVisibility(View.VISIBLE);
+        disableMainButtons();
+
     }
 
     // checked if email was verified
@@ -275,6 +310,30 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mPasswordResetBtn.setClickable(true);
     }
 
+    private void showProgressDialog(String msg) {
+        this.mLoadingViewText.setText(msg);
+
+        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+        this.mLoadingView.startAnimation(aniFade);
+        this.mLoadingView.setVisibility(View.VISIBLE);
+
+    }
+
+    private void hideProgressDialog() {
+
+        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
+        this.mLoadingView.startAnimation(aniFade);
+        this.mLoadingView.setVisibility(View.INVISIBLE);
+
+        this.mLoadingViewText.setText("");
+
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////// *************** firebase callbacks *************** ///////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,7 +357,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
     @Override
     public void checkUserExistResetCallBack(boolean result) {
-        this.mUtils.hideProgressDialog();
+        hideProgressDialog();
         if (result) {
             this.mFirebaseAuth.sendPasswordResetEmail(this.mEmail)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {

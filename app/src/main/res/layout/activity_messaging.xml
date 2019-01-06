@@ -22,6 +22,7 @@
             android:focusableInTouchMode="true"
             android:padding="10dp">
 
+
             <Button
                 android:id="@+id/add_btn"
                 android:layout_width="30dp"
@@ -39,8 +40,9 @@
                 android:layout_alignParentBottom="true"
                 android:layout_toLeftOf="@+id/btn_chat_send"
                 android:layout_weight="0.7"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_alignParentRight="@id/add_btn"
+                android:layout_marginLeft="40dp"
                 android:hint="Input message" />
 
             <Button

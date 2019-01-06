@@ -39,5 +39,4 @@ public class UtilitiesFunc {
         });
         alertDialog.show();
     }
-
 }

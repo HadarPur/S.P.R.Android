@@ -12,8 +12,12 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import com.example.hpur.spr.Logic.GPSTracker;
 import com.example.hpur.spr.Logic.Queries.DateCallback;
 import com.example.hpur.spr.Logic.Shelter;
@@ -21,7 +25,6 @@ import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.Storage.FireBaseModifiedDate;
 import com.example.hpur.spr.Storage.SharedPreferencesStorage;
-import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,17 +32,25 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements DateCallback{
     private static final String TAG = MainActivity.class.getSimpleName();
-    private boolean mFirstAsk = true, mIsLoading;
+    private boolean mFirstAsk = true, mIsLoading, mIsShow;
+    private String mDate;
+
+    private ShelterInstance mShelterInfo;
+
     private Button mStartChat;
     private Button mFindShelter;
     private Button mAboutUs;
     private Button mSignOut;
-    private GPSTracker mGpsTracker;
-    private ShelterInstance mShelterInfo;
+    private Button mAlertOkBtn;
+
+    private LinearLayout mAlertView;
     private RelativeLayout mLoadingBack;
+
+    private TextView mAlertTittle;
+    private TextView mAlertText;
+
+    private GPSTracker mGpsTracker;
     private SharedPreferencesStorage mSharedPreferences;
-    private UtilitiesFunc mUtils;
-    private String mDate;
     private FireBaseModifiedDate mModifiedDate;
 
     @Override
@@ -57,8 +68,13 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
         findViews();
         setupOnClick();
 
-        this.mUtils = new UtilitiesFunc(this);
-        this.mUtils.showOnSettingsAlert("Big Note:", "You must permit location and network connection for this app");
+        mAlertTittle.setText("Pay attention");
+        mAlertText.setText("You must permit location and network connection for this app");
+        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+        mAlertView.startAnimation(aniFade);
+        mAlertView.setVisibility(View.VISIBLE);
+        this.mIsShow = true;
+        disableButtons();
 
         this.mGpsTracker = new GPSTracker(this, mFirstAsk);
         if(!this.mGpsTracker.getGPSEnable()){
@@ -86,6 +102,11 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
         this.mFindShelter = findViewById(R.id.shelter);
         this.mAboutUs = findViewById(R.id.about_us);
         this.mSignOut = findViewById(R.id.signout);
+
+        this.mAlertView = findViewById(R.id.alertview);
+        this.mAlertTittle = findViewById(R.id.alerttittle);
+        this.mAlertText = findViewById(R.id.msg);
+        this.mAlertOkBtn = findViewById(R.id.alert_def_btn);
 
         this.mLoadingBack = findViewById(R.id.load);
         this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
@@ -137,6 +158,17 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     finish();
                 }
+            }
+        });
+
+        this.mAlertOkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
+                mAlertView.startAnimation(aniFade);
+                mAlertView.setVisibility(View.INVISIBLE);
+                mIsShow = false;
+                enableButtons();
             }
         });
     }
@@ -223,14 +255,31 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
         }
     }
 
+    private void disableButtons(){
+        this.mSignOut.setClickable(false);
+        this.mStartChat.setClickable(false);
+        this.mFindShelter.setClickable(false);
+        this.mAboutUs.setClickable(false);
+    }
+
+    private void enableButtons(){
+        this.mSignOut.setClickable(true);
+        this.mStartChat.setClickable(true);
+        this.mFindShelter.setClickable(true);
+        this.mAboutUs.setClickable(true);
+    }
+
     //start loading view for the callback
     private void loadingPage() {
+        disableButtons();
         this.mLoadingBack.setVisibility(View.VISIBLE);
         this.mIsLoading =true;
     }
 
     //finish loading view for the callback
     private void doneLoadingPage() {
+        if (mIsShow == false)
+            enableButtons();
         this.mLoadingBack.setVisibility(View.GONE);
         this.mIsLoading =false;
     }

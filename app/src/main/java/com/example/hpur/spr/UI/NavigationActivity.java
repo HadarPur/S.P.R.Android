@@ -21,19 +21,22 @@ import java.util.ArrayList;
 
 public class NavigationActivity extends AppCompatActivity {
     private static final String TAG = NavigationActivity.class.getSimpleName();
-    private Map mMap;
-    private RelativeLayout mLoadingBack;
-    private ArrayList<Shelter>[] mShelterData;
-    private ShelterInstance mShelterInfo;
     private boolean mFirstAsk =false, mIsLoading;
     private double mLatitude, mLongitude;
-    private ImageButton mBack;
-    private GPSTracker mGpsTracker;
-    private SupportMapFragment mMapFragment;
-    private Spinner mSpinner;
+    private ArrayList<Shelter>[] mShelterData;
+
+    private ShelterInstance mShelterInfo;
+
     private Button mSearchBtn;
+    private ImageButton mBack;
     private FloatingActionButton mFab;
-    private ArrayList<Shelter> mSheltersonRadar;
+
+    private Map mMap;
+    private SupportMapFragment mMapFragment;
+
+    private RelativeLayout mLoadingBack;
+    private GPSTracker mGpsTracker;
+    private Spinner mSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +56,6 @@ public class NavigationActivity extends AppCompatActivity {
         }
 
         Log.d(TAG, "mLatitude: " + this.mLatitude + " mLongitude: " + this.mLongitude);
-
-        mSheltersonRadar = new ArrayList<>();
 
         findViews ();
         setupOnClick();
