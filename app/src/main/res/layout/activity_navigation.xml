@@ -80,10 +80,8 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="171dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="24dp"
             android:src="@drawable/ic_autorenew" />
 

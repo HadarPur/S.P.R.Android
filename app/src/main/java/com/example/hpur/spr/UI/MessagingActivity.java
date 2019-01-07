@@ -26,6 +26,8 @@ import android.widget.Toast;
 import com.example.hpur.spr.Logic.ChatBubble;
 import com.example.hpur.spr.Logic.ChatBubbleAdapter;
 import com.example.hpur.spr.R;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,7 +38,6 @@ import java.util.List;
 import android.widget.ImageButton;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
-
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
@@ -274,7 +275,6 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
                 mAudioView.startAnimation(aniFade);
                 mAudioView.setVisibility(View.INVISIBLE);
 
-                mSession.disconnect();
             }
         });
 
@@ -289,10 +289,8 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
                 mVideoView.startAnimation(aniFade);
                 mVideoView.setVisibility(View.INVISIBLE);
 
-                mSession.disconnect();
             }
         });
-
     }
 
     private void attachDatabaseReadListener() {

@@ -22,33 +22,29 @@
             android:focusableInTouchMode="true"
             android:padding="10dp">
 
-
             <Button
-                android:id="@+id/add_btn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
+                android:id="@+id/menu"
                 android:background="@drawable/ic_add"
-                android:layout_marginBottom="6dp"
-                android:textColor="@color/background_material_light" />
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="6dp" />
 
             <EditText
                 android:id="@+id/msg_type"
                 android:layout_width="290dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/menu"
                 android:layout_toLeftOf="@+id/btn_chat_send"
-                android:layout_weight="0.7"
-                android:layout_marginRight="20dp"
-                android:layout_alignParentRight="@id/add_btn"
-                android:layout_marginLeft="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
                 android:hint="Input message" />
 
             <Button
                 android:id="@+id/btn_chat_send"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/ic_send"

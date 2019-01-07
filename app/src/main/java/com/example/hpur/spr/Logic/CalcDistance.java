@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,7 +59,7 @@ public class CalcDistance implements CallableDistArr {
         mMarkerOptionsShelterLocation.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
         mMap.addMarker(mMarkerOptionsShelterLocation);
         //move map camera
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 8), 5000, null);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 9), 5000, null);
         Log.d(TAG,"map----done");
     }
 
@@ -82,7 +83,7 @@ public class CalcDistance implements CallableDistArr {
         mShelterOnRadar.add(shelters);
         mCount++;
         if(mCount == mShelters.size()){
-            mShelterOnRadar.sort(new SheltersComparator(this.mLat, this.mLong));
+            Collections.sort(mShelterOnRadar,new SheltersComparator(this.mLat, this.mLong));
             Log.d(TAG,"mShelterOnRadar size: "+mShelterOnRadar.size());
 
             mTopFiveShelters = new ArrayList<>();

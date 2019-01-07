@@ -38,6 +38,7 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleHolder> {
             case OTHER_MESSAGE:
                 Log.d(TAG,"left chat bubble layout");
                 mItemResource = R.layout.left_chat_bubble;
+                break;
         }
         View view = LayoutInflater.from(parent.getContext()).inflate(mItemResource, parent, false);
 

@@ -5,5 +5,8 @@
     <color name="colorAccent">#d7363e</color>
     <color name="colorAccent2">#ebeced</color>
     <color name="colorAccent3">#fb6c6f</color>
+    <color name="blue">#6c9efb</color>
+    <color name="green">#22c98e</color>
+
 
 </resources>
