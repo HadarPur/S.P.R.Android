@@ -17,6 +17,8 @@ import com.example.hpur.spr.Logic.Shelter;
 import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
 import com.google.android.gms.maps.SupportMapFragment;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class NavigationActivity extends AppCompatActivity {
@@ -29,7 +31,9 @@ public class NavigationActivity extends AppCompatActivity {
 
     private Button mSearchBtn;
     private ImageButton mBack;
-    private FloatingActionButton mFab;
+    private FloatingActionButton mFindTop5SheltersButton;
+    private FloatingActionButton mSearchForPoliceStations;
+    private FloatingActionButton mSearchForHospital;
 
     private Map mMap;
     private SupportMapFragment mMapFragment;
@@ -82,7 +86,9 @@ public class NavigationActivity extends AppCompatActivity {
         this.mBack = findViewById(R.id.backbtn);
         this.mSpinner = findViewById(R.id.spinner1);
         this.mSearchBtn = findViewById(R.id.search);
-        this.mFab = findViewById(R.id.fab);
+        this.mFindTop5SheltersButton = findViewById(R.id.fab);
+        this.mSearchForHospital = findViewById(R.id.fab2);
+        this.mSearchForPoliceStations = findViewById(R.id.fab3);
         this.mLoadingBack = findViewById(R.id.load);
 
         this.mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -92,6 +98,7 @@ public class NavigationActivity extends AppCompatActivity {
                 R.array.cities_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        this.mSpinner.setDropDownVerticalOffset(110);
         this.mSpinner.setAdapter(adapter);
     }
 
@@ -119,13 +126,27 @@ public class NavigationActivity extends AppCompatActivity {
             }
         });
 
-        this.mFab.setOnClickListener(new View.OnClickListener() {
+        this.mFindTop5SheltersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mIsLoading == false) {
                     loadingPage();
                     showClosestSheltersOnMap();
                 }
+            }
+        });
+
+        this.mSearchForHospital.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showHospitalOnMap();
+            }
+        });
+
+        this.mSearchForPoliceStations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPoliceStationOnMap();
             }
         });
     }
@@ -135,6 +156,23 @@ public class NavigationActivity extends AppCompatActivity {
         this.mMap.showShelters(mShelterData[position], this);
     }
 
+    private void showPoliceStationOnMap()  {
+        try {
+            this.mMap.setMarkersOnMap(mLongitude,mLatitude, "police");
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void showHospitalOnMap()  {
+        try {
+            this.mMap.setMarkersOnMap(mLongitude,mLatitude, "hospital");
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
     //set the closest shelters on the map
     private void showClosestSheltersOnMap() {
         this.mMap.showClosestShelters(mShelterData, this);

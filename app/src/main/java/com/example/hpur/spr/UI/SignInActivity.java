@@ -166,6 +166,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     public void onBackPressed() {
         if (this.mForgetPassword) {
             this.mGoBackBtn.callOnClick();
+            hideProgressDialog();
         }
         else {
             super.onBackPressed();

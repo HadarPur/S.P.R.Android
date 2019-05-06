@@ -85,6 +85,30 @@
             android:layout_marginBottom="24dp"
             android:src="@drawable/ic_autorenew" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            app:backgroundTint="@color/orange"
+            android:layout_alignLeft="@+id/fab"
+            android:layout_marginLeft="100dp"
+            android:layout_marginBottom="24dp"
+            android:src="@drawable/ic_local_hospital" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_alignRight="@+id/fab"
+            android:layout_marginRight="100dp"
+            android:layout_marginBottom="24dp"
+            app:backgroundTint="@color/blue"
+            android:src="@drawable/ic_person" />
+
         <!--take from external library https://github.com/ybq/Android-SpinKit -->
 
         <include
@@ -94,8 +118,6 @@
             android:layout_height="match_parent"
             android:visibility="invisible"
             android:layout_width="match_parent"/>
-
-
 
     </RelativeLayout>
 </LinearLayout>

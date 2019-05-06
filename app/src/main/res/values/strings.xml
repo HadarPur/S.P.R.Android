@@ -2,21 +2,21 @@
     <string name="app_name">SPR</string>
 
     <string-array name="cities_array">
-        <!--<item>Afula</item>-->
-        <!--<item>Arad</item>-->
-        <!--<item>Ashdod</item>-->
-        <!--<item>Ashkelon</item>-->
-        <!--<item>Bat Yam‎</item>-->
+        <item>Afula</item>
+        <item>Arad</item>
+        <item>Ashdod</item>
+        <item>Ashkelon</item>
+        <item>Bat Yam</item>
         <item>Beer Sheba‎</item>
-        <!--<item>Beit Shean</item>-->
-        <!--<item>Beit Shemesh‎</item>-->
+        <item>Beit Shean</item>
+        <item>Beit Shemesh‎</item>
         <item>Bnei Brak‎</item>
-        <!--<item>Dimona‎</item>-->
-        <!--<item>Eilat‎</item>-->
-        <!--<item>Elad‎</item>-->
-        <!--<item>Givat Shmuel</item>-->
-        <!--<item>Givatayim‎</item>-->
-        <!--<item>Hadera‎</item>-->
+        <item>Dimona‎</item>
+        <item>Eilat‎</item>
+        <item>Elad‎</item>
+        <item>Givat Shmuel</item>
+        <item>Givatayim‎</item>
+        <item>Hadera‎</item>
         <item>Haifa‎</item>
         <!--<item>Herzliya</item>-->
         <!--<item>Hod HaSharon‎</item>-->

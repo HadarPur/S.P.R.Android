@@ -18,6 +18,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class CalcDistance implements CallableDistArr {
+    private static final int NUM_OF_THREADS =14;
+
     private static final String TAG ="Radar";
     private GoogleMap mMap;
     private ArrayList<Shelter> mShelters;
@@ -39,7 +41,7 @@ public class CalcDistance implements CallableDistArr {
         this.mLong = currentLongitude;
         this.mShelterOnRadar = new ArrayList<>();
         this.mCount = 0;
-        this.mTasks = new DistanceClass[mShelters.size()];
+        this.mTasks = new DistanceClass[NUM_OF_THREADS];
 
         findNearbyShelters(activity);
     }
@@ -65,10 +67,10 @@ public class CalcDistance implements CallableDistArr {
 
     //search the near by shelters
     private void findNearbyShelters(Activity activity){
-        ExecutorService ex = Executors.newFixedThreadPool(mShelters.size());
+        ExecutorService ex = Executors.newFixedThreadPool(NUM_OF_THREADS);
 
-        for(int i=0; i< mShelters.size(); i++) {
-            mTasks[i] = new DistanceClass(mShelters.get(i), activity,this);
+        for(int i=0; i< NUM_OF_THREADS; i++) {
+            mTasks[i] = new DistanceClass(mShelters, NUM_OF_THREADS, mLat, mLong, activity,this);
             ex.execute(mTasks[i]);
         }
         if(ex.isTerminated()) {
@@ -79,22 +81,23 @@ public class CalcDistance implements CallableDistArr {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public synchronized void filterDistance(Shelter shelters, int numOfNeededShelters) {
-        mShelterOnRadar.add(shelters);
+    public synchronized void filterDistance(ArrayList<Shelter> shelters) {
+        mTopFiveShelters = new ArrayList<>();
+        mShelterOnRadar.addAll(shelters);
         mCount++;
-        if(mCount == mShelters.size()){
-            Collections.sort(mShelterOnRadar,new SheltersComparator(this.mLat, this.mLong));
-            Log.d(TAG,"mShelterOnRadar size: "+mShelterOnRadar.size());
 
-            mTopFiveShelters = new ArrayList<>();
-            for (int i=0 ; i < numOfNeededShelters && i < mShelterOnRadar.size() ; i++) {
-                mTopFiveShelters.add(mShelterOnRadar.get(i));
-                Log.d(TAG,"Shelter name size: "+mShelterOnRadar.get(i).getName() + " City: " + mShelterOnRadar.get(i).getCity());
-            }
-
+        if(mCount == NUM_OF_THREADS) {
             mActivityShelters.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Collections.sort(mShelterOnRadar,new SheltersComparator(mLat, mLong));
+                    int num = 0 ;
+                    while (mTopFiveShelters.size()<5) {
+                        if (!mTopFiveShelters.contains(mShelterOnRadar.get(num)))
+                            mTopFiveShelters.add(mShelterOnRadar.get(num));
+                        num++;
+                    }
+
                     for(int i = 0; i < mTopFiveShelters.size(); i++) {
                         showMarker(mTopFiveShelters.get(i), mActivityShelters);
                     }
