@@ -5,7 +5,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
 
-import com.example.hpur.spr.Storage.GetNearbyPlacesData;
 import com.example.hpur.spr.UI.NavigationActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

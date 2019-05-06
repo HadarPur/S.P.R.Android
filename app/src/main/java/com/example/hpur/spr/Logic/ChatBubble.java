@@ -1,7 +1,5 @@
 package com.example.hpur.spr.Logic;
 
-
-
 public class ChatBubble  {
 
     private String mTextMessage;

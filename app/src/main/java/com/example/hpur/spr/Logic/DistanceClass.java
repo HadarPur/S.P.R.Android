@@ -18,12 +18,12 @@ public class DistanceClass implements Runnable{
     private int mNumOfShelters;
 
     // c'tor
-    public DistanceClass(ArrayList<Shelter> sheltersOld , int numOfThreads, double lat, double longt, Activity activity, CallableDistArr callArr){
+    public DistanceClass(ArrayList<Shelter> sheltersOld , int numOfThreads, double lat, double ltg, Activity activity, CallableDistArr callArr){
         this.mSheltersOld = new ArrayList<>();
         this.mSheltersNew = new ArrayList<>();
         this.mNumOfThreads = numOfThreads;
         this.mLat = lat;
-        this.mLong = longt;
+        this.mLong = ltg;
         this.mActivity = activity;
         this.mCallArr = callArr;
         this.mNumOfShelters = 5;

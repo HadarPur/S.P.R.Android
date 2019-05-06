@@ -1,10 +1,7 @@
-package com.example.hpur.spr.Storage;
+package com.example.hpur.spr.Logic;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.example.hpur.spr.Logic.DataParser;
-import com.example.hpur.spr.Logic.DownloadUrl;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -14,9 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
-    private String googlePlacesData;
+    private String mGooglePlacesData;
     private GoogleMap mMap;
-    private String url;
+    private String mUrl;
     private String mKind;
 
     public GetNearbyPlacesData(String kind) {
@@ -27,16 +24,16 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
         try {
             Log.d("GetNearbyPlacesData", "doInBackground entered");
             mMap = (GoogleMap) params[0];
-            url = (String) params[1];
+            mUrl = (String) params[1];
             DownloadUrl downloadUrl = new DownloadUrl();
-            googlePlacesData = downloadUrl.readUrl(url);
+            mGooglePlacesData = downloadUrl.readUrl(mUrl);
             Log.d("GooglePlacesReadTask", "doInBackground Exit");
         }
         catch (Exception e) {
             e.getStackTrace();
             Log.d("GooglePlacesReadTask", e.toString());
         }
-        return googlePlacesData;
+        return mGooglePlacesData;
     }
 
     @Override //convert from Json to hashMap
