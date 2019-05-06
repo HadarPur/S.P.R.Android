@@ -1,7 +1,6 @@
 package com.example.hpur.spr.UI;
 
 import android.graphics.Color;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +15,8 @@ import com.example.hpur.spr.Logic.Map;
 import com.example.hpur.spr.Logic.Shelter;
 import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class NavigationActivity extends AppCompatActivity {
     private FloatingActionButton mSearchForPoliceStations;
     private FloatingActionButton mSearchForHospital;
 
+    private FloatingActionMenu mMenu;
     private Map mMap;
     private SupportMapFragment mMapFragment;
 
@@ -80,7 +82,6 @@ public class NavigationActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
-
     //find views from xml with listeners
     private void findViews () {
         this.mBack = findViewById(R.id.backbtn);
@@ -90,6 +91,7 @@ public class NavigationActivity extends AppCompatActivity {
         this.mSearchForHospital = findViewById(R.id.fab2);
         this.mSearchForPoliceStations = findViewById(R.id.fab3);
         this.mLoadingBack = findViewById(R.id.load);
+        this.mMenu = findViewById(R.id.menu_labels_right);
 
         this.mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
@@ -98,7 +100,7 @@ public class NavigationActivity extends AppCompatActivity {
                 R.array.cities_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        this.mSpinner.setDropDownVerticalOffset(110);
+        this.mSpinner.setDropDownVerticalOffset(125);
         this.mSpinner.setAdapter(adapter);
     }
 
@@ -132,6 +134,8 @@ public class NavigationActivity extends AppCompatActivity {
                 if (mIsLoading == false) {
                     loadingPage();
                     showClosestSheltersOnMap();
+                    mMenu.close(true);
+
                 }
             }
         });
@@ -140,6 +144,7 @@ public class NavigationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showHospitalOnMap();
+                mMenu.close(true);
             }
         });
 
@@ -147,6 +152,8 @@ public class NavigationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showPoliceStationOnMap();
+                mMenu.close(true);
+
             }
         });
     }
