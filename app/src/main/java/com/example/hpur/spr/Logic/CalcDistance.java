@@ -92,7 +92,7 @@ public class CalcDistance implements CallableDistArr {
                 public void run() {
                     Collections.sort(mShelterOnRadar,new SheltersComparator(mLat, mLong));
                     int num = 0 ;
-                    while (mTopFiveShelters.size()<5) {
+                    while (mTopFiveShelters.size() < 5) {
                         if (!mTopFiveShelters.contains(mShelterOnRadar.get(num)))
                             mTopFiveShelters.add(mShelterOnRadar.get(num));
                         num++;

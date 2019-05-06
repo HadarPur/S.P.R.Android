@@ -53,16 +53,11 @@ public class DistanceClass implements Runnable{
             mSheltersNew.add(shelter);
         }
 
-//        shelter = mSheltersOld;
-//        String add = shelter.getStreet() + " " + shelter.getNumber()+", "+shelter.getCity();
-//        shelter.findShelterLocation(mActivity, add);
-//        Log.d(TAG,"Shelter name size: "+shelter.getName() + " City: " + shelter.getCity());
-
         mCallArr.filterDistance(mSheltersNew);
     }
 
     //getter
-    public ArrayList<Shelter> getNewStreets() {
+    public ArrayList<Shelter> getNewShelters() {
         return mSheltersNew;
     }
 }
