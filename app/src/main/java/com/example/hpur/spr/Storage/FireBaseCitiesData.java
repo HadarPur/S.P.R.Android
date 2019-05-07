@@ -14,7 +14,7 @@ import java.util.Iterator;
 
 public class FireBaseCitiesData implements Serializable {
         private static final String TAG = "DATA";
-        private static final int NUM_OF_CITIES = 6;
+    ;
         private Shelter mShelter;
         private ArrayList<Shelter> mCloudData[];
         private DatabaseReference mRef;
@@ -24,7 +24,7 @@ public class FireBaseCitiesData implements Serializable {
         //c'tor
         public FireBaseCitiesData(String[] cities){
             FirebaseDatabase data = FirebaseDatabase.getInstance();
-            this.mRefChildren = new DatabaseReference[NUM_OF_CITIES];
+            this.mRefChildren = new DatabaseReference[cities.length];
 
             this.mCities = cities;
             // gets the shelters node reference
@@ -38,7 +38,7 @@ public class FireBaseCitiesData implements Serializable {
 
         //init array
         public void initData(){
-            mCloudData = new ArrayList[NUM_OF_CITIES];
+            mCloudData = new ArrayList[this.mCities.length];
             for(int i = 0 ; i < mCloudData.length ; i++){
                 mCloudData[i] = new ArrayList<>();
             }

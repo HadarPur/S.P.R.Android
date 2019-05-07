@@ -1,6 +1,8 @@
 package com.example.hpur.spr.Logic.Queries;
 import com.example.hpur.spr.Logic.Shelter;
 
+import java.util.ArrayList;
+
 public interface CallableDistArr {
-    void filterDistance(Shelter shelters, int numOfNeededShelters);
+    void filterDistance(ArrayList<Shelter> shelters);
 }

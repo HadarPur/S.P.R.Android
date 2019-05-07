@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:layoutDirection="ltr"
     android:background="@drawable/simple_background"
     tools:context=".UI.NavigationActivity">
@@ -76,15 +76,51 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/linearLayout2"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_autorenew" />
 
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/menu_labels_right"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            fab:fab_size="normal"
+            fab:menu_labels_ellipsize="end"
+            fab:menu_labels_singleLine="true"
+            fab:menu_backgroundColor="#ccffffff"
+            fab:menu_labels_position="right"
+            fab:menu_colorNormal="@color/colorAccent"
+            fab:menu_colorPressed="@color/colorAccent3"
+            fab:menu_colorRipple="@color/colorAccent3">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_label="Closest shelters"
+                fab:fab_size="mini"
+                android:src="@drawable/ic_autorenew" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:backgroundTint="@color/orange"
+                fab:fab_label="Hospitals"
+                fab:fab_size="mini"
+                android:src="@drawable/ic_local_hospital" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/blue"
+                fab:fab_label="Police stations"
+                fab:fab_size="mini"
+                android:src="@drawable/ic_person" />
+
+        </com.github.clans.fab.FloatingActionMenu>
         <!--take from external library https://github.com/ybq/Android-SpinKit -->
 
         <include
@@ -94,8 +130,6 @@
             android:layout_height="match_parent"
             android:visibility="invisible"
             android:layout_width="match_parent"/>
-
-
 
     </RelativeLayout>
 </LinearLayout>

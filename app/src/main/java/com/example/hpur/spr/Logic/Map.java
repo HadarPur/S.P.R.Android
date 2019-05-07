@@ -4,6 +4,7 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
+
 import com.example.hpur.spr.UI.NavigationActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,6 +27,8 @@ public class Map implements OnMapReadyCallback {
     private GoogleMap mMap;
     private Geocoder mGeocoder;
     private MarkerOptions mMarkerOptionsMyLocation;
+    private MarkerOptions mMarkerOptionsKindLocation;
+
 
     public Map(SupportMapFragment mapFragment, double latitude, double longitude, Context context) {
         this.mMapFragment = mapFragment;
@@ -76,10 +79,14 @@ public class Map implements OnMapReadyCallback {
 
     public void showShelters(ArrayList<Shelter> shelters, NavigationActivity activity )  {
         try {
+            Log.d(TAG, "enter");
 
             LatLng latLng = null;
             setMyLocationOnTheMap();
+            Log.d(TAG, "setloc");
+
             for (int i=0; i<shelters.size(); i++) {
+                Log.d(TAG, "enter2");
                 String add = shelters.get(i).getStreet() + " " + shelters.get(i).getNumber()+", "+shelters.get(i).getCity();
                 Log.d(TAG, "address: "+ add);
 
@@ -130,6 +137,22 @@ public class Map implements OnMapReadyCallback {
         }
     }
 
+    //set marker with car's location on the map
+    public void setMarkersOnMap(double lgt, double lat, String kind) throws IOException {
+        //place users markers
+        String street;
+        mMap.clear();
+        setMyLocationOnTheMap();
+
+        String url = getUrl(lat, lgt, kind);
+        Object[] DataTransfer = new Object[2];
+        DataTransfer[0] = mMap;
+        DataTransfer[1] = url;
+        Log.d("url: ", url);
+        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData(kind);
+        getNearbyPlacesData.execute(DataTransfer);
+    }
+
     //geocode function return street name
     public String getLocationName(double latitude, double longitude) throws IOException {
         //to specific address
@@ -145,7 +168,7 @@ public class Map implements OnMapReadyCallback {
     private String getUrl(double latitude, double longitude, String nearbyPlace) {
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         googlePlacesUrl.append("location=" + latitude + "," + longitude);
-        googlePlacesUrl.append("&radius=" + RADIUS);
+        googlePlacesUrl.append("&radius=" + 5000);
         googlePlacesUrl.append("&type=" + nearbyPlace);
         googlePlacesUrl.append("&sensor=true");
         googlePlacesUrl.append("&key=" + "AIzaSyCdv0EMKx3KLjPWbDX_GpuE3UbniIh0a1o");

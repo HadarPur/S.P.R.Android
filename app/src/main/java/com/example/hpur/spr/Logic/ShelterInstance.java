@@ -14,7 +14,6 @@ public class ShelterInstance {
         return instance;
     }
 
-    private static final int NUM_OF_CITIES = 6;
     private static final String TAG = "CALL";
 
     ArrayList<Shelter> mData[]; /** each index in the list refers to shelters for each city in israel. **/
@@ -24,8 +23,8 @@ public class ShelterInstance {
     }
 
     //init array
-    public void initAll(){
-        this.mData = new ArrayList[NUM_OF_CITIES];
+    public void initAll(int length){
+        this.mData = new ArrayList[length];
         for(int i = 0 ; i < this.mData.length ; i++){
             this.mData[i] = new ArrayList<>();
         }
@@ -58,7 +57,7 @@ public class ShelterInstance {
 
     //set the mData that read on the array
     public void setData(ArrayList<Shelter>[] arr) {
-        initAll();
+        initAll(arr.length);
         for(int i = 0 ; i < arr.length ; i++){
             this.mData[i].addAll(arr[i]);
         }
