@@ -31,9 +31,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity implements CheckUserCallbacks {
     private static final String KEY = "connect", IS_FIRST_INSTALLATION = "false";
+    private static final String TAG = SignInActivity.class.getSimpleName();
+    
     private final int MIN_PASS_LEN = 6;
     private final int RESET=0, SIGN=1;
-    private static final String TAG = SignInActivity.class.getSimpleName();
+
 
     private String mEmail;
     private String mPass;
@@ -110,18 +112,21 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
     // setup all button events when they clicked
     private void setupOnClick() {
+
         this.mSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 userLogin();
             }
         });
+
         this.mSignUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 userSignUp();
             }
         });
+
         this.mPasswordResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

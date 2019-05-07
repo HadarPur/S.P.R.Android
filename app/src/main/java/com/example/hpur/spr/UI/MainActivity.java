@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
         }
         else {
             singletonShelters();
-
 //            mModifiedDate.ReadData(this);
         }
     }
