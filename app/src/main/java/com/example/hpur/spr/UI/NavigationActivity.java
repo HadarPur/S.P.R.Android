@@ -95,6 +95,7 @@ public class NavigationActivity extends AppCompatActivity {
         this.mSearchForPoliceStations = findViewById(R.id.fab3);
         this.mLoadingBack = findViewById(R.id.load);
         this.mMenu = findViewById(R.id.menu_labels_right);
+        this.mMenu.setClosedOnTouchOutside(true);
 
         this.mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
