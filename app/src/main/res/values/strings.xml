@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">SPR</string>
+    <string name="Open">Open</string>
+    <string name="Close">Close</string>
 
     <string-array name="cities_array">
         <item>Afula</item>

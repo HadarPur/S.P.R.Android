@@ -9,8 +9,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -29,8 +37,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements DateCallback{
+public class MainActivity extends AppCompatActivity implements DateCallback, NavigationView.OnNavigationItemSelectedListener{
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean mFirstAsk = true, mIsLoading, mIsShow;
     private String mDate;
@@ -53,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
     private SharedPreferencesStorage mSharedPreferences;
     private FireBaseModifiedDate mModifiedDate;
 
+    private ActionBarDrawerToggle mToggle;
+    private DrawerLayout mDrawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
 
         findViews();
         setupOnClick();
+        initNavigationDrawer();
 
         mAlertTittle.setText("Pay attention");
         mAlertText.setText("You must permit location and network connection for this app");
@@ -110,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
 
         this.mLoadingBack = findViewById(R.id.load);
         this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
+
+        this.mDrawerLayout = findViewById(R.id.activity_main);
     }
 
     // setup all button events when they clicked
@@ -210,6 +225,29 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
         alertDialog.show();
     }
 
+    private void initNavigationDrawer() {
+        Toolbar toolbar = findViewById(R.id.tool_bar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        ActionBar actionbar = getSupportActionBar();
+        assert actionbar != null;
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+        this.mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.Open, R.string.Close);
+
+        this.mDrawerLayout.addDrawerListener(mToggle);
+        this.mToggle.syncState();
+
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        NavigationView nv = findViewById(R.id.nv);
+        nv.setNavigationItemSelectedListener(this);
+
+        nv.getMenu().getItem(0).setChecked(true);
+
+    }
+
     //alert for GPS connection
     private void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
@@ -302,5 +340,26 @@ public class MainActivity extends AppCompatActivity implements DateCallback{
 //        catch (ParseException e) {
 //            e.printStackTrace();
 //        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        int id = menuItem.getItemId();
+
+        switch (id) {
+            case R.id.profile_item:
+//                startActivity(new Intent(MessagingActivity.this, MessagingConfigActivity.class));
+//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                break;
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mToggle.onOptionsItemSelected(item))
+            return true;
+        return super.onOptionsItemSelected(item);
     }
 }
