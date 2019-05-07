@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.io.Serializable;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -67,6 +68,9 @@ public class FireBaseCitiesData implements Serializable {
                     if (calllback != null) {
                         calllback.onCallback(mCloudData);
                     }
+
+                    Log.d(TAG, "City: "+ mCities[index].trim() + " mCloudData[index].size() : " + mCloudData[index].size());
+
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {

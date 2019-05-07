@@ -77,17 +77,18 @@ public class Map implements OnMapReadyCallback {
 
     }
 
-    public void showShelters(ArrayList<Shelter> shelters, NavigationActivity activity )  {
+    public void showShelters(ArrayList<Shelter> shelters, NavigationActivity activity)  {
         try {
             Log.d(TAG, "enter");
 
             LatLng latLng = null;
             setMyLocationOnTheMap();
             Log.d(TAG, "setloc");
+            Log.d(TAG, "shelters.size(): "+shelters.size());
 
-            for (int i=0; i<shelters.size(); i++) {
+            for (int i=0; i < shelters.size(); i++) {
                 Log.d(TAG, "enter2");
-                String add = shelters.get(i).getStreet() + " " + shelters.get(i).getNumber()+", "+shelters.get(i).getCity();
+                String add =  shelters.get(i).getStreet() + " " + shelters.get(i).getNumber()+", "+shelters.get(i).getCity();
                 Log.d(TAG, "address: "+ add);
 
                 shelters.get(i).findShelterLocation(activity,add);
@@ -105,10 +106,10 @@ public class Map implements OnMapReadyCallback {
 
                 this.mMarkerOptionsMyLocation.snippet("Location: " + add);
                 this.mMap.addMarker(mMarkerOptionsMyLocation);
-            }
 
+                this.mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11), 5000, null);
+            }
             //move map camera
-            this.mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11), 5000, null);
         }
         catch (IOException e) {
             e.printStackTrace();

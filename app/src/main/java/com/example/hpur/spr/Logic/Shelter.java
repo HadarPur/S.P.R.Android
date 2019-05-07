@@ -20,8 +20,8 @@ public class Shelter {
 
     public Shelter(String name, String number ,String street) {
         this.Name = name;
-        this.Street = street;
-        this.Number = number;
+        this.Street = street.trim();
+        this.Number = number.trim();
     }
 
     /** calculates the location of a street by name **/
@@ -83,7 +83,7 @@ public class Shelter {
     }
 
     public void setStreet(String mStreet) {
-        this.Street = mStreet;
+        this.Street = mStreet.trim();
     }
 
     public String getNumber() {
@@ -91,7 +91,7 @@ public class Shelter {
     }
 
     public void setNumber(String mNumber) {
-        this.Number = mNumber;
+        this.Number = mNumber.trim();
     }
 
     public ShelterLocation getShelterLocation() {

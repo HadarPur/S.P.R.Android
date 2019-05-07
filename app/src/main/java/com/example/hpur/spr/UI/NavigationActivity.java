@@ -10,11 +10,14 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
+
 import com.example.hpur.spr.Logic.GPSTracker;
 import com.example.hpur.spr.Logic.Map;
 import com.example.hpur.spr.Logic.Shelter;
 import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
+import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -122,8 +125,8 @@ public class NavigationActivity extends AppCompatActivity {
                     int spinnerPos = mSpinner.getSelectedItemPosition();
 
                     Log.d(TAG, "spinnerPosText: " + spinnerPosText + " position : " + spinnerPos);
-
                     showSheltersOnMap(spinnerPos);
+//                        Toast.makeText(NavigationActivity.this, "There isn't shelters in that area", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -135,7 +138,6 @@ public class NavigationActivity extends AppCompatActivity {
                     loadingPage();
                     showClosestSheltersOnMap();
                     mMenu.close(true);
-
                 }
             }
         });
