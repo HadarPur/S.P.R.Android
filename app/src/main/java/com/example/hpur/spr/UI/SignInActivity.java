@@ -61,7 +61,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private FirebaseAuth mFirebaseAuth;
     private FireBaseAuthenticationUsers mUsers;
     private FirebaseUser mCurrentUser;
-
+    private UtilitiesFunc mUtils;
     private SharedPreferencesStorage mSharedPreferences;
 
     @Override
@@ -75,6 +75,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
         this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
         this.mForgetPassword = false;
+
+        this.mUtils = new UtilitiesFunc(this);
 
         findViews();
         setupOnClick();
@@ -312,6 +314,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     }
 
     private void showProgressDialog(String msg) {
+        this.mUtils.hideKeyboard(this);
+
         this.mLoadingViewText.setText(msg);
 
         Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
@@ -328,11 +332,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
         this.mLoadingViewText.setText("");
 
-    }
-
-    public void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
