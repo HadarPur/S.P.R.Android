@@ -76,7 +76,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
         this.mForgetPassword = false;
 
-        this.mUtils = new UtilitiesFunc(this);
+        this.mUtils = new UtilitiesFunc();
 
         findViews();
         setupOnClick();
@@ -321,7 +321,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
         this.mLoadingView.startAnimation(aniFade);
         this.mLoadingView.setVisibility(View.VISIBLE);
-
     }
 
     private void hideProgressDialog() {
