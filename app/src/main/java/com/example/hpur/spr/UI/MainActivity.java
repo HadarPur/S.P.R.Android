@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements DateCallback, Nav
         Log.d(TAG, "Date: "+ mDate);
 
         findViews();
-        setupOnClick();
         initNavigationDrawer();
+        setupOnClick();
 
         mAlertTittle.setText("Pay attention");
         mAlertText.setText("You must permit location and network connection for this app");
@@ -342,17 +342,21 @@ public class MainActivity extends AppCompatActivity implements DateCallback, Nav
 //        }
     }
 
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
 
         switch (id) {
             case R.id.profile_item:
-//                startActivity(new Intent(MessagingActivity.this, MessagingConfigActivity.class));
-//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 break;
+            default:
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                return false;
         }
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        mDrawerLayout.closeDrawer(GravityCompat.START, false);
         return true;
     }
 

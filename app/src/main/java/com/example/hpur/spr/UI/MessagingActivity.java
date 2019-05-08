@@ -207,6 +207,8 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
         this.mPhone.setClickable(true);
         this.mVideo.setClickable(true);
 
+        this.mBack.setVisibility(View.VISIBLE);
+
         this.mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {

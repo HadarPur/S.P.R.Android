@@ -10,18 +10,14 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
-
 import com.example.hpur.spr.Logic.GPSTracker;
 import com.example.hpur.spr.Logic.Map;
 import com.example.hpur.spr.Logic.Shelter;
 import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
-import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.maps.SupportMapFragment;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -97,6 +93,8 @@ public class NavigationActivity extends AppCompatActivity {
         this.mMenu = findViewById(R.id.menu_labels_right);
         this.mMenu.setClosedOnTouchOutside(true);
 
+        this.mBack.setVisibility(View.VISIBLE);
+
         this.mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
 
@@ -127,7 +125,6 @@ public class NavigationActivity extends AppCompatActivity {
 
                     Log.d(TAG, "spinnerPosText: " + spinnerPosText + " position : " + spinnerPos);
                     showSheltersOnMap(spinnerPos);
-//                        Toast.makeText(NavigationActivity.this, "There isn't shelters in that area", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -183,6 +180,7 @@ public class NavigationActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
     }
+
     //set the closest shelters on the map
     private void showClosestSheltersOnMap() {
         this.mMap.showClosestShelters(mShelterData, this);
