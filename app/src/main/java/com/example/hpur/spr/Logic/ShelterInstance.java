@@ -1,5 +1,7 @@
 package com.example.hpur.spr.Logic;
 
+import android.util.Log;
+
 import com.example.hpur.spr.Storage.FireBaseCitiesData;
 import java.util.ArrayList;
 

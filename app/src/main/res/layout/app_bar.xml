@@ -16,6 +16,7 @@
             android:layout_width="15pt"
             android:layout_height="20pt"
             android:src="@drawable/ic_back"
+            android:visibility="gone"
             android:background="@android:color/transparent"
             android:clickable="false"/>
 

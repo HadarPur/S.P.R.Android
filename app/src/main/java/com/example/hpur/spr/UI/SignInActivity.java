@@ -1,6 +1,5 @@
 package com.example.hpur.spr.UI;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,10 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,7 +60,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private FirebaseAuth mFirebaseAuth;
     private FireBaseAuthenticationUsers mUsers;
     private FirebaseUser mCurrentUser;
-
+    private UtilitiesFunc mUtils;
     private SharedPreferencesStorage mSharedPreferences;
 
     @Override
@@ -77,6 +74,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
         this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
         this.mForgetPassword = false;
+
+        this.mUtils = new UtilitiesFunc();
 
         findViews();
         setupOnClick();
@@ -234,43 +233,46 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
     // sign up a user to the app
     private void userSignUp() {
-        this.mEmail = this.mEmailEditText.getText().toString().trim();
-        this.mPass = this.mPasswordEditText.getText().toString().trim();
+//        this.mEmail = this.mEmailEditText.getText().toString().trim();
+//        this.mPass = this.mPasswordEditText.getText().toString().trim();
+//
+//
+//        if (TextUtils.isEmpty(this.mEmail)) {
+//            Toast.makeText(this, "Please enter email", Toast.LENGTH_LONG).show();
+//            return;
+//        }
+//
+//        if (TextUtils.isEmpty(this.mPass)) {
+//            Toast.makeText(this, "Please enter password", Toast.LENGTH_LONG).show();
+//            return;
+//        }
+//
+//        if (this.mPass.length() <= MIN_PASS_LEN) {
+//            Toast.makeText(this, "Password need to be at least " + MIN_PASS_LEN + " characters", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        showProgressDialog("Signing up, please wait...");
+//        this.mFirebaseAuth.createUserWithEmailAndPassword(this.mEmail, this.mPass)
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            // Sign in success, update UI with the signed-in user's information
+//                            Log.d(TAG, "createUserWithEmail:success");
+//                            sendEmailVerification();
+//
+//                        } else {
+//                            // If sign in fails, display a message to the user.
+//                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+//                            Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                        hideProgressDialog();
+//                    }
+//                });
 
-
-        if (TextUtils.isEmpty(this.mEmail)) {
-            Toast.makeText(this, "Please enter email", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (TextUtils.isEmpty(this.mPass)) {
-            Toast.makeText(this, "Please enter password", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (this.mPass.length() <= MIN_PASS_LEN) {
-            Toast.makeText(this, "Password need to be at least " + MIN_PASS_LEN + " characters", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        showProgressDialog("Signing up, please wait...");
-        this.mFirebaseAuth.createUserWithEmailAndPassword(this.mEmail, this.mPass)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            sendEmailVerification();
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                        hideProgressDialog();
-                    }
-                });
+        startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     // after user signed up, email verification send
@@ -317,12 +319,13 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     }
 
     private void showProgressDialog(String msg) {
+        this.mUtils.hideKeyboard(this);
+
         this.mLoadingViewText.setText(msg);
 
         Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
         this.mLoadingView.startAnimation(aniFade);
         this.mLoadingView.setVisibility(View.VISIBLE);
-
     }
 
     private void hideProgressDialog() {
@@ -333,11 +336,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
         this.mLoadingViewText.setText("");
 
-    }
-
-    public void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

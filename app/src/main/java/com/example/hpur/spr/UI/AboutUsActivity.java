@@ -39,6 +39,8 @@ public class AboutUsActivity extends AppCompatActivity {
 
         this.mAboutUsTextView.setBackgroundColor(Color.argb(150, 255,255,255));
 
+        this.mBack.setVisibility(View.VISIBLE);
+
         this.mAboutUsTextView.setText("S.P.R: Saving population at risk\n\n" +
         "S.P.R main goal is to provide a simplified and easiest platform for youth at risk, who needs an immediate help, especially on late hours.\n\n" +
                 "In our app youth at risk can chat with human agent volunteer who is a certified agent.\n\n" +

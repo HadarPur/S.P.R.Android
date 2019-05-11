@@ -14,30 +14,15 @@ public class SheltersComparator implements Comparator<Shelter> {
     // compare method to sort by closest dist shelters
     @Override
     public int compare(Shelter o1, Shelter o2) {
-        if (o1.getShelterLocation() != null && o2.getShelterLocation() != null) {
-            double lat1 = o1.getShelterLocation().getLatitude();
-            double lon1 = o1.getShelterLocation().getLongitude();
+        double lat1 = o1.getShelterLocation().getLatitude();
+        double lon1 = o1.getShelterLocation().getLongitude();
 
-            double lat2 = o2.getShelterLocation().getLatitude();
-            double lon2 = o2.getShelterLocation().getLongitude();
+        double lat2 = o2.getShelterLocation().getLatitude();
+        double lon2 = o2.getShelterLocation().getLongitude();
 
-            double distanceToPlace1 = distance(this.mLat, this.mLong, lat1, lon1);
-            double distanceToPlace2 = distance(this.mLat, this.mLong, lat2, lon2);
-            return (int) (distanceToPlace1 - distanceToPlace2);
-        }
-        else if (o1.getShelterLocation() != null) {
-            double lat1 = o1.getShelterLocation().getLatitude();
-            double lon1 = o1.getShelterLocation().getLongitude();
-
-            return (int) distance(this.mLat, this.mLong, lat1, lon1);
-        }
-        else if(o2.getShelterLocation() != null) {
-            double lat2 = o2.getShelterLocation().getLatitude();
-            double lon2 = o2.getShelterLocation().getLongitude();
-
-            return (int) distance(this.mLat, this.mLong, lat2, lon2);
-        }
-        return 0;
+        double distanceToPlace1 = distance(this.mLat, this.mLong, lat1, lon1);
+        double distanceToPlace2 = distance(this.mLat, this.mLong, lat2, lon2);
+        return (int) (distanceToPlace1 - distanceToPlace2);
     }
 
     // calculate dist between the shelters location to user's current location
