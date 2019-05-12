@@ -124,7 +124,7 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
                             @Override
                             public void run() {
                                 mRecycleView.smoothScrollToPosition(
-                                        mRecycleView.getAdapter().getItemCount() - 1);
+                                        mRecycleView.getAdapter().getItemCount());
                             }
                         }, 1);
                     }
