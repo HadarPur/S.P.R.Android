@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/simple_background"
     android:orientation="vertical" >
 
@@ -22,13 +23,31 @@
             android:focusableInTouchMode="true"
             android:padding="10dp">
 
-            <Button
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+            <com.github.clans.fab.FloatingActionMenu
                 android:id="@+id/menu"
-                android:background="@drawable/ic_add"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="6dp" />
+                android:paddingRight="0dp"
+                android:paddingBottom="0dp"
+                android:paddingLeft="0dp"
+                fab:menu_fab_size="mini"
+                fab:menu_icon="@drawable/ic_add_circle_outline"
+                fab:menu_labels_ellipsize="end"
+                fab:menu_labels_singleLine="true"
+                fab:menu_labels_position="right"
+                fab:menu_colorNormal="@color/colorAccent"
+                fab:menu_colorPressed="@color/colorAccent3"
+                fab:menu_colorRipple="@color/colorAccent3">
+
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/location_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_size="mini"
+                    android:src="@drawable/ic_map" />
+
+            </com.github.clans.fab.FloatingActionMenu>
 
             <EditText
                 android:id="@+id/msg_type"
