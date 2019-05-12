@@ -59,7 +59,7 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        return this.mChatBubbles.get(position).getmMyMessage() ? USER_MESSAGE : OTHER_MESSAGE;
+        return this.mChatBubbles.get(position).ismMyMessage() ? USER_MESSAGE : OTHER_MESSAGE;
     }
 
 

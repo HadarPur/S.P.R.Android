@@ -3,6 +3,8 @@ package com.example.hpur.spr.UI;
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -25,9 +27,16 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.example.hpur.spr.Logic.ChatBubble;
 import com.example.hpur.spr.Logic.ChatBubbleAdapter;
+import com.example.hpur.spr.Logic.MapModel;
+import com.example.hpur.spr.Logic.Queries.ChatListener;
 import com.example.hpur.spr.R;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,11 +54,14 @@ import com.opentok.android.Stream;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Subscriber;
 
-public class MessagingActivity extends AppCompatActivity implements Session.SessionListener, PublisherKit.PublisherListener {
+public class MessagingActivity extends AppCompatActivity implements Session.SessionListener, PublisherKit.PublisherListener, ChatListener {
 
     private final String TAG = "MessagingActivity:";
     private final String AUDIO = "Audio";
     private final String VIDEO = "Video";
+
+    // service places
+    private static final int PLACE_PICKER_REQUEST = 3;
 
     // for tokbox session
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
@@ -131,6 +143,32 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
                 }
             });
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST){
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(this, data);
+                if (place != null){
+                    LatLng latLng = place.getLatLng();
+                    MapModel mapModel = new MapModel(latLng.latitude+"",latLng.longitude+"");
+                    ChatBubble chatBubble = new ChatBubble(mapModel, mUserName, mMyMessage);
+                    mMessagesDatabaseReference.push().setValue(chatBubble);
+                    mEditText.setText("");
+                } else{
+                    Toast.makeText(this, "Place is null", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void clickImageMapChat(View view, int position,String latitude,String longitude) {
+        String uri = String.format("geo:%s,%s?z=17&q=%s,%s", latitude,longitude,latitude,longitude);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        startActivity(intent);
     }
 
     @Override
@@ -305,8 +343,18 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
             @Override
             public void onClick(View view) {
                 mMenu.close(true);
+                locationPlacesIntent();
             }
         });
+    }
+
+    private void locationPlacesIntent(){
+        try {
+            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 
     private void attachDatabaseReadListener() {
