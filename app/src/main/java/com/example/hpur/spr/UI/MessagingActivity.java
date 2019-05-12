@@ -91,6 +91,8 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
     private Publisher mPublisher;
     private Subscriber mSubscriber;
 
+    private FloatingActionButton mSendLocation;
+    private FloatingActionMenu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +209,11 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
         this.mPhone.setClickable(true);
         this.mVideo.setClickable(true);
 
+        this.mMenu = findViewById(R.id.menu_msg);
+        this.mMenu.setClosedOnTouchOutside(true);
+
+        this.mSendLocation = findViewById(R.id.location_fab);
+
         this.mBack.setVisibility(View.VISIBLE);
 
         this.mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -291,6 +298,13 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
                 mVideoView.startAnimation(aniFade);
                 mVideoView.setVisibility(View.INVISIBLE);
 
+            }
+        });
+
+        this.mSendLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMenu.close(true);
             }
         });
     }
