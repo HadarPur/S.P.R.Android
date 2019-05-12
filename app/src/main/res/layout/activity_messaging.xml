@@ -32,7 +32,7 @@
                 android:paddingBottom="0dp"
                 android:paddingLeft="0dp"
                 fab:menu_fab_size="mini"
-                fab:menu_icon="@drawable/ic_add_circle_outline"
+                fab:menu_icon="@drawable/ic_add"
                 fab:menu_labels_ellipsize="end"
                 fab:menu_labels_singleLine="true"
                 fab:menu_labels_position="right"
