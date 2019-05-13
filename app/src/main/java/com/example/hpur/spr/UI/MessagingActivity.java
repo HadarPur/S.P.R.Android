@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -23,9 +24,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TabHost;
 import android.widget.Toast;
 import com.example.hpur.spr.Logic.ChatBubble;
 import com.example.hpur.spr.Logic.ChatBubbleAdapter;
+import com.example.hpur.spr.Logic.GPSTracker;
 import com.example.hpur.spr.Logic.MapModel;
 import com.example.hpur.spr.Logic.MessageType;
 import com.example.hpur.spr.R;
@@ -35,6 +39,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -58,7 +63,6 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
     private final String TAG = "MessagingActivity:";
     private final String AUDIO = "Audio";
     private final String VIDEO = "Video";
-    private final static int  PLACE_PICKER_REQUEST = 3;
 
     // for tokbox session
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
@@ -72,6 +76,8 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
     private List<ChatBubble> mChatBubbles;
     private String mCallTypeName;
     private String mUserName = "AnonymousTeenager";
+
+    private RelativeLayout mLoadingBack;
 
     private RecyclerView mRecycleView;
     private View mSendBtn;
@@ -120,6 +126,7 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
         //Bind the RecycleView with the current application layout
         this.mRecycleView.setLayoutManager(layoutManager);
         this.mRecycleView.setAdapter(mChatAdapter);
+        this.mRecycleView.setItemAnimator(null);
 
         if (Build.VERSION.SDK_INT >= 11) {
             mRecycleView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -194,7 +201,13 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
     @Override
     protected void onStop(){
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         mChatBubbles.clear();
+        mChatAdapter.notifyItemInserted(mChatBubbles.size());
         detachDatabaseReadListener();
     }
 
@@ -234,6 +247,9 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
 
         this.mBack.setVisibility(View.VISIBLE);
 
+        this.mLoadingBack = findViewById(R.id.load);
+        this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
+
         this.mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -243,36 +259,6 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
             }
         });
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "RESULT CODE : " + resultCode);
-        if (requestCode == PLACE_PICKER_REQUEST && resultCode == Activity.RESULT_OK) {
-
-           Log.d(TAG,"onActivityResult enter phase");
-
-
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-       /* super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLACE_PICKER_REQUEST){
-            if (resultCode == RESULT_OK) {
-                Log.d(TAG, "onActivityResult, map 3");
-                Place place = PlacePicker.getPlace(this, data);
-                if (place != null){
-                    LatLng latLng = place.getLatLng();
-                    MapModel mapModel = new MapModel(latLng.latitude+"",latLng.longitude+"");
-                    ChatBubble chatBubble = new ChatBubble(mapModel, mUserName, MessageType.USER_MAP_MESSAGE);
-                    mMessagesDatabaseReference.push().setValue(chatBubble);
-                    mEditText.setText("");
-                } else{
-                    Toast.makeText(this, "Place is null", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }*/
-
 
     // setup all button events when they clicked
     private void setupOnClick() {
@@ -353,25 +339,23 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
             @Override
             public void onClick(View view) {
                 mMenu.close(true);
-                try {
-                    PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
-                    Intent intent = intentBuilder.build(MessagingActivity.this);
-                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
-
-                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }
-               // locationPlacesIntent();
+                locationPlacesIntent();
             }
         });
     }
 
-    private void locationPlacesIntent(){
-        try {
-            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
-        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
+    private void locationPlacesIntent() {
+        GPSTracker gpsTracker = new GPSTracker(this, false);
+        if(gpsTracker.getGPSEnable()&& gpsTracker.getPosition()!=null){
+            double latitude = gpsTracker.getPosition().getLatitude();
+            double longitude = gpsTracker.getPosition().getLongitude();
+            //if location wasn't enable and now it's enable
+            gpsTracker.initLocation();
+
+            MapModel mapModel = new MapModel(latitude+"",longitude+"");
+            ChatBubble chatBubble = new ChatBubble(mapModel, mUserName, MessageType.USER_MAP_MESSAGE);
+            mMessagesDatabaseReference.push().setValue(chatBubble);
+            mEditText.setText("");
         }
     }
 
@@ -387,11 +371,18 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
                     //chat bubble layout decision depends on the source of the message.
                     if (!(curBubbleMessage.getmUserName().equals(mUserName))) {
                         Log.d(TAG, "another user message");
-                        curBubbleMessage.setmMessageType(MessageType.OTHER_CHAT_MESSAGE);
+                        if (curBubbleMessage.getmMapModel()!=null) {
+                            curBubbleMessage.setmMessageType(MessageType.OTHER_MAP_MESSAGE);
+                            mChatAdapter.setSupportFragmentManager(getSupportFragmentManager());
+                        }
+                        else
+                            curBubbleMessage.setmMessageType(MessageType.OTHER_CHAT_MESSAGE);
                     } else {
                         Log.d(TAG, "own user message");
-                        if (curBubbleMessage.getmMapModel()!=null)
+                        if (curBubbleMessage.getmMapModel()!=null) {
                             curBubbleMessage.setmMessageType(MessageType.USER_MAP_MESSAGE);
+                            mChatAdapter.setSupportFragmentManager(getSupportFragmentManager());
+                        }
                         else
                             curBubbleMessage.setmMessageType(MessageType.USER_CHAT_MESSAGE);
                     }
@@ -406,6 +397,7 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
                             mRecycleView.smoothScrollToPosition(mChatBubbles.size() - 1);
                         }
                     }, 1);
+
                 }
 
                 @Override
@@ -434,20 +426,6 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
             mChildEventListener = null;
         }
 
-    }
-
-    private void alertGotOut() {
-        new AlertDialog.Builder(this)
-                .setTitle("Really Exit?")
-                .setMessage("Are you sure you want to leave the chat?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        MessagingActivity.super.onBackPressed();
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    }
-                }).create().show();
     }
 
     public void hideKeyboard(View view) {
@@ -535,59 +513,5 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
     }
 
 }
-
-/*
-@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == PLACE_PICKER_REQUEST){
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(this, data);
-                if (place!=null){
-                    LatLng latLng = place.getLatLng();
-                    MapModel mapModel = new MapModel(latLng.latitude+"",latLng.longitude+"");
-                    ChatModel chatModel = new ChatModel(userModel,Calendar.getInstance().getTime().getTime()+"",mapModel);
-                    mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(chatModel);
-                }else{
-                    //PLACE IS NULL
-                }
-            }
-    }
-
-     @Override
-    public void clickImageMapChat(View view, int position,String latitude,String longitude) {
-        String uri = String.format("geo:%s,%s?z=17&q=%s,%s", latitude,longitude,latitude,longitude);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        startActivity(intent);
-    }
-
-      private void locationPlacesIntent(){
-        try {
-            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
-        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void lerMessagensFirebase(){
-        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        final ChatFirebaseAdapter firebaseAdapter = new ChatFirebaseAdapter(mFirebaseDatabaseReference.child(CHAT_REFERENCE),userModel.getName(),this);
-        firebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-                int friendlyMessageCount = firebaseAdapter.getItemCount();
-                int lastVisiblePosition = mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
-                if (lastVisiblePosition == -1 ||
-                        (positionStart >= (friendlyMessageCount - 1) &&
-                                lastVisiblePosition == (positionStart - 1))) {
-                    rvListMessage.scrollToPosition(positionStart);
-                }
-            }
-        });
-        rvListMessage.setLayoutManager(mLinearLayoutManager);
-        rvListMessage.setAdapter(firebaseAdapter);
-    }
- */
 
 

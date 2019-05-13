@@ -2,12 +2,16 @@ package com.example.hpur.spr.Logic;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.hpur.spr.R;
+import com.google.android.gms.maps.SupportMapFragment;
+
 import java.util.List;
 
 //In charge to providing between the items and the underlying data
@@ -23,6 +27,7 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleHolder> {
     private Context mContext;
     private List<ChatBubble> mChatBubbles;
     private int mItemResource;
+    private FragmentManager mFragment;
 
     public ChatBubbleAdapter(Context context, int resource, List<ChatBubble> chatBubbles) {
         this.mContext = context;
@@ -50,9 +55,10 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleHolder> {
             default:
                 Log.d(TAG, "view type is not expected.. error at getItemViewType() ");
         }
+
         View view = LayoutInflater.from(parent.getContext()).inflate(mItemResource, parent, false);
 
-        return new ChatBubbleHolder(this.mContext, view, viewType);
+        return new ChatBubbleHolder(getSupportedFragment() ,this.mContext, view, viewType);
     }
 
     //onBindViewHolder purpose:
@@ -73,6 +79,14 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleHolder> {
     @Override
     public int getItemViewType(int position) {
         return this.mChatBubbles.get(position).getmMessageType().ordinal();
+    }
+
+    public void setSupportFragmentManager(FragmentManager fragment) {
+        this.mFragment = fragment;
+    }
+
+    public FragmentManager getSupportedFragment() {
+        return this.mFragment;
     }
 
 

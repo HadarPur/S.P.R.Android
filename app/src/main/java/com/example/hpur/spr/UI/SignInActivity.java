@@ -318,23 +318,34 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mPasswordResetBtn.setClickable(true);
     }
 
-    private void showProgressDialog(String msg) {
+    private void showProgressDialog(final String msg) {
         this.mUtils.hideKeyboard(this);
 
-        this.mLoadingViewText.setText(msg);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mLoadingViewText.setText(msg);
 
-        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
-        this.mLoadingView.startAnimation(aniFade);
-        this.mLoadingView.setVisibility(View.VISIBLE);
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+                mLoadingView.startAnimation(aniFade);
+                mLoadingView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void hideProgressDialog() {
 
-        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
-        this.mLoadingView.startAnimation(aniFade);
-        this.mLoadingView.setVisibility(View.INVISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
+                mLoadingView.startAnimation(aniFade);
+                mLoadingView.setVisibility(View.INVISIBLE);
 
-        this.mLoadingViewText.setText("");
+                mLoadingViewText.setText("");
+            }
+        });
+
 
     }
 

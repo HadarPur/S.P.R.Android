@@ -61,7 +61,7 @@ public class CalcDistance implements CallableDistArr {
         mMarkerOptionsShelterLocation.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
         mMap.addMarker(mMarkerOptionsShelterLocation);
         //move map camera
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 9), 5000, null);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11), 5000, null);
         Log.d(TAG,"map----done");
     }
 
