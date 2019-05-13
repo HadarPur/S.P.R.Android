@@ -2,7 +2,9 @@ package com.example.hpur.spr.UI;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -28,6 +30,7 @@ import com.example.hpur.spr.Logic.ChatBubbleAdapter;
 import com.example.hpur.spr.Logic.GPSTracker;
 import com.example.hpur.spr.Logic.MapModel;
 import com.example.hpur.spr.Logic.MessageType;
+import com.example.hpur.spr.Logic.Queries.OnMapClickedCallback;
 import com.example.hpur.spr.R;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -48,7 +51,7 @@ import com.opentok.android.Stream;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Subscriber;
 
-public class MessagingActivity extends AppCompatActivity implements Session.SessionListener, PublisherKit.PublisherListener {
+public class MessagingActivity extends AppCompatActivity implements Session.SessionListener, PublisherKit.PublisherListener, OnMapClickedCallback {
 
     private final String TAG = "MessagingActivity:";
     private final String AUDIO = "Audio";
@@ -111,12 +114,11 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
         findViews();
         setupOnClick();
 
-        this.mChatAdapter = new ChatBubbleAdapter(getApplicationContext(), R.layout.right_chat_bubble, mChatBubbles);
+        this.mChatAdapter = new ChatBubbleAdapter(getApplicationContext(), R.layout.right_chat_bubble, mChatBubbles, this);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         //Bind the RecycleView with the current application layout
         this.mRecycleView.setLayoutManager(layoutManager);
         this.mRecycleView.setAdapter(mChatAdapter);
-        this.mRecycleView.setItemAnimator(null);
 
         if (Build.VERSION.SDK_INT >= 11) {
             mRecycleView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -165,7 +167,6 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
             mSession = new Session.Builder(this, API_KEY, SESSION_ID).build();
             mSession.setSessionListener(this);
             mSession.connect(TOKEN);
-
 
         } else {
             EasyPermissions.requestPermissions(this, "This app needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);
@@ -369,7 +370,7 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
                             curBubbleMessage.setmMessageType(MessageType.OTHER_CHAT_MESSAGE);
                     } else {
                         Log.d(TAG, "own user message");
-                        if (curBubbleMessage.getmMapModel()!=null) {
+                        if (curBubbleMessage.getmMapModel() != null) {
                             curBubbleMessage.setmMessageType(MessageType.USER_MAP_MESSAGE);
                             mChatAdapter.setSupportFragmentManager(getSupportFragmentManager());
                         }
@@ -433,6 +434,14 @@ public class MessagingActivity extends AppCompatActivity implements Session.Sess
         this.mPhone.setClickable(false);
         this.mVideo.setClickable(false);
         this.mSendBtn.setClickable(false);
+    }
+
+    @Override
+    public void onMapBubbleClicked(String lat, String lng) {
+        Uri gmmIntentUri = Uri.parse("google.navigation:q="+lat+","+lng);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
     }
 
     // ***************************************************************** //

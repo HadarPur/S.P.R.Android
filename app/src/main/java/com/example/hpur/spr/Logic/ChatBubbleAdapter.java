@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.hpur.spr.Logic.Queries.OnMapClickedCallback;
 import com.example.hpur.spr.R;
 import com.google.android.gms.maps.SupportMapFragment;
 
@@ -28,11 +30,13 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleHolder> {
     private List<ChatBubble> mChatBubbles;
     private int mItemResource;
     private FragmentManager mFragment;
+    private OnMapClickedCallback mOnMapClickedCallback;
 
-    public ChatBubbleAdapter(Context context, int resource, List<ChatBubble> chatBubbles) {
+    public ChatBubbleAdapter(Context context, int resource, List<ChatBubble> chatBubbles, OnMapClickedCallback onMapClickedCallback) {
         this.mContext = context;
         this.mChatBubbles = chatBubbles;
         this.mItemResource = resource;
+        this.mOnMapClickedCallback = onMapClickedCallback;
     }
 
     @NonNull
@@ -68,7 +72,7 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleHolder> {
     public void onBindViewHolder(@NonNull ChatBubbleHolder chatBubbleHolder, int position) {
         Log.d(TAG,"onBindViewHolder");
         ChatBubble chatBubble = this.mChatBubbles.get(position);
-        chatBubbleHolder.bindChatBubble(chatBubble);
+        chatBubbleHolder.bindChatBubble(chatBubble, mOnMapClickedCallback);
     }
 
     @Override
