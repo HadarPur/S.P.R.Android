@@ -23,7 +23,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_api" />
+            android:value="AIzaSyDQkp1Sh07b3cEKV2ZBdwog8mIUx8CaD2Q" />
 
         <activity
             android:name=".UI.MainActivity"
@@ -36,7 +36,6 @@
         </activity>
         <activity
             android:name=".UI.MessagingActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
