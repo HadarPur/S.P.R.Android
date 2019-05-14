@@ -33,7 +33,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private final int MIN_PASS_LEN = 6;
     private final int RESET=0, SIGN=1;
 
-
     private String mEmail;
     private String mPass;
     private boolean mForgetPassword;
