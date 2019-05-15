@@ -62,7 +62,7 @@ public class UtilitiesFunc {
         //convert the decoded bitmap to stream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
 
         FileOutputStream fileOutputStream = new FileOutputStream(compressed);
         fileOutputStream.write(byteArrayOutputStream.toByteArray());
@@ -92,8 +92,7 @@ public class UtilitiesFunc {
         o.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(c.getContentResolver().openInputStream(uri), null, o);
 
-        int width_tmp = o.outWidth
-                , height_tmp = o.outHeight;
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
 
         while(true) {
