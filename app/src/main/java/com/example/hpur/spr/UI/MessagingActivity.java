@@ -1,44 +1,61 @@
 package com.example.hpur.spr.UI;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import com.example.hpur.spr.BuildConfig;
 import com.example.hpur.spr.Logic.ChatBubble;
 import com.example.hpur.spr.Logic.ChatBubbleAdapter;
 import com.example.hpur.spr.Logic.GPSTracker;
+import com.example.hpur.spr.Logic.ImageModel;
 import com.example.hpur.spr.Logic.MapModel;
 import com.example.hpur.spr.Logic.MessageType;
 import com.example.hpur.spr.Logic.Queries.OnMapClickedCallback;
 import com.example.hpur.spr.R;
+import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import android.widget.ImageButton;
 
 public class MessagingActivity extends AppCompatActivity implements OnMapClickedCallback {
+
+    private static final int IMAGE_GALLERY_REQUEST = 1;
+    private static final int IMAGE_CAMERA_REQUEST = 2;
 
     private final String TAG = "MessagingActivity:";
 
@@ -62,7 +79,22 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
     private ImageButton mBack;
 
     private FloatingActionButton mSendLocation;
+    private FloatingActionButton mSendImage;
+    private FloatingActionButton mSendImageFromCam;
+
     private FloatingActionMenu mMenu;
+
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+
+    //File
+    private File filePathImageCamera;
+
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            android.Manifest.permission.READ_EXTERNAL_STORAGE,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,24 +188,27 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
         this.mMenu.setClosedOnTouchOutside(true);
 
         this.mSendLocation = findViewById(R.id.location_fab);
+        this.mSendImage = findViewById(R.id.gallery_fab);
+        this.mSendImageFromCam = findViewById(R.id.cam_fab);
 
         this.mBack.setVisibility(View.VISIBLE);
 
         this.mLoadingBack = findViewById(R.id.load);
         this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
 
-        this.mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    hideKeyboard(v);
-                }
-            }
-        });
     }
 
     // setup all button events when they clicked
     private void setupOnClick() {
+        this.mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    UtilitiesFunc.hideKeyboard(MessagingActivity.this);
+                }
+            }
+        });
+
         this.mPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -222,6 +257,69 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
                 locationPlacesIntent();
             }
         });
+
+        this.mSendImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMenu.close(true);
+                galleryIntent();
+            }
+        });
+
+        this.mSendImageFromCam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMenu.close(true);
+                verifyStoragePermissions();
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://sprfinalproject.appspot.com").child("SPRApp/PhotoMessages");
+
+        if (requestCode == IMAGE_GALLERY_REQUEST && resultCode == RESULT_OK) {
+            Uri imageUri = data.getData();
+            if (imageUri != null){
+                sendFileFirebase(storageRef,imageUri);
+            } else{
+                //URI IS NULL
+            }
+        } else if (requestCode == IMAGE_CAMERA_REQUEST && resultCode == RESULT_OK) {
+            if (filePathImageCamera != null && filePathImageCamera.exists()) {
+                try {
+                    StorageReference imageCameraRef = storageRef.child(filePathImageCamera.getName() + "_camera");
+                    sendFileFirebase(imageCameraRef, UtilitiesFunc.getCompressed(this, filePathImageCamera.getPath()));
+                }
+                catch (Throwable t) {
+                    Log.e("ERROR", "Error compressing file." + t.toString ());
+                    t.printStackTrace ();
+                }
+
+            } else {
+                //IS NULL
+            }
+        }
+    }
+
+    private void galleryIntent() {
+        Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        startActivityForResult(Intent.createChooser(galleryIntent, "Select Image"), IMAGE_GALLERY_REQUEST);
+    }
+
+    private void photoCameraIntent() {
+        String nomeFoto = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
+        filePathImageCamera = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), nomeFoto+"camera.jpg");
+        Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Uri photoURI = FileProvider.getUriForFile(MessagingActivity.this, BuildConfig.APPLICATION_ID + ".provider", filePathImageCamera);
+        it.putExtra(MediaStore.EXTRA_OUTPUT,photoURI);
+        startActivityForResult(it, IMAGE_CAMERA_REQUEST);
     }
 
     private void locationPlacesIntent() {
@@ -251,20 +349,24 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
                     //chat bubble layout decision depends on the source of the message.
                     if (!(curBubbleMessage.getmUserName().equals(mUserName))) {
                         Log.d(TAG, "another user message");
-                        if (curBubbleMessage.getmMapModel()!=null) {
+
+                        if (curBubbleMessage.getmMapModel() != null)
                             curBubbleMessage.setmMessageType(MessageType.OTHER_MAP_MESSAGE);
-                            mChatAdapter.setSupportFragmentManager(getSupportFragmentManager());
-                        }
+                        else if (curBubbleMessage.getmImageModel() != null)
+                            curBubbleMessage.setmMessageType(MessageType.OTHER_IMAGE_MESSAGE);
                         else
                             curBubbleMessage.setmMessageType(MessageType.OTHER_CHAT_MESSAGE);
+
                     } else {
+
                         Log.d(TAG, "own user message");
-                        if (curBubbleMessage.getmMapModel() != null) {
+                        if (curBubbleMessage.getmMapModel() != null)
                             curBubbleMessage.setmMessageType(MessageType.USER_MAP_MESSAGE);
-                            mChatAdapter.setSupportFragmentManager(getSupportFragmentManager());
-                        }
+                        else if (curBubbleMessage.getmImageModel() != null)
+                            curBubbleMessage.setmMessageType(MessageType.USER_IMAGE_MESSAGE);
                         else
                             curBubbleMessage.setmMessageType(MessageType.USER_CHAT_MESSAGE);
+
                     }
                     //Add a new chatBubble(Message) into the list.
                     mChatBubbles.add(curBubbleMessage);
@@ -305,24 +407,102 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
             this.mMessagesDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
-
     }
 
-    public void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    private void sendFileFirebase(StorageReference storageReference, final Uri file){
+        if (storageReference != null){
+            final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
+            final StorageReference imageGalleryRef = storageReference.child(name+"_gallery");
+
+            UploadTask uploadTask = imageGalleryRef.putFile(file);
+
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    // Continue with the task to get the download URL
+
+                    return imageGalleryRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUrl = task.getResult();
+                        ImageModel imageModel = new ImageModel("img", downloadUrl.toString(), name, "");
+                        ChatBubble chatBubble = new ChatBubble(imageModel, mUserName, MessageType.USER_IMAGE_MESSAGE);
+                        mMessagesDatabaseReference.push().setValue(chatBubble);
+                    } else {
+                        Log.d(TAG,"Handle failures");
+                    }
+                }
+            });
+        }
+        else{
+            Log.d(TAG,"storageReference is null");
+        }
+    }
+    private void sendFileFirebase(final StorageReference storageReference, final File file){
+        if (storageReference != null){
+            Uri photoURI = FileProvider.getUriForFile(MessagingActivity.this, BuildConfig.APPLICATION_ID + ".provider", file);
+            UploadTask uploadTask = storageReference.putFile(photoURI);
+
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    // Continue with the task to get the download URL
+                    return storageReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUrl = task.getResult();
+                        ImageModel imageModel = new ImageModel("img", downloadUrl.toString(), file.getName(),file.length()+"");
+                        ChatBubble chatBubble = new ChatBubble(imageModel, mUserName, MessageType.USER_IMAGE_MESSAGE);
+                        mMessagesDatabaseReference.push().setValue(chatBubble);
+                    } else {
+                        Log.d(TAG,"Handle failures");
+                    }
+                }
+            });
+        }
+        else{
+            Log.d(TAG,"storageReference is null");
+        }
     }
 
-    private void enableButtons() {
-        this.mPhone.setClickable(true);
-        this.mVideo.setClickable(true);
-        this.mSendBtn.setClickable(true);
+    public void verifyStoragePermissions() {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(MessagingActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(MessagingActivity.this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+        }else{
+            // we already have permission, lets go ahead and call camera intent
+            photoCameraIntent();
+        }
     }
 
-    private void disableButtons() {
-        this.mPhone.setClickable(false);
-        this.mVideo.setClickable(false);
-        this.mSendBtn.setClickable(false);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode){
+            case REQUEST_EXTERNAL_STORAGE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                    photoCameraIntent();
+                }
+                break;
+        }
     }
 
     @Override
@@ -331,6 +511,13 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
         startActivity(mapIntent);
+    }
+
+    @Override
+    public void onImageBubbleClicked(String urlPhotoClick) {
+        Intent intent = new Intent(this,FullScreenImageActivity.class);
+        intent.putExtra("urlPhotoClick",urlPhotoClick);
+        startActivity(intent);
     }
 }
 
