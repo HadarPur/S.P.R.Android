@@ -57,7 +57,6 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
 
     private static final int IMAGE_GALLERY_REQUEST = 1;
     private static final int IMAGE_CAMERA_REQUEST = 2;
-    // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
 
     private final String TAG = "MessagingActivity:";
