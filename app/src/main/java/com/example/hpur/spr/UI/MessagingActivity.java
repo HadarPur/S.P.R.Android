@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,8 +30,10 @@ import com.example.hpur.spr.Logic.ImageModel;
 import com.example.hpur.spr.Logic.MapModel;
 import com.example.hpur.spr.Logic.MessageType;
 import com.example.hpur.spr.Logic.Queries.OnMapClickedCallback;
+import com.example.hpur.spr.Logic.Queries.PermissionsCallback;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
+import com.example.hpur.spr.UI.Utils.UtilitiesPermissions;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.Continuation;
@@ -52,10 +53,12 @@ import java.util.Date;
 import java.util.List;
 import android.widget.ImageButton;
 
-public class MessagingActivity extends AppCompatActivity implements OnMapClickedCallback {
+public class MessagingActivity extends AppCompatActivity implements OnMapClickedCallback, PermissionsCallback {
 
     private static final int IMAGE_GALLERY_REQUEST = 1;
     private static final int IMAGE_CAMERA_REQUEST = 2;
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
 
     private final String TAG = "MessagingActivity:";
 
@@ -89,13 +92,6 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
     //File
     private File filePathImageCamera;
 
-    // Storage Permissions
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            android.Manifest.permission.READ_EXTERNAL_STORAGE,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,15 +114,12 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
         if (Build.VERSION.SDK_INT >= 11) {
             mRecycleView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 @Override
-                public void onLayoutChange(View v,
-                                           int left, int top, int right, int bottom,
-                                           int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                     if (bottom < oldBottom) {
                         mRecycleView.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                mRecycleView.smoothScrollToPosition(
-                                        mRecycleView.getAdapter().getItemCount());
+                                mRecycleView.smoothScrollToPosition(mRecycleView.getAdapter().getItemCount());
                             }
                         }, 1);
                     }
@@ -139,21 +132,6 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
     protected void onStart() {
         super.onStart();
         attachDatabaseReadListener();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
     }
 
     @Override
@@ -222,7 +200,6 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "mVideo clicked");
-
                 startActivity(new Intent(MessagingActivity.this, VideoActivity.class));
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
@@ -270,9 +247,22 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
             @Override
             public void onClick(View v) {
                 mMenu.close(true);
-                verifyStoragePermissions();
+                UtilitiesPermissions.verifyStoragePermissions(MessagingActivity.this,MessagingActivity.this);
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case REQUEST_EXTERNAL_STORAGE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                    photoCameraIntent();
+                }
+                break;
+        }
     }
 
     @Override
@@ -283,27 +273,29 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
 
         if (requestCode == IMAGE_GALLERY_REQUEST && resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
-            if (imageUri != null){
-                sendFileFirebase(storageRef,imageUri);
-            } else{
-                //URI IS NULL
-            }
+            if (imageUri != null)
+                sendFileFirebase(storageRef, imageUri);
+            else
+                Log.e(TAG, "imageUri == null");
         } else if (requestCode == IMAGE_CAMERA_REQUEST && resultCode == RESULT_OK) {
             if (filePathImageCamera != null && filePathImageCamera.exists()) {
                 try {
                     StorageReference imageCameraRef = storageRef.child(filePathImageCamera.getName() + "_camera");
                     sendFileFirebase(imageCameraRef, UtilitiesFunc.getCompressed(this, filePathImageCamera.getPath()));
-                }
-                catch (Throwable t) {
-                    Log.e("ERROR", "Error compressing file." + t.toString ());
-                    t.printStackTrace ();
+                } catch (Throwable t) {
+                    Log.e(TAG, "Error compressing file." + t.toString());
+                    t.printStackTrace();
                 }
 
             } else {
-                //IS NULL
+                Log.e(TAG, "filePathImageCamera == null");
             }
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////
+    /////////////////////////// Intent Func ////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
 
     private void galleryIntent() {
         Intent galleryIntent = new Intent();
@@ -336,6 +328,10 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
             mEditText.setText("");
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////
+    /////////////////////////// Database Func //////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
 
     private void attachDatabaseReadListener() {
         if(mChildEventListener == null)
@@ -409,6 +405,10 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////
+    /////////////////////////// Database file Func /////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
     private void sendFileFirebase(StorageReference storageReference, final Uri file){
         if (storageReference != null){
             final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
@@ -478,32 +478,9 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
         }
     }
 
-    public void verifyStoragePermissions() {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(MessagingActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(MessagingActivity.this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
-        }else{
-            // we already have permission, lets go ahead and call camera intent
-            photoCameraIntent();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        switch (requestCode){
-            case REQUEST_EXTERNAL_STORAGE:
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                    photoCameraIntent();
-                }
-                break;
-        }
-    }
+    ////////////////////////////////////////////////////////////////////////
+    /////////////////////////// Callback Func //////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
 
     @Override
     public void onMapBubbleClicked(String lat, String lng) {
@@ -518,6 +495,11 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
         Intent intent = new Intent(this,FullScreenImageActivity.class);
         intent.putExtra("urlPhotoClick",urlPhotoClick);
         startActivity(intent);
+    }
+
+    @Override
+    public void onStoragePermissionGuarantee() {
+        photoCameraIntent();
     }
 }
 
