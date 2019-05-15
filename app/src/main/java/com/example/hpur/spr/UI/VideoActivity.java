@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Utils.OpenTokConfig;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
@@ -35,6 +36,9 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
     private FrameLayout mPublisherViewContainer;
     private FrameLayout mSubscriberViewContainer;
 
+    private SpinKitView mSpinKitViewUser;
+    private SpinKitView mSpinKitViewAgent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +58,14 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
         this.mBack = findViewById(R.id.backbtn);
         this.mEndCall = findViewById(R.id.endcallvideo);
         this.mBack.setVisibility(View.VISIBLE);
+
+        this.mSpinKitViewUser = findViewById(R.id.spin_kit2);
+        this.mSpinKitViewAgent = findViewById(R.id.spin_kit);
+
+
+        this.mSpinKitViewUser.setVisibility(View.VISIBLE);
+        this.mSpinKitViewAgent.setVisibility(View.VISIBLE);
+
     }
 
     public void setOnClick() {
@@ -63,7 +75,6 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
                 onBackPressed();
             }
         });
-
         this.mEndCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +89,6 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
@@ -113,7 +123,10 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
         mPublisher.setPublisherListener(this);
 
         mPublisherViewContainer.addView(mPublisher.getView());
+        mSpinKitViewUser.setVisibility(View.GONE);
+
         mSession.publish(mPublisher);
+
     }
 
     @Override
@@ -131,6 +144,7 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
             mSubscriber = new Subscriber.Builder(this, stream).build();
             mSession.subscribe(mSubscriber);
             mSubscriberViewContainer.addView(mSubscriber.getView());
+            this.mSpinKitViewAgent.setVisibility(View.GONE);
         }
     }
 
