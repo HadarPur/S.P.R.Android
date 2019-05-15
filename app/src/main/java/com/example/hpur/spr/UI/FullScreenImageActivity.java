@@ -27,6 +27,7 @@ public class FullScreenImageActivity extends AppCompatActivity {
         setValues(angle);
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();

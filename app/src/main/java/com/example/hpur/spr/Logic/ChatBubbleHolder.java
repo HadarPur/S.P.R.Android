@@ -81,16 +81,17 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
                 e.printStackTrace();
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);
+                    mMapMessage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            callback.onMapBubbleClicked(mChatBubble.getmMapModel().getLatitude(), mChatBubble.getmMapModel().getLongitude());
+                        }
+                    });
                 }
             }
         });
 
-        this.mMapMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callback.onMapBubbleClicked(mChatBubble.getmMapModel().getLatitude(), mChatBubble.getmMapModel().getLongitude());
-            }
-        });
+
     }
 
     private void setImageMessage(final OnMapClickedCallback callback) {
@@ -102,6 +103,12 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
                 Log.d("bindChatBubble", "onSuccess");
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);
+                    mImageMessage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            callback.onImageBubbleClicked(url);
+                        }
+                    });
                 }
             }
 
@@ -114,13 +121,5 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
-
-        this.mImageMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callback.onImageBubbleClicked(url);
-            }
-        });
-
     }
 }

@@ -1,7 +1,9 @@
 package com.example.hpur.spr.UI;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -10,6 +12,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -48,6 +51,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +61,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
 
     private static final int IMAGE_GALLERY_REQUEST = 1;
     private static final int IMAGE_CAMERA_REQUEST = 2;
+    // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
 
     private final String TAG = "MessagingActivity:";
@@ -272,10 +277,17 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
 
         if (requestCode == IMAGE_GALLERY_REQUEST && resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
-            if (imageUri != null)
-                sendFileFirebase(storageRef, imageUri);
-            else
-                Log.e(TAG, "imageUri == null");
+            try {
+                if (imageUri != null) {
+                    Bitmap bmp = UtilitiesFunc.decodeUri(this, imageUri, 300);
+                    sendFileFirebase(storageRef, UtilitiesFunc.getImageUri(this, bmp));
+                }
+                else
+                    Log.e(TAG, "imageUri == null");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
         } else if (requestCode == IMAGE_CAMERA_REQUEST && resultCode == RESULT_OK) {
             if (filePathImageCamera != null && filePathImageCamera.exists()) {
                 try {
@@ -408,12 +420,12 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
     /////////////////////////// Database file Func /////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
-    private void sendFileFirebase(StorageReference storageReference, final Uri file){
+    private void sendFileFirebase(StorageReference storageReference, final Uri uri){
         if (storageReference != null){
             final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
             final StorageReference imageGalleryRef = storageReference.child(name+"_gallery");
 
-            UploadTask uploadTask = imageGalleryRef.putFile(file);
+            UploadTask uploadTask = imageGalleryRef.putFile(uri);
 
             Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -447,6 +459,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
     private void sendFileFirebase(final StorageReference storageReference, final File file){
         if (storageReference != null){
             Uri photoURI = FileProvider.getUriForFile(MessagingActivity.this, BuildConfig.APPLICATION_ID + ".provider", file);
+
             UploadTask uploadTask = storageReference.putFile(photoURI);
 
             Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {

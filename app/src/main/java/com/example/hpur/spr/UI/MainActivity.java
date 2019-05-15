@@ -81,24 +81,17 @@ public class MainActivity extends AppCompatActivity implements DateCallback, Nav
         initNavigationDrawer();
         setupOnClick();
 
-        mAlertTittle.setText("Pay attention");
-        mAlertText.setText("You must permit location and network connection for this app");
-        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
-        mAlertView.startAnimation(aniFade);
-        mAlertView.setVisibility(View.VISIBLE);
-        this.mIsShow = true;
-        disableButtons();
-
         this.mGpsTracker = new GPSTracker(this, mFirstAsk);
+
         if(!this.mGpsTracker.getGPSEnable()){
             showSettingsAlert();
         }
+
         if(!isNetworkAvailable(this)) {
             showConnectionInternetFailed();
         }
         else {
             singletonShelters();
-//            mModifiedDate.ReadData(this);
         }
     }
 
@@ -119,6 +112,14 @@ public class MainActivity extends AppCompatActivity implements DateCallback, Nav
         this.mAlertTittle = findViewById(R.id.alerttittle);
         this.mAlertText = findViewById(R.id.msg);
         this.mAlertOkBtn = findViewById(R.id.alert_def_btn);
+
+        this.mAlertTittle.setText("Pay attention");
+        this.mAlertText.setText("You must permit location and network connection for this app");
+        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+        this.mAlertView.startAnimation(aniFade);
+        this.mAlertView.setVisibility(View.VISIBLE);
+        this.mIsShow = true;
+        disableButtons();
 
         this.mLoadingBack = findViewById(R.id.load);
         this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
