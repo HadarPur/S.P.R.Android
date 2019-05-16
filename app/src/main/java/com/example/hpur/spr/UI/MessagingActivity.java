@@ -30,7 +30,7 @@ import com.example.hpur.spr.Logic.GPSTracker;
 import com.example.hpur.spr.Logic.ImageModel;
 import com.example.hpur.spr.Logic.MapModel;
 import com.example.hpur.spr.Logic.MessageType;
-import com.example.hpur.spr.Logic.Queries.OnMapClickedCallback;
+import com.example.hpur.spr.Logic.Queries.OnMessageModelClickedCallback;
 import com.example.hpur.spr.Logic.Queries.PermissionsCallback;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
@@ -55,7 +55,7 @@ import java.util.Date;
 import java.util.List;
 import android.widget.ImageButton;
 
-public class MessagingActivity extends AppCompatActivity implements OnMapClickedCallback, PermissionsCallback {
+public class MessagingActivity extends AppCompatActivity implements OnMessageModelClickedCallback, PermissionsCallback {
 
     private static final int IMAGE_GALLERY_REQUEST = 1;
     private static final int IMAGE_CAMERA_REQUEST = 2;

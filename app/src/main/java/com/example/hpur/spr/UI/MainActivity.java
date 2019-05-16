@@ -27,7 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.example.hpur.spr.Logic.GPSTracker;
-import com.example.hpur.spr.Logic.Queries.DateCallback;
 import com.example.hpur.spr.Logic.Shelter;
 import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
@@ -39,10 +38,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements DateCallback, NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean mFirstAsk = true, mIsLoading, mIsShow;
-    private String mDate;
 
     private ShelterInstance mShelterInfo;
 
@@ -60,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements DateCallback, Nav
 
     private GPSTracker mGpsTracker;
     private SharedPreferencesStorage mSharedPreferences;
-    private FireBaseModifiedDate mModifiedDate;
 
     private ActionBarDrawerToggle mToggle;
     private DrawerLayout mDrawerLayout;
@@ -71,11 +68,6 @@ public class MainActivity extends AppCompatActivity implements DateCallback, Nav
         setContentView(R.layout.activity_main);
 
         this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
-        this.mModifiedDate = new FireBaseModifiedDate();
-
-        this.mDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-
-        Log.d(TAG, "Date: "+ mDate);
 
         findViews();
         initNavigationDrawer();
@@ -321,27 +313,6 @@ public class MainActivity extends AppCompatActivity implements DateCallback, Nav
         this.mLoadingBack.setVisibility(View.GONE);
         this.mIsLoading =false;
     }
-
-    @Override
-    public void getModifiedDate(String date) {
-
-//        try {
-//            String lastDate = mSharedPreferences.readData("IsModified");
-//            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-//            if (lastDate.equals("") || sdf.parse(lastDate).getTime() < sdf.parse(date).getTime()) {
-//                mSharedPreferences.saveData(date, "IsModified");
-//                singletonShelters();
-//            }
-//            else {
-//                Toast.makeText(MainActivity.this, "calling from sp ", Toast.LENGTH_SHORT).show();
-//            }
-//
-//        }
-//        catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-    }
-
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {

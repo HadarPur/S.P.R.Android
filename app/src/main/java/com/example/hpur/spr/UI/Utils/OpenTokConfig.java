@@ -36,9 +36,9 @@ public class OpenTokConfig {
     public void tokboxHttpJsonRequest(final TokBoxServerSDKCallback callback) {
 
         // TODO: need to change the ip address to wifi ip address!!!!
-        String JsonURL = "http://172.40.0.210:5000";
+        String JsonDevice = "http://172.40.0.210:5000";
 
-        JsonObjectRequest obreq = new JsonObjectRequest(Request.Method.GET, JsonURL,
+        JsonObjectRequest obreq = new JsonObjectRequest(Request.Method.GET, JsonDevice,
                 new Response.Listener<JSONObject>() {
 
                     @Override

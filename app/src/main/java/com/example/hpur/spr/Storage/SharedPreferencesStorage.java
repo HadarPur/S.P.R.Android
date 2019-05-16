@@ -12,7 +12,7 @@ public class SharedPreferencesStorage {
     private final String FILE = "SPR";
     private final String SHELTERS_FILE = "Shelters";
 
-    private final Context mContext;
+    private Context mContext;
 
     // c'tor
     public SharedPreferencesStorage(Context context) {

@@ -2,13 +2,12 @@ package com.example.hpur.spr.Logic;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.example.hpur.spr.Logic.Queries.OnMapClickedCallback;
+import com.example.hpur.spr.Logic.Queries.OnMessageModelClickedCallback;
 import com.example.hpur.spr.R;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.squareup.picasso.Callback;
@@ -17,15 +16,17 @@ import com.squareup.picasso.Picasso;
 //In charge of handling item's content/user interaction (row)
 public class ChatBubbleHolder extends RecyclerView.ViewHolder {
 
-    private TextView mTxtMessage;
-    private ImageView mMapMessage;
-    private ImageView mImageMessage;
     private static final int USER_MESSAGE = 0;
     private static final int OTHER_MESSAGE = 1;
     private static final int USER_MAP = 2;
     private static final int OTHER_MAP = 3;
     private static final int USER_IMAGE = 4;
     private static final int OTHER_IMAGE = 5;
+
+    private TextView mTxtMessage;
+    private ImageView mMapMessage;
+    private ImageView mImageMessage;
+
     private Context mContext;
     private ChatBubble mChatBubble;
     private SpinKitView mProgressBar = null;
@@ -50,7 +51,7 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void bindChatBubble(ChatBubble chatBubble, final OnMapClickedCallback callback){
+    public void bindChatBubble(ChatBubble chatBubble, final OnMessageModelClickedCallback callback){
         this.mChatBubble = chatBubble;
         if (mChatBubble.getmMapModel() != null) {
             setMapMessage(callback);
@@ -62,7 +63,7 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
             this.mTxtMessage.setText(mChatBubble.getmTextMessage());
     }
 
-    private void setMapMessage(final OnMapClickedCallback callback) {
+    private void setMapMessage(final OnMessageModelClickedCallback callback) {
         mProgressBar.setVisibility(View.VISIBLE);
         final String latLong = mChatBubble.getmMapModel().getLongitude() +","+mChatBubble.getmMapModel().getLatitude();
         final String url = "https://static-maps.yandex.ru/1.x/?lang=en_US&ll="+latLong+"&size=400,200&z=7&l=map&pt="+latLong+",pm2rdl";
@@ -72,7 +73,14 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
                 Log.d("bindChatBubble", "onSuccess");
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);
+                    mMapMessage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            callback.onMapBubbleClicked(mChatBubble.getmMapModel().getLatitude(), mChatBubble.getmMapModel().getLongitude());
+                        }
+                    });
                 }
+
             }
 
             @Override
@@ -81,12 +89,6 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
                 e.printStackTrace();
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);
-                    mMapMessage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            callback.onMapBubbleClicked(mChatBubble.getmMapModel().getLatitude(), mChatBubble.getmMapModel().getLongitude());
-                        }
-                    });
                 }
             }
         });
@@ -94,7 +96,7 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
 
     }
 
-    private void setImageMessage(final OnMapClickedCallback callback) {
+    private void setImageMessage(final OnMessageModelClickedCallback callback) {
         mProgressBar.setVisibility(View.VISIBLE);
         final String url = mChatBubble.getmImageModel().getUrl_file();
         Picasso.get().load(url).into(mImageMessage, new Callback() {

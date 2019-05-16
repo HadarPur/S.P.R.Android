@@ -2,17 +2,14 @@ package com.example.hpur.spr.Logic;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.hpur.spr.Logic.Queries.OnMapClickedCallback;
+import com.example.hpur.spr.Logic.Queries.OnMessageModelClickedCallback;
 import com.example.hpur.spr.R;
-import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.List;
 
@@ -32,9 +29,9 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleHolder> {
     private Context mContext;
     private List<ChatBubble> mChatBubbles;
     private int mItemResource;
-    private OnMapClickedCallback mOnMapClickedCallback;
+    private OnMessageModelClickedCallback mOnMapClickedCallback;
 
-    public ChatBubbleAdapter(Context context, int resource, List<ChatBubble> chatBubbles, OnMapClickedCallback onMapClickedCallback) {
+    public ChatBubbleAdapter(Context context, int resource, List<ChatBubble> chatBubbles, OnMessageModelClickedCallback onMapClickedCallback) {
         this.mContext = context;
         this.mChatBubbles = chatBubbles;
         this.mItemResource = resource;
