@@ -221,7 +221,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                             mUsers.checkUser(SIGN, user.getEmail(), SignInActivity.this);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Log.e(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         hideProgressDialog();

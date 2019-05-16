@@ -22,7 +22,7 @@ public class DataParser {
         }
         catch (JSONException e) {
             e.getStackTrace();
-            Log.d("Places", "parse error");
+            Log.e("Places", "parse error");
             e.printStackTrace();
         }
         return getPlaces(jsonArray);
@@ -43,7 +43,7 @@ public class DataParser {
             }
             catch (JSONException e) {
                 e.getStackTrace();
-                Log.d("Places", "Error in Adding places");
+                Log.e("Places", "Error in Adding places");
                 e.printStackTrace();
             }
         }
@@ -80,7 +80,7 @@ public class DataParser {
         }
         catch (JSONException e) {
             e.getStackTrace();
-            Log.d("getPlace", "Error");
+            Log.e("getPlace", "Error");
             e.printStackTrace();
         }
         return googlePlaceMap;

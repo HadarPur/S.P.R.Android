@@ -31,7 +31,7 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
         }
         catch (Exception e) {
             e.getStackTrace();
-            Log.d("GooglePlacesReadTask", e.toString());
+            Log.e("GooglePlacesReadTask", e.toString());
         }
         return mGooglePlacesData;
     }

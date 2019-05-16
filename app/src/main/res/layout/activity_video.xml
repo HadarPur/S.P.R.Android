@@ -91,6 +91,14 @@
                     android:src="@drawable/ic_call_end"
                     android:textAllCaps="false" />
 
+            <include
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                layout="@layout/alert_view"
+                android:visibility="gone"
+                android:layout_height="270dp"
+                android:layout_width="350dp"/>
+
         </RelativeLayout>
 
 </LinearLayout>

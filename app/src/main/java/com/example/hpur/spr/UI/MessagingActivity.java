@@ -478,13 +478,13 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
                         ChatBubble chatBubble = new ChatBubble(imageModel, mUserName, MessageType.USER_IMAGE_MESSAGE);
                         mMessagesDatabaseReference.push().setValue(chatBubble);
                     } else {
-                        Log.d(TAG,"Handle failures");
+                        Log.e(TAG,"Handle failures");
                     }
                 }
             });
         }
         else{
-            Log.d(TAG,"storageReference is null");
+            Log.e(TAG,"storageReference is null");
         }
     }
 

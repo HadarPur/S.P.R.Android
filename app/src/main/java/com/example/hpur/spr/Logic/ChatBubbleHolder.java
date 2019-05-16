@@ -77,7 +77,7 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
 
             @Override
             public void onError(Exception e) {
-                Log.d("bindChatBubble", "onError: "+ e);
+                Log.e("bindChatBubble", "onError: "+ e);
                 e.printStackTrace();
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);
@@ -114,7 +114,7 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
 
             @Override
             public void onError(Exception e) {
-                Log.d("bindChatBubble", "onError: "+ e);
+                Log.e("bindChatBubble", "onError: "+ e);
                 e.printStackTrace();
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);

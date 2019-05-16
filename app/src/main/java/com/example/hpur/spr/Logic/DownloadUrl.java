@@ -43,7 +43,7 @@ public class DownloadUrl {
         }
         catch (Exception e) {
             e.getStackTrace();
-            Log.d("Exception", e.toString());
+            Log.e("Exception", e.toString());
         }
         finally {
             iStream.close();
