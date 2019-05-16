@@ -68,23 +68,6 @@ public class OpenTokConfig {
                 }
         );
 
-        obreq.setRetryPolicy(new RetryPolicy() {
-            @Override
-            public int getCurrentTimeout() {
-                return 50000;
-            }
-
-            @Override
-            public int getCurrentRetryCount() {
-                return 50000;
-            }
-
-            @Override
-            public void retry(VolleyError error) throws VolleyError {
-
-            }
-        });
-
         // Adds the JSON object request "obreq" to the request queue
         requestQueue.add(obreq);
     }

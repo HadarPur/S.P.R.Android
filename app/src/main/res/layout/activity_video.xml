@@ -95,7 +95,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 layout="@layout/alert_view"
-                android:visibility="gone"
+                android:visibility="invisible"
                 android:layout_height="270dp"
                 android:layout_width="350dp"/>
 

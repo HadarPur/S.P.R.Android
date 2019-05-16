@@ -121,12 +121,9 @@ public class MessagingActivity extends AppCompatActivity implements OnMapClicked
                         mRecycleView.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-<<<<<<< HEAD
                                 mRecycleView.smoothScrollToPosition(
                                         mRecycleView.getAdapter().getItemCount());
-=======
                                 mRecycleView.smoothScrollToPosition(mRecycleView.getAdapter().getItemCount());
->>>>>>> openTalkAPI
                             }
                         }, 1);
                     }
