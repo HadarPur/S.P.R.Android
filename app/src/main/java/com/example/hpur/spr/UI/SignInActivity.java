@@ -28,9 +28,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity implements CheckUserCallbacks {
     private static final String KEY = "connect", IS_FIRST_INSTALLATION = "false";
+    private static final String TAG = SignInActivity.class.getSimpleName();
+    
     private final int MIN_PASS_LEN = 6;
     private final int RESET=0, SIGN=1;
-    private static final String TAG = SignInActivity.class.getSimpleName();
 
     private String mEmail;
     private String mPass;
@@ -109,18 +110,21 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
     // setup all button events when they clicked
     private void setupOnClick() {
+
         this.mSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 userLogin();
             }
         });
+
         this.mSignUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 userSignUp();
             }
         });
+
         this.mPasswordResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,7 +221,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                             mUsers.checkUser(SIGN, user.getEmail(), SignInActivity.this);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Log.e(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         hideProgressDialog();
@@ -313,23 +317,34 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mPasswordResetBtn.setClickable(true);
     }
 
-    private void showProgressDialog(String msg) {
+    private void showProgressDialog(final String msg) {
         this.mUtils.hideKeyboard(this);
 
-        this.mLoadingViewText.setText(msg);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mLoadingViewText.setText(msg);
 
-        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
-        this.mLoadingView.startAnimation(aniFade);
-        this.mLoadingView.setVisibility(View.VISIBLE);
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+                mLoadingView.startAnimation(aniFade);
+                mLoadingView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void hideProgressDialog() {
 
-        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
-        this.mLoadingView.startAnimation(aniFade);
-        this.mLoadingView.setVisibility(View.INVISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
+                mLoadingView.startAnimation(aniFade);
+                mLoadingView.setVisibility(View.INVISIBLE);
 
-        this.mLoadingViewText.setText("");
+                mLoadingViewText.setText("");
+            }
+        });
+
 
     }
 
