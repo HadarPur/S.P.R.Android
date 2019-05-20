@@ -232,61 +232,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
 
     // sign up a user to the app
     private void userSignUp() {
-//        this.mEmail = this.mEmailEditText.getText().toString().trim();
-//        this.mPass = this.mPasswordEditText.getText().toString().trim();
-//
-//
-//        if (TextUtils.isEmpty(this.mEmail)) {
-//            Toast.makeText(this, "Please enter email", Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//
-//        if (TextUtils.isEmpty(this.mPass)) {
-//            Toast.makeText(this, "Please enter password", Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//
-//        if (this.mPass.length() <= MIN_PASS_LEN) {
-//            Toast.makeText(this, "Password need to be at least " + MIN_PASS_LEN + " characters", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        showProgressDialog("Signing up, please wait...");
-//        this.mFirebaseAuth.createUserWithEmailAndPassword(this.mEmail, this.mPass)
-//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        if (task.isSuccessful()) {
-//                            // Sign in success, update UI with the signed-in user's information
-//                            Log.d(TAG, "createUserWithEmail:success");
-//                            sendEmailVerification();
-//
-//                        } else {
-//                            // If sign in fails, display a message to the user.
-//                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-//                            Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-//                        }
-//                        hideProgressDialog();
-//                    }
-//                });
-
         startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-    }
-
-    // after user signed up, email verification send
-    private void sendEmailVerification () {
-        this.mCurrentUser = mFirebaseAuth.getCurrentUser();
-        this.mCurrentUser.sendEmailVerification();
-        String msg = "We've sent a confirmation email to: " + this.mEmail+"\nTo get started, check your email and click the verification link.\n";
-
-        mAlertTittle.setText("Email verification");
-        mAlertText.setText(msg);
-        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
-        mAlertView.startAnimation(aniFade);
-        mAlertView.setVisibility(View.VISIBLE);
-        disableMainButtons();
-
     }
 
     // checked if email was verified
@@ -344,8 +291,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                 mLoadingViewText.setText("");
             }
         });
-
-
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
