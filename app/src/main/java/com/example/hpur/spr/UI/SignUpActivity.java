@@ -1,5 +1,6 @@
 package com.example.hpur.spr.UI;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,10 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.example.hpur.spr.Logic.Types.GenderType;
+import com.example.hpur.spr.Logic.Types.SectorType;
+import com.example.hpur.spr.Logic.Types.SexType;
+import com.example.hpur.spr.Logic.UserModel;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.example.hpur.spr.UI.Views.ToggleButtonGroupTableLayout;
@@ -29,7 +34,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,7 +117,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         // details view
         this.mDetailsView = findViewById(R.id.details_view);
-        this.mDetailsView.setVisibility(View.GONE);
+        this.mDetailsView.setVisibility(View.VISIBLE);
 
         this.mEmailEditText = this.mDetailsView.findViewById(R.id.email);
         this.mPasswordEditText = this.mDetailsView.findViewById(R.id.password);
@@ -125,7 +129,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         // form view
         this.mFormView = findViewById(R.id.form_view);
-        this.mFormView.setVisibility(View.VISIBLE);
+        this.mFormView.setVisibility(View.INVISIBLE);
 
         this.mNickNameEditText = this.mFormView.findViewById(R.id.nickname);
         this.mSexRadioGroup = this.mFormView.findViewById(R.id.radio_sex);
@@ -183,7 +187,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(SignUpActivity.this, date, myCalendar
+                new DatePickerDialog(SignUpActivity.this, AlertDialog.THEME_HOLO_LIGHT, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -208,7 +212,6 @@ public class SignUpActivity extends AppCompatActivity {
         this.mEmail = this.mEmailEditText.getText().toString().trim();
         this.mPass = this.mPasswordEditText.getText().toString().trim();
 
-
         if (TextUtils.isEmpty(this.mEmail)) {
             Toast.makeText(this, "Please enter email", Toast.LENGTH_LONG).show();
             return;
@@ -227,6 +230,8 @@ public class SignUpActivity extends AppCompatActivity {
         UtilitiesFunc.hideKeyboard(this);
 
         this.mDetailsView.setVisibility(View.GONE);
+        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+        this.mFormView.startAnimation(aniFade);
         this.mFormView.setVisibility(View.VISIBLE);
     }
 
@@ -305,8 +310,9 @@ public class SignUpActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
+                            UserModel user = new UserModel(mEmail, mNickName, SexType.valueOf(mSex.toUpperCase()),mCity, SectorType.valueOf(mSector.toUpperCase()), mAge, GenderType.valueOf(mGender.toUpperCase()));
+                            user.saveLocalObj(SignUpActivity.this);
                             sendEmailVerification();
-
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());

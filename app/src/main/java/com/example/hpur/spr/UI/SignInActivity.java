@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.hpur.spr.Logic.Queries.CheckUserCallbacks;
+import com.example.hpur.spr.Logic.UserModel;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.Storage.FireBaseAuthenticationUsers;
 import com.example.hpur.spr.Storage.SharedPreferencesStorage;
@@ -42,18 +43,14 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private Button mPasswordResetBtn;
     private Button mGoBackBtn;
     private Button mResetBtn;
-    private Button mAlertOkBtn;
 
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
     private EditText mEmailReset;
 
-    private TextView mAlertTittle;
-    private TextView mAlertText;
     private TextView mLoadingViewText;
 
     private LinearLayout mResetView;
-    private LinearLayout mAlertView;
     private LinearLayout mLoadingView;
 
     private FirebaseAuth mFirebaseAuth;
@@ -68,6 +65,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         setContentView(R.layout.activity_sign_in);
 
         this.mFirebaseAuth = FirebaseAuth.getInstance();
+        this.mCurrentUser = mFirebaseAuth.getCurrentUser();
 
         this.mUsers = new FireBaseAuthenticationUsers();
 
@@ -97,10 +95,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mGoBackBtn = findViewById(R.id.close);
         this.mResetBtn = findViewById(R.id.resetbtn);
         this.mResetView = findViewById(R.id.resetview);
-        this.mAlertView = findViewById(R.id.alertview);
-        this.mAlertTittle = findViewById(R.id.alerttittle);
-        this.mAlertText = findViewById(R.id.msg);
-        this.mAlertOkBtn = findViewById(R.id.alert_def_btn);
         this.mLoadingView = findViewById(R.id.loadingview);
         this.mLoadingViewText = findViewById(R.id.progress_dialog_text);
 
@@ -153,16 +147,6 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                 resetPassword();
             }
         });
-
-        this.mAlertOkBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
-                mAlertView.startAnimation(aniFade);
-                mAlertView.setVisibility(View.INVISIBLE);
-                enableMainButtons();
-            }
-        });
     }
 
     @Override
@@ -187,7 +171,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         }
 
         showProgressDialog("Please wait...");
-        this.mUsers.checkUser(RESET, this.mEmail, SignInActivity.this);
+        this.mUsers.checkUser(this,RESET, this.mEmail, SignInActivity.this);
     }
 
     // log in a user to app
@@ -218,7 +202,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                            mUsers.checkUser(SIGN, user.getEmail(), SignInActivity.this);
+                            mUsers.checkUser(SignInActivity.this,SIGN, user.getEmail(), SignInActivity.this);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.e(TAG, "signInWithEmail:failure", task.getException());
@@ -243,7 +227,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             @Override
             public void onSuccess(Object o) {
                 if (mCurrentUser.isEmailVerified()) {
-                    mUsers.writeUserToDataBase(mCurrentUser.getUid(), mCurrentUser.getEmail());
+                    mUsers.writeUserToDataBase(mCurrentUser.getUid(), new UserModel().readLocalObj(SignInActivity.this));
                 }
                 else {
                     Toast.makeText(SignInActivity.this, "Email verification failed.", Toast.LENGTH_SHORT).show();
@@ -300,9 +284,12 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     @Override
     public void checkUserFirebaseCallback(boolean result) {
         if (result) {
+            Log.d(TAG, "Intent intent = new Intent(SignInActivity.this, MainActivity.class)");
+
             this.mSharedPreferences.saveData(IS_FIRST_INSTALLATION, KEY);
             this.mSharedPreferences.saveData(this.mEmail, "Email");
             this.mSharedPreferences.saveData("true", "SignedIn");
+            this.mSharedPreferences.saveData(mFirebaseAuth.getCurrentUser().getUid(), "UID");
 
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
             startActivity(intent);

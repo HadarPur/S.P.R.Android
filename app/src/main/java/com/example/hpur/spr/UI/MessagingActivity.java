@@ -29,10 +29,11 @@ import com.example.hpur.spr.Logic.ChatBubbleAdapter;
 import com.example.hpur.spr.Logic.GPSTracker;
 import com.example.hpur.spr.Logic.ImageModel;
 import com.example.hpur.spr.Logic.MapModel;
-import com.example.hpur.spr.Logic.MessageType;
+import com.example.hpur.spr.Logic.Types.MessageType;
 import com.example.hpur.spr.Logic.Queries.OnMessageModelClickedCallback;
 import com.example.hpur.spr.Logic.Queries.PermissionsCallback;
 import com.example.hpur.spr.R;
+import com.example.hpur.spr.Storage.SharedPreferencesStorage;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.example.hpur.spr.UI.Utils.UtilitiesPermissions;
 import com.github.clans.fab.FloatingActionButton;
@@ -60,7 +61,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
     private static final int IMAGE_GALLERY_REQUEST = 1;
     private static final int IMAGE_CAMERA_REQUEST = 2;
     // Storage Permissions
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_EXTERNAL_STORAGE = 3;
 
     private final String TAG = "MessagingActivity:";
 
@@ -100,8 +101,8 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
         setContentView(R.layout.activity_messaging);
 
         this.mFirebaseDatabase = FirebaseDatabase.getInstance();
-        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference("SPRApp/Messages/some_agent_uid").child("Maor");
-
+        String uid = new SharedPreferencesStorage(this).readData("UID");
+        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference("SPRApp/Messages/some_agent_uid").child(uid);
         this.mChatBubbles = new ArrayList<>();
 
         findViews();

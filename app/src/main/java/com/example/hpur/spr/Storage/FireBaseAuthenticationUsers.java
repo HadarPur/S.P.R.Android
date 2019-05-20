@@ -1,6 +1,14 @@
 package com.example.hpur.spr.Storage;
 
+import android.content.Context;
+
 import com.example.hpur.spr.Logic.Queries.CheckUserCallbacks;
+import com.example.hpur.spr.Logic.Types.GenderType;
+import com.example.hpur.spr.Logic.Types.SectorType;
+import com.example.hpur.spr.Logic.Types.SexType;
+import com.example.hpur.spr.Logic.UserModel;
+import com.example.hpur.spr.UI.SignInActivity;
+import com.example.hpur.spr.UI.SignUpActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,12 +28,12 @@ public class FireBaseAuthenticationUsers implements Serializable {
     }
 
     //write user into fire base
-    public void writeUserToDataBase(String uid, String email) {
-        this.mRef.child(uid).setValue(email);
+    public void writeUserToDataBase(String uid, UserModel user) {
+        this.mRef.child(uid).setValue(user);
     }
 
     // check if user exist
-    public void checkUser(final int type,final String email, final CheckUserCallbacks queryCallback) {
+    public void checkUser(final Context ctx, final int type, final String email, final CheckUserCallbacks queryCallback) {
         this.mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -33,7 +41,10 @@ public class FireBaseAuthenticationUsers implements Serializable {
                 boolean userExist = false;
                 Iterator<DataSnapshot> itr = dataSnapshot.getChildren().iterator();
                 while(itr.hasNext()) {
-                    if (itr.next().getValue().equals(email)) {
+                    UserModel user = itr.next().getValue(UserModel.class);
+
+                    if (user.getEmail().equals(email)) {
+                        user.saveLocalObj(ctx);
                         userExist = true;
                         break;
                     }
@@ -54,6 +65,4 @@ public class FireBaseAuthenticationUsers implements Serializable {
             }
         });
     }
-
-
 }
