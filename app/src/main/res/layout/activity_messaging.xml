@@ -93,6 +93,8 @@
                 android:layout_toLeftOf="@+id/btn_chat_send"
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
                 android:hint="Input message" />
 
             <Button

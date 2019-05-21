@@ -111,8 +111,7 @@ public class NavigationActivity extends AppCompatActivity {
         this.mBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                onBackPressed();
             }
         });
 
