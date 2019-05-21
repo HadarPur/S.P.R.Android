@@ -1,5 +1,7 @@
 package com.example.hpur.spr.Logic;
 
+import com.example.hpur.spr.Logic.Models.ImageModel;
+import com.example.hpur.spr.Logic.Models.MapModel;
 import com.example.hpur.spr.Logic.Types.MessageType;
 
 public class ChatBubble  {

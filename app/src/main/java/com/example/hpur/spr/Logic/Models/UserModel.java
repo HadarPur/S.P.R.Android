@@ -1,4 +1,4 @@
-package com.example.hpur.spr.Logic;
+package com.example.hpur.spr.Logic.Models;
 
 import android.content.Context;
 

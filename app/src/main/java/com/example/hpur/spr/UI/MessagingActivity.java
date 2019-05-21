@@ -27,13 +27,13 @@ import com.example.hpur.spr.BuildConfig;
 import com.example.hpur.spr.Logic.ChatBubble;
 import com.example.hpur.spr.Logic.ChatBubbleAdapter;
 import com.example.hpur.spr.Logic.GPSTracker;
-import com.example.hpur.spr.Logic.ImageModel;
-import com.example.hpur.spr.Logic.MapModel;
+import com.example.hpur.spr.Logic.Models.ImageModel;
+import com.example.hpur.spr.Logic.Models.MapModel;
 import com.example.hpur.spr.Logic.Types.MessageType;
 import com.example.hpur.spr.Logic.Queries.OnMessageModelClickedCallback;
 import com.example.hpur.spr.Logic.Queries.PermissionsCallback;
+import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.R;
-import com.example.hpur.spr.Storage.SharedPreferencesStorage;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.example.hpur.spr.UI.Utils.UtilitiesPermissions;
 import com.github.clans.fab.FloatingActionButton;
@@ -101,8 +101,8 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
         setContentView(R.layout.activity_messaging);
 
         this.mFirebaseDatabase = FirebaseDatabase.getInstance();
-        String uid = new SharedPreferencesStorage(this).readData("UID");
-        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference("SPRApp/Messages/some_agent_uid").child(uid);
+        UserModel user = new UserModel().readLocalObj(this);
+        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference("SPRApp/Messages/some_agent_uid").child(user.getNickname());
         this.mChatBubbles = new ArrayList<>();
 
         findViews();

@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.hpur.spr.Logic.Queries.CheckUserCallbacks;
-import com.example.hpur.spr.Logic.UserModel;
+import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.Storage.FireBaseAuthenticationUsers;
 import com.example.hpur.spr.Storage.SharedPreferencesStorage;

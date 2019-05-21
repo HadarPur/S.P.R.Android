@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.example.hpur.spr.Logic.Types.GenderType;
 import com.example.hpur.spr.Logic.Types.SectorType;
 import com.example.hpur.spr.Logic.Types.SexType;
-import com.example.hpur.spr.Logic.UserModel;
+import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.example.hpur.spr.UI.Views.ToggleButtonGroupTableLayout;

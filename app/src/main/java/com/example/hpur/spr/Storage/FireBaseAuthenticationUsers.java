@@ -3,12 +3,7 @@ package com.example.hpur.spr.Storage;
 import android.content.Context;
 
 import com.example.hpur.spr.Logic.Queries.CheckUserCallbacks;
-import com.example.hpur.spr.Logic.Types.GenderType;
-import com.example.hpur.spr.Logic.Types.SectorType;
-import com.example.hpur.spr.Logic.Types.SexType;
-import com.example.hpur.spr.Logic.UserModel;
-import com.example.hpur.spr.UI.SignInActivity;
-import com.example.hpur.spr.UI.SignUpActivity;
+import com.example.hpur.spr.Logic.Models.UserModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
