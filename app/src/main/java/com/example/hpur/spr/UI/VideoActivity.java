@@ -1,6 +1,7 @@
 package com.example.hpur.spr.UI;
 
 import android.Manifest;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,16 +14,27 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.hpur.spr.Logic.Map;
+import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.Logic.Queries.TokBoxServerSDKCallback;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Utils.OpenTokConfig;
 import com.github.ybq.android.spinkit.SpinKitView;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
+
+import java.util.HashMap;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -46,20 +58,28 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
     private SpinKitView mSpinKitViewUser;
     private SpinKitView mSpinKitViewAgent;
 
-    private OpenTokConfig openTok = null;
+    private OpenTokConfig mOpenTok = null;
 
     private Button mAlertOkBtn;
     private LinearLayout mAlertView;
     private TextView mAlertTittle;
     private TextView mAlertText;
 
+    private FirebaseFirestore mFirebaseFirestore;
+    private FirebaseAuth mAuth;
+    private String mUID;
+    private String mAgentUID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
-        openTok = new OpenTokConfig(this);
+        this.mOpenTok = new OpenTokConfig(this);
+        this.mFirebaseFirestore = FirebaseFirestore.getInstance();
+        this.mAuth = FirebaseAuth.getInstance();
+        this.mUID = this.mAuth.getCurrentUser().getUid();
+        this.mAgentUID = getIntent().getStringExtra("AgentUID");
 
         findViews();
         setOnClick();
@@ -124,7 +144,7 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
             mPublisherViewContainer = findViewById(R.id.publisher_frameLayout);
             mSubscriberViewContainer = findViewById(R.id.subscriber_frameLayout);
 
-            openTok.tokboxHttpJsonRequest(this);
+            mOpenTok.tokboxHttpJsonRequest(this);
 
         } else {
             EasyPermissions.requestPermissions(this, "This app needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);
@@ -146,7 +166,6 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
         mSpinKitViewUser.setVisibility(View.GONE);
 
         mSession.publish(mPublisher);
-
     }
 
     @Override
@@ -218,6 +237,34 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
         mSession = new Session.Builder(this, apiKey, sessionId).build();
         mSession.setSessionListener(this);
         mSession.connect(tokenPublisher);
+
+        // send push to the agent
+
+        String name = new UserModel().readLocalObj(this).getNickname();
+        String message = "New incoming video call from "+name;
+
+        HashMap<String, Object> notificationMessage = new HashMap();
+        notificationMessage.put("name", name);
+        notificationMessage.put("message", message);
+        notificationMessage.put("from", mUID);
+        notificationMessage.put("to", mAgentUID);
+        notificationMessage.put("apiKey", apiKey);
+        notificationMessage.put("sessionId", sessionId);
+        notificationMessage.put("tokenPublisher", tokenPublisher);
+        notificationMessage.put("tokenSubscriber", tokenSubscriber);
+
+        this.mFirebaseFirestore.collection("Users").document(mUID).collection("Notifications").add(notificationMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Toast.makeText(VideoActivity.this, "Notification sent", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Error: "+e.getMessage());
+                Toast.makeText(VideoActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

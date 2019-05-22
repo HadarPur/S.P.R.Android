@@ -2,6 +2,14 @@ package com.example.hpur.spr.UI.Utils;
 
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -15,11 +23,17 @@ import com.example.hpur.spr.Logic.Queries.TokBoxServerSDKCallback;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+
+import static android.content.Context.WIFI_SERVICE;
+import static org.webrtc.ContextUtils.getApplicationContext;
+
 public class OpenTokConfig {
-//    public static final String SESSION_ID = "2_MX40NjMyODgyMn5-MTU1NzgzMTY3NzEzOH5QbnltSXNXYktSTkprT3FMSXRYRWMwL3J-fg";
-//    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NjMyODgyMiZzaWc9NWUzMjg0NTY1YTA3Y2QyZTVmMGY1Mjk0N2RmODdlZDFiNGU2ZGRlOTpzZXNzaW9uX2lkPTJfTVg0ME5qTXlPRGd5TW41LU1UVTFOemd6TVRZM056RXpPSDVRYm5sdFNYTlhZa3RTVGtwclQzRk1TWFJZUldNd0wzSi1mZyZjcmVhdGVfdGltZT0xNTU3ODMxOTMyJm5vbmNlPTAuODI1OTI1NTM3NzU2ODI4JnJvbGU9cHVibGlzaGVyJmV4cGlyZV90aW1lPTE1NjA0MjM5MzEmaW5pdGlhbF9sYXlvdXRfY2xhc3NfbGlzdD0=";
-//    public static final String API_KEY = "46328822";
-//    public static final String SECRET_KEY = "1031919db407a48f966d8a2e55bc09dce0f43d95";
 
     private RequestQueue requestQueue;
     private Context mCtx;
@@ -34,9 +48,8 @@ public class OpenTokConfig {
     }
 
     public void tokboxHttpJsonRequest(final TokBoxServerSDKCallback callback) {
-
-        // TODO: need to change the ip address to wifi ip address!!!!
-        String JsonDevice = "http://172.40.0.210:5000";
+        String ip = "172.40.1.47";
+        String JsonDevice = "http://"+ip+":5000";
 
         JsonObjectRequest obreq = new JsonObjectRequest(Request.Method.GET, JsonDevice,
                 new Response.Listener<JSONObject>() {
@@ -64,6 +77,7 @@ public class OpenTokConfig {
                     public void onErrorResponse(VolleyError error) {
                         callback.onTokboxRequestFailed();
                         Log.e("Volley", "Error: " + error);
+
                     }
                 }
         );
@@ -71,4 +85,5 @@ public class OpenTokConfig {
         // Adds the JSON object request "obreq" to the request queue
         requestQueue.add(obreq);
     }
+
 }

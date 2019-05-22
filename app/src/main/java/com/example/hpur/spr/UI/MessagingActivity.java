@@ -95,6 +95,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
     //File
     private File filePathImageCamera;
 
+    private String mAgentUserId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +103,8 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
 
         this.mFirebaseDatabase = FirebaseDatabase.getInstance();
         UserModel user = new UserModel().readLocalObj(this);
-        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference("SPRApp/Messages/some_agent_uid").child(user.getNickname());
+        this.mAgentUserId = "8j1CLGt6n3g1JvheexOSlW95mM43";
+        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference("SPRApp/Messages/"+mAgentUserId).child(user.getNickname());
         this.mChatBubbles = new ArrayList<>();
 
         findViews();
@@ -196,7 +198,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "mPhone clicked");
-                startActivity(new Intent(MessagingActivity.this, AudioActivity.class));
+                startActivity(new Intent(MessagingActivity.this, VideoActivity.class).putExtra("AgentUID", mAgentUserId));
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
@@ -205,7 +207,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "mVideo clicked");
-                startActivity(new Intent(MessagingActivity.this, VideoActivity.class));
+                startActivity(new Intent(MessagingActivity.this, VideoActivity.class).putExtra("AgentUID", mAgentUserId));
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });

@@ -32,6 +32,9 @@ import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.Storage.FireBaseModifiedDate;
 import com.example.hpur.spr.Storage.SharedPreferencesStorage;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
