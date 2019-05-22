@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
                 Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
                 mAlertView.startAnimation(aniFade);
-                mAlertView.setVisibility(View.INVISIBLE);
+                mAlertView.setVisibility(View.GONE);
                 mIsShow = false;
                 enableButtons();
             }

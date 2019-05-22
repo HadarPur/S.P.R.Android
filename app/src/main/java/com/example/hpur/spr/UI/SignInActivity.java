@@ -136,7 +136,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                 mForgetPassword = false;
                 Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
                 mResetView.startAnimation(aniFade);
-                mResetView.setVisibility(View.INVISIBLE);
+                mResetView.setVisibility(View.GONE);
                 enableMainButtons();
             }
         });
@@ -270,7 +270,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             public void run() {
                 Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
                 mLoadingView.startAnimation(aniFade);
-                mLoadingView.setVisibility(View.INVISIBLE);
+                mLoadingView.setVisibility(View.GONE);
 
                 mLoadingViewText.setText("");
             }
