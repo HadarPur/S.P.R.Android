@@ -12,7 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import com.example.hpur.spr.Logic.GPSTracker;
 import com.example.hpur.spr.Logic.Map;
-import com.example.hpur.spr.Logic.Shelter;
+import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
 import com.github.clans.fab.FloatingActionButton;
@@ -25,7 +25,7 @@ public class NavigationActivity extends AppCompatActivity {
     private static final String TAG = NavigationActivity.class.getSimpleName();
     private boolean mFirstAsk =false, mIsLoading;
     private double mLatitude, mLongitude;
-    private ArrayList<Shelter>[] mShelterData;
+    private ArrayList<ShelterModel>[] mShelterData;
 
     private ShelterInstance mShelterInfo;
 

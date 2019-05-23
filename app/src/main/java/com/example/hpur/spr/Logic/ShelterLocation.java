@@ -1,7 +1,5 @@
 package com.example.hpur.spr.Logic;
 
-import android.app.Activity;
-
 public class ShelterLocation {
 
     private double longitude, latitude;

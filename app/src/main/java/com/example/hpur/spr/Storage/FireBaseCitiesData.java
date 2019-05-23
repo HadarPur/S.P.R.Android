@@ -1,7 +1,7 @@
 package com.example.hpur.spr.Storage;
 
 import android.util.Log;
-import com.example.hpur.spr.Logic.Shelter;
+import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.Logic.ShelterInstance;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -9,15 +9,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.io.Serializable;
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class FireBaseCitiesData implements Serializable {
         private static final String TAG = "DATA";
     ;
-        private Shelter mShelter;
-        private ArrayList<Shelter> mCloudData[];
+        private ShelterModel mShelter;
+        private ArrayList<ShelterModel> mCloudData[];
         private DatabaseReference mRef;
         private DatabaseReference[] mRefChildren;
         private String[] mCities;
@@ -60,7 +59,7 @@ public class FireBaseCitiesData implements Serializable {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Iterator<DataSnapshot> itr = dataSnapshot.getChildren().iterator();
                     while(itr.hasNext()) {
-                       mShelter = itr.next().getValue(Shelter.class);
+                       mShelter = itr.next().getValue(ShelterModel.class);
                        mShelter.setCity(dataSnapshot.getKey());
                        mCloudData[index].add(mShelter);
                     }

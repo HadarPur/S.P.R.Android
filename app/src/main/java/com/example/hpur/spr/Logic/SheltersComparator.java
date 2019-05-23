@@ -1,8 +1,10 @@
 package com.example.hpur.spr.Logic;
 
+import com.example.hpur.spr.Logic.Models.ShelterModel;
+
 import java.util.Comparator;
 
-public class SheltersComparator implements Comparator<Shelter> {
+public class SheltersComparator implements Comparator<ShelterModel> {
     private double mLat, mLong;
 
     // c'tor
@@ -13,7 +15,7 @@ public class SheltersComparator implements Comparator<Shelter> {
 
     // compare method to sort by closest dist shelters
     @Override
-    public int compare(Shelter o1, Shelter o2) {
+    public int compare(ShelterModel o1, ShelterModel o2) {
         double lat1 = o1.getShelterLocation().getLatitude();
         double lon1 = o1.getShelterLocation().getLongitude();
 

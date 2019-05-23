@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
 
+import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.UI.NavigationActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -77,7 +78,7 @@ public class Map implements OnMapReadyCallback {
 
     }
 
-    public void showShelters(ArrayList<Shelter> shelters, NavigationActivity activity)  {
+    public void showShelters(ArrayList<ShelterModel> shelters, NavigationActivity activity)  {
         try {
             Log.d(TAG, "enter");
 
@@ -101,7 +102,7 @@ public class Map implements OnMapReadyCallback {
 
                 //Place current location marker
                 this.mMarkerOptionsMyLocation.position(latLng);
-                this.mMarkerOptionsMyLocation.title("Shelter name: "+shelters.get(i).getName());
+                this.mMarkerOptionsMyLocation.title("ShelterModel name: "+shelters.get(i).getName());
                 this.mMarkerOptionsMyLocation.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
 
                 this.mMarkerOptionsMyLocation.snippet("Location: " + add);
@@ -116,13 +117,13 @@ public class Map implements OnMapReadyCallback {
         }
     }
 
-    public void showClosestShelters(ArrayList<Shelter>[] shelters, NavigationActivity activity)  {
+    public void showClosestShelters(ArrayList<ShelterModel>[] shelters, NavigationActivity activity)  {
         try {
 
             LatLng latLng = null;
             setMyLocationOnTheMap();
 
-            ArrayList<Shelter> allShelters = new ArrayList<>();
+            ArrayList<ShelterModel> allShelters = new ArrayList<>();
 
             for (int i=0; i<shelters.length; i++) {
                 for (int j=0; j<shelters[i].size(); j++) {

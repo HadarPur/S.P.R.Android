@@ -1,13 +1,16 @@
-package com.example.hpur.spr.Logic;
+package com.example.hpur.spr.Logic.Models;
 
 import android.app.Activity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
+
+import com.example.hpur.spr.Logic.ShelterLocation;
+
 import java.io.IOException;
 import java.util.List;
 
-public class Shelter {
+public class ShelterModel {
     private static final String TAG ="SHELTER";
     private String mCity;
     private String Name;
@@ -15,10 +18,10 @@ public class Shelter {
     private String Number;
     private ShelterLocation mShelterLocation;
 
-    public Shelter(){
+    public ShelterModel(){
     }
 
-    public Shelter(String name, String number ,String street) {
+    public ShelterModel(String name, String number , String street) {
         this.Name = name;
         this.Street = street.trim();
         this.Number = number.trim();

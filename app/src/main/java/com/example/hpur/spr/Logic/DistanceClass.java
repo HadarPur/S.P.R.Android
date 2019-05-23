@@ -1,15 +1,16 @@
 package com.example.hpur.spr.Logic;
 
 import android.app.Activity;
-import android.util.Log;
+
+import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.Logic.Queries.CallableDistArr;
 
 import java.util.ArrayList;
 
 public class DistanceClass implements Runnable{
     private static final String TAG = "DistanceClass";
-    private ArrayList<Shelter> mSheltersOld;
-    private ArrayList<Shelter> mSheltersNew;
+    private ArrayList<ShelterModel> mSheltersOld;
+    private ArrayList<ShelterModel> mSheltersNew;
     private int mNumOfThreads;
     private double mLat;
     private double mLong;
@@ -18,7 +19,7 @@ public class DistanceClass implements Runnable{
     private int mNumOfShelters;
 
     // c'tor
-    public DistanceClass(ArrayList<Shelter> sheltersOld , int numOfThreads, double lat, double ltg, Activity activity, CallableDistArr callArr){
+    public DistanceClass(ArrayList<ShelterModel> sheltersOld , int numOfThreads, double lat, double ltg, Activity activity, CallableDistArr callArr){
         this.mSheltersOld = new ArrayList<>();
         this.mSheltersNew = new ArrayList<>();
         this.mNumOfThreads = numOfThreads;
@@ -35,7 +36,7 @@ public class DistanceClass implements Runnable{
     @Override
     public void run() {
         int section;
-        Shelter shelter;
+        ShelterModel shelter;
 
         int tNum = (int) (Thread.currentThread().getId() % mNumOfThreads + 1);
         if (tNum < mNumOfThreads) {
@@ -57,7 +58,7 @@ public class DistanceClass implements Runnable{
     }
 
     //getter
-    public ArrayList<Shelter> getNewShelters() {
+    public ArrayList<ShelterModel> getNewShelters() {
         return mSheltersNew;
     }
 }

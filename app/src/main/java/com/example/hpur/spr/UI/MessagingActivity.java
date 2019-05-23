@@ -95,6 +95,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
     //File
     private File filePathImageCamera;
 
+
     private String mAgentUserId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,7 +199,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "mPhone clicked");
-                startActivity(new Intent(MessagingActivity.this, VideoActivity.class).putExtra("AgentUID", mAgentUserId));
+                startActivity(new Intent(MessagingActivity.this, AudioActivity.class).putExtra("AgentUID", mAgentUserId));
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });

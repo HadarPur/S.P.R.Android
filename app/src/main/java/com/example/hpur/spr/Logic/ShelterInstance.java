@@ -1,7 +1,6 @@
 package com.example.hpur.spr.Logic;
 
-import android.util.Log;
-
+import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.Storage.FireBaseCitiesData;
 import java.util.ArrayList;
 
@@ -18,7 +17,7 @@ public class ShelterInstance {
 
     private static final String TAG = "CALL";
 
-    ArrayList<Shelter> mData[]; /** each index in the list refers to shelters for each city in israel. **/
+    ArrayList<ShelterModel> mData[]; /** each index in the list refers to shelters for each city in israel. **/
 
     //c'tor
     private ShelterInstance(){
@@ -33,12 +32,12 @@ public class ShelterInstance {
     }
 
     //return shelters on specific city
-    public ArrayList<Shelter> getShelters(int index) {
+    public ArrayList<ShelterModel> getShelters(int index) {
         return this.mData[index];
     }
 
     //gets all mData
-    public ArrayList<Shelter>[] getData() {
+    public ArrayList<ShelterModel>[] getData() {
         return this.mData;
     }
 
@@ -48,7 +47,7 @@ public class ShelterInstance {
 
     //interface for the callback
     public interface Callback {
-        void onCallback(ArrayList<Shelter>[] cloudData);
+        void onCallback(ArrayList<ShelterModel>[] cloudData);
     }
 
     //reading mData from the cloud
@@ -58,7 +57,7 @@ public class ShelterInstance {
     }
 
     //set the mData that read on the array
-    public void setData(ArrayList<Shelter>[] arr) {
+    public void setData(ArrayList<ShelterModel>[] arr) {
         initAll(arr.length);
         for(int i = 0 ; i < arr.length ; i++){
             this.mData[i].addAll(arr[i]);

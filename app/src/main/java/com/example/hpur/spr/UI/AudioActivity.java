@@ -214,32 +214,10 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
         mSession.connect(tokenPublisher);
 
         // send push to the agent
-
         String name = new UserModel().readLocalObj(this).getNickname();
-        String message = "New incoming video call from "+name;
+        String message = "New incoming audio call from "+name;
+        mOpenTok.sendCallNotification(mFirebaseFirestore, this, name, message, mUID, mAgentUID, apiKey, sessionId, tokenPublisher, tokenSubscriber);
 
-        HashMap<String, Object> notificationMessage = new HashMap();
-        notificationMessage.put("name", name);
-        notificationMessage.put("message", message);
-        notificationMessage.put("from", mUID);
-        notificationMessage.put("to", mAgentUID);
-        notificationMessage.put("apiKey", apiKey);
-        notificationMessage.put("sessionId", sessionId);
-        notificationMessage.put("tokenPublisher", tokenPublisher);
-        notificationMessage.put("tokenSubscriber", tokenSubscriber);
-
-        this.mFirebaseFirestore.collection("Users").document(mUID).collection("Notifications").add(notificationMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(AudioActivity.this, "Notification sent", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e(TAG, "Error: "+e.getMessage());
-                Toast.makeText(AudioActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+
+import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.Logic.Queries.CallableDistArr;
 import com.example.hpur.spr.UI.NavigationActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,18 +24,18 @@ public class CalcDistance implements CallableDistArr {
 
     private static final String TAG ="Radar";
     private GoogleMap mMap;
-    private ArrayList<Shelter> mShelters;
+    private ArrayList<ShelterModel> mShelters;
     private NavigationActivity mActivityShelters;
-    private ArrayList<Shelter> mShelterOnRadar;
+    private ArrayList<ShelterModel> mShelterOnRadar;
     private MarkerOptions mMarkerOptionsShelterLocation;
-    private ArrayList<Shelter> mTopFiveShelters;
+    private ArrayList<ShelterModel> mTopFiveShelters;
     private DistanceClass[] mTasks;
     private int mCount;
     private double mLat;
     private double mLong;
 
     //c'tor
-    public CalcDistance(GoogleMap mMap, ArrayList<Shelter> mShelters, NavigationActivity activity, double currentLatitude, double currentLongitude) {
+    public CalcDistance(GoogleMap mMap, ArrayList<ShelterModel> mShelters, NavigationActivity activity, double currentLatitude, double currentLongitude) {
         this.mMap = mMap;
         this.mShelters = mShelters;
         this.mActivityShelters = activity;
@@ -47,7 +49,7 @@ public class CalcDistance implements CallableDistArr {
     }
 
     //set markers
-    private void showMarker(Shelter shelter, Activity activity){
+    private void showMarker(ShelterModel shelter, Activity activity){
         int status=0;
         DecimalFormat df = new DecimalFormat("#.##");
         Log.d(TAG,"status : "+status);
@@ -56,7 +58,7 @@ public class CalcDistance implements CallableDistArr {
         LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
         mMarkerOptionsShelterLocation = new MarkerOptions();
         mMarkerOptionsShelterLocation.position(latLng);
-        mMarkerOptionsShelterLocation.title("Shelter name: "+ shelter.getName());
+        mMarkerOptionsShelterLocation.title("ShelterModel name: "+ shelter.getName());
         mMarkerOptionsShelterLocation.snippet("Location: " + shelter.getStreet() + " " + shelter.getNumber()+", "+shelter.getCity());
         mMarkerOptionsShelterLocation.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
         mMap.addMarker(mMarkerOptionsShelterLocation);
@@ -81,7 +83,7 @@ public class CalcDistance implements CallableDistArr {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public synchronized void filterDistance(ArrayList<Shelter> shelters) {
+    public synchronized void filterDistance(ArrayList<ShelterModel> shelters) {
         mTopFiveShelters = new ArrayList<>();
         mShelterOnRadar.addAll(shelters);
         mCount++;
