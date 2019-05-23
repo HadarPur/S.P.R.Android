@@ -59,6 +59,7 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
     private FirebaseAuth mAuth;
     private String mUID;
     private String mAgentUID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
