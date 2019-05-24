@@ -78,8 +78,10 @@ public class OpenTokConfig {
         requestQueue.add(obreq);
     }
 
-    public void sendCallNotification(FirebaseFirestore firebaseFirestore, final Context ctx, String name, String message, String uid, String agentUid, String apiKey, String sessionId, String tokenPublisher, String tokenSubscriber) {
+    public void sendCallNotification(FirebaseFirestore firebaseFirestore, final Context ctx, String name, String message, String uid, String agentUid, String apiKey, String sessionId, String tokenPublisher, String tokenSubscriber, String type, String activityName) {
         HashMap<String, Object> notificationMessage = new HashMap();
+        notificationMessage.put("activityType", type);
+        notificationMessage.put("activityNameAction", activityName);
         notificationMessage.put("name", name);
         notificationMessage.put("message", message);
         notificationMessage.put("from", uid);
@@ -101,5 +103,4 @@ public class OpenTokConfig {
             }
         });
     }
-
 }

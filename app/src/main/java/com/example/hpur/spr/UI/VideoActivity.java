@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.hpur.spr.Logic.Map;
 import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.Logic.Queries.TokBoxServerSDKCallback;
+import com.example.hpur.spr.Logic.Types.ActivityType;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Utils.OpenTokConfig;
 import com.github.ybq.android.spinkit.SpinKitView;
@@ -242,7 +243,7 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
         // send push to the agent
         String name = new UserModel().readLocalObj(this).getNickname();
         String message = "New incoming video call from "+name;
-        mOpenTok.sendCallNotification(mFirebaseFirestore, this, name, message, mUID, mAgentUID, apiKey, sessionId, tokenPublisher, tokenSubscriber);
+        mOpenTok.sendCallNotification(mFirebaseFirestore, this, name, message, mUID, mAgentUID, apiKey, sessionId, tokenPublisher, tokenSubscriber, ActivityType.VIDEO.toString(),"android.intent.action.VideoActivity");
 
     }
 
