@@ -165,9 +165,8 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
         mPublisher.setPublisherListener(this);
 
         mPublisherViewContainer.addView(mPublisher.getView());
-        mSpinKitViewUser.setVisibility(View.GONE);
-
         mSession.publish(mPublisher);
+        mSpinKitViewUser.setVisibility(View.GONE);
     }
 
     @Override
@@ -177,9 +176,12 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
+    // ***************************************************************** //
+    // ******************* Subscriber methods tokbox ******************* //
+    // ***************************************************************** //
+
     @Override
     public void onStreamReceived(Session session, Stream stream) {
-
         Log.i(TAG, "Stream Received");
         if (mSubscriber == null) {
             mSubscriber = new Subscriber.Builder(this, stream).build();
@@ -192,7 +194,6 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
     @Override
     public void onStreamDropped(Session session, Stream stream) {
         Log.i(TAG, "Stream Dropped");
-
         if (mSubscriber != null) {
             mSubscriber = null;
             mSubscriberViewContainer.removeAllViews();
@@ -228,12 +229,13 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
     // ***************************************************************** //
 
     @Override
-    public void onTokboxRequestSucceed(String apiKey, String sessionId, String tokenPublisher, String tokenSubscriber) {
+    public void onTokboxRequestSucceed(String apiKey, String sessionId, String tokenPublisher, String tokenSubscriber, String tokenModerator) {
         Log.e(TAG, "onTokboxRequestSucceed");
         Log.e(TAG, "apiKey = " +apiKey);
         Log.e(TAG, "sessionId = " +sessionId);
         Log.e(TAG, "tokenPublisher = " +tokenPublisher);
         Log.e(TAG, "tokenSubscriber = "+tokenSubscriber);
+        Log.e(TAG, "tokenModerator = "+ tokenModerator);
 
         // initialize and connect to the session
         mSession = new Session.Builder(this, apiKey, sessionId).build();
@@ -243,7 +245,7 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
         // send push to the agent
         String name = new UserModel().readLocalObj(this).getNickname();
         String message = "New incoming video call from "+name;
-        mOpenTok.sendCallNotification(mFirebaseFirestore, this, name, message, mUID, mAgentUID, apiKey, sessionId, tokenPublisher, tokenSubscriber, ActivityType.VIDEO.toString(),"android.intent.action.VideoActivity");
+        mOpenTok.sendCallNotification(mFirebaseFirestore, this, name, message, mUID, mAgentUID, apiKey, sessionId, tokenPublisher, tokenSubscriber, tokenModerator, ActivityType.VIDEO.toString(),"android.intent.action.VideoActivity");
 
     }
 

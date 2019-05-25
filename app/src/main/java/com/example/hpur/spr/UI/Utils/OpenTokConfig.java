@@ -34,6 +34,7 @@ public class OpenTokConfig {
     private String mSessionId;
     private String mTokenPublisher;
     private String mTokenSubscriber;
+    private String mTokenModerator;
 
     public OpenTokConfig(Context ctx) {
         this.mCtx = ctx;
@@ -54,8 +55,8 @@ public class OpenTokConfig {
                             mSessionId = response.getString("sessionId");
                             mTokenPublisher = response.getString("tokenPublisher");
                             mTokenSubscriber = response.getString("tokenSubscriber");
-
-                            callback.onTokboxRequestSucceed(mApiKey, mSessionId, mTokenPublisher, mTokenSubscriber);
+                            mTokenModerator = response.getString("tokenModerator");
+                            callback.onTokboxRequestSucceed(mApiKey, mSessionId, mTokenPublisher, mTokenSubscriber, mTokenModerator);
 
                         }
                         catch (JSONException e) {
@@ -78,7 +79,7 @@ public class OpenTokConfig {
         requestQueue.add(obreq);
     }
 
-    public void sendCallNotification(FirebaseFirestore firebaseFirestore, final Context ctx, String name, String message, String uid, String agentUid, String apiKey, String sessionId, String tokenPublisher, String tokenSubscriber, String type, String activityName) {
+    public void sendCallNotification(FirebaseFirestore firebaseFirestore, final Context ctx, String name, String message, String uid, String agentUid, String apiKey, String sessionId, String tokenPublisher, String tokenSubscriber, String tokenModerator, String type, String activityName) {
         HashMap<String, Object> notificationMessage = new HashMap();
         notificationMessage.put("activityType", type);
         notificationMessage.put("activityNameAction", activityName);
@@ -90,6 +91,7 @@ public class OpenTokConfig {
         notificationMessage.put("sessionId", sessionId);
         notificationMessage.put("tokenPublisher", tokenPublisher);
         notificationMessage.put("tokenSubscriber", tokenSubscriber);
+        notificationMessage.put("tokenModerator", tokenModerator);
 
         firebaseFirestore.collection("Users").document(uid).collection("Notifications").add(notificationMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override

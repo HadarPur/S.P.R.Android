@@ -203,12 +203,13 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
     // ***************************************************************** //
 
     @Override
-    public void onTokboxRequestSucceed(String apiKey, String sessionId, String tokenPublisher, String tokenSubscriber) {
-        Log.i(TAG, "onTokboxRequestSucceed");
-        Log.i(TAG, "apiKey = " +apiKey);
-        Log.i(TAG, "sessionId = " +sessionId);
-        Log.i(TAG, "tokenPublisher = " +tokenPublisher);
-        Log.i(TAG, "tokenSubscriber = "+tokenSubscriber);
+    public void onTokboxRequestSucceed(String apiKey, String sessionId, String tokenPublisher, String tokenSubscriber, String tokenModerator) {
+        Log.e(TAG, "onTokboxRequestSucceed");
+        Log.e(TAG, "apiKey = " +apiKey);
+        Log.e(TAG, "sessionId = " +sessionId);
+        Log.e(TAG, "tokenPublisher = " +tokenPublisher);
+        Log.e(TAG, "tokenSubscriber = "+tokenSubscriber);
+        Log.e(TAG, "tokenModerator = "+ tokenModerator);
 
         // initialize and connect to the session
         mSession = new Session.Builder(this, apiKey, sessionId).build();
@@ -217,8 +218,8 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
 
         // send push to the agent
         String name = new UserModel().readLocalObj(this).getNickname();
-        String message = "New incoming audio call from "+name;
-        mOpenTok.sendCallNotification(mFirebaseFirestore, this, name, message, mUID, mAgentUID, apiKey, sessionId, tokenPublisher, tokenSubscriber, ActivityType.AUDIO.toString(), "android.intent.action.AudioActivity");
+        String message = "New incoming video call from "+name;
+        mOpenTok.sendCallNotification(mFirebaseFirestore, this, name, message, mUID, mAgentUID, apiKey, sessionId, tokenPublisher, tokenSubscriber, tokenModerator, ActivityType.VIDEO.toString(),"android.intent.action.VideoActivity");
 
     }
 
