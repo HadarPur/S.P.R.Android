@@ -32,7 +32,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private static final String KEY = "connect", IS_FIRST_INSTALLATION = "false";
     private static final String TAG = SignInActivity.class.getSimpleName();
     
-    private final int MIN_PASS_LEN = 6;
+    private final int MIN_PASS_LEN = 7;
     private final int RESET=0, SIGN=1;
 
     private String mEmail;

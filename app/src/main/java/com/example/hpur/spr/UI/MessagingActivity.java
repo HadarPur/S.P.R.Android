@@ -104,7 +104,8 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
 
         this.mFirebaseDatabase = FirebaseDatabase.getInstance();
         UserModel user = new UserModel().readLocalObj(this);
-        this.mAgentUserId = "8j1CLGt6n3g1JvheexOSlW95mM43";
+
+        this.mAgentUserId = getIntent().getStringExtra("AGENT_UID");
         this.mMessagesDatabaseReference = mFirebaseDatabase.getReference("SPRApp/Messages/"+mAgentUserId).child(user.getNickname());
         this.mChatBubbles = new ArrayList<>();
 
