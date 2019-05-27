@@ -37,21 +37,4 @@ public class SharedPreferencesStorage {
     public String readData(String sharedPreferencesKey) {
         return readData("", sharedPreferencesKey);
     }
-
-    public void writeSheltersArrayList(ArrayList<ShelterModel>[] list, String key) {
-        SharedPreferences prefs = this.mContext.getSharedPreferences(SHELTERS_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(list);
-        editor.putString(key, json);
-        editor.apply();     // This line is IMPORTANT !!!
-    }
-
-    public ArrayList<String>[] readSheltersArrayList(String key){
-        SharedPreferences prefs = this.mContext.getSharedPreferences(SHELTERS_FILE, Context.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = prefs.getString(key, null);
-        Type type = new TypeToken<ArrayList<ShelterModel>>() {}.getType();
-        return gson.fromJson(json, type);
-    }
 }
