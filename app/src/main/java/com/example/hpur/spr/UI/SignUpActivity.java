@@ -43,7 +43,7 @@ import java.util.Locale;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = SignUpActivity.class.getSimpleName();
-    private final int MIN_PASS_LEN = 6;
+    private final int MIN_PASS_LEN = 7;
 
     private ImageButton mBack;
 
