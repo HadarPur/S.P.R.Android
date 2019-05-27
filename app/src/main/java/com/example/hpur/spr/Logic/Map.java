@@ -93,7 +93,7 @@ public class Map implements OnMapReadyCallback {
                 Log.d(TAG, "address: "+ add);
 
                 shelters.get(i).findShelterLocation(activity,add);
-                ShelterLocation loc = shelters.get(i).getShelterLocation();
+                AddressLocation loc = shelters.get(i).getShelterLocation();
                 Log.d(TAG, "loc.getLatitude(): "+ loc.getLatitude() + " loc.getLongitude(): " + loc.getLongitude());
 
                 //Place current location marker

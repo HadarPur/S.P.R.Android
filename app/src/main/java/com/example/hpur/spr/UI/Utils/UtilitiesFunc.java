@@ -4,17 +4,25 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import com.example.hpur.spr.Logic.AddressLocation;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -125,5 +133,52 @@ public class UtilitiesFunc {
         }
 
         return capMatcher.appendTail(capBuffer).toString();
+    }
+
+    public static int convertDateToAge(int year, int month, int day){
+        Calendar dob = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
+        dob.set(year, month, day);
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
+            age--;
+        }
+
+        Integer ageInt = new Integer(age);
+        return ageInt;
+    }
+
+    //get location by name
+    public static AddressLocation getLocation(String name, Activity activity) {
+        Geocoder coder = new Geocoder(activity.getApplicationContext());
+        List<Address> address;
+        List<Address> streets;
+        AddressLocation location = null;
+
+        try {
+            Log.d("UtilitiesFunc", "name: " + name);
+            address = coder.getFromLocationName(name, 5);
+            if (address == null) {
+                return null;
+            }
+            if (address.size() == 0) {
+                return null;
+            }
+
+            Address add = address.get(0);
+            location = new AddressLocation(add.getLatitude(), add.getLongitude());
+            String neighName = add.getSubLocality();
+            streets = coder.getFromLocation(location.getLatitude(), location.getLongitude(), 10);
+            Log.d("UtilitiesFunc", "number of dtreets: : " + streets.size());
+
+            for (int i = 0; i < streets.size(); i++) {
+                String stname = streets.get(i).getThoroughfare();
+                Log.d("UtilitiesFunc", "street: " + stname);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return location;
     }
 }

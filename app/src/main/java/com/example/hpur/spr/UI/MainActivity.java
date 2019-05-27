@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.example.hpur.spr.Logic.GPSTracker;
+import com.example.hpur.spr.Logic.Map;
 import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.Logic.Queries.KnnCallback;
@@ -367,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(this.user == null)
              this.user = new UserModel().readLocalObj(MainActivity.this);
         loadingPage();
-        mKnnServiceUtil.knnServiceJsonRequest(MainActivity.this, user);
+        mKnnServiceUtil.knnServiceJsonRequest(MainActivity.this, user, MainActivity.this);
     }
 
     @Override

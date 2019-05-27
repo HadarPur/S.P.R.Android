@@ -5,7 +5,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
 
-import com.example.hpur.spr.Logic.ShelterLocation;
+import com.example.hpur.spr.Logic.AddressLocation;
+import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,7 +17,7 @@ public class ShelterModel {
     private String Name;
     private String Street;
     private String Number;
-    private ShelterLocation mShelterLocation;
+    private AddressLocation mShelterLocation;
 
     public ShelterModel(){
     }
@@ -29,40 +30,7 @@ public class ShelterModel {
 
     /** calculates the location of a street by name **/
     public void findShelterLocation(Activity activity, String name){
-        mShelterLocation = getLocation(name,activity);
-    }
-
-    //get location by name
-    public ShelterLocation getLocation(String name, Activity activity) {
-        Geocoder coder = new Geocoder(activity.getApplicationContext());
-        List<Address> address;
-        List<Address> streets;
-        ShelterLocation location = null;
-
-        try {
-            Log.d(TAG, "name: " + name);
-            address = coder.getFromLocationName(name, 5);
-            if (address == null) {
-                return null;
-            }
-            if (address.size() == 0) {
-                return null;
-            }
-
-            Address add = address.get(0);
-            location = new ShelterLocation(add.getLatitude(), add.getLongitude());
-            String neighName = add.getSubLocality();
-            streets = coder.getFromLocation(location.getLatitude(), location.getLongitude(), 10);
-            Log.d(TAG, "number of dtreets: : " + streets.size());
-
-            for (int i = 0; i < streets.size(); i++) {
-                String stname = streets.get(i).getThoroughfare();
-                Log.d(TAG, "street: " + stname);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return location;
+        mShelterLocation = UtilitiesFunc.getLocation(name,activity);
     }
 
     public String getCity() {
@@ -97,11 +65,11 @@ public class ShelterModel {
         this.Number = mNumber.trim();
     }
 
-    public ShelterLocation getShelterLocation() {
+    public AddressLocation getShelterLocation() {
         return mShelterLocation;
     }
 
-    public void setShelterLocation(ShelterLocation mShelterLocation) {
+    public void setShelterLocation(AddressLocation mShelterLocation) {
         this.mShelterLocation = mShelterLocation;
     }
 }

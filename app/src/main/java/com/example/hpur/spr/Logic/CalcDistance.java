@@ -53,7 +53,7 @@ public class CalcDistance implements CallableDistArr {
         int status=0;
         DecimalFormat df = new DecimalFormat("#.##");
         Log.d(TAG,"status : "+status);
-        ShelterLocation loc = shelter.getShelterLocation();
+        AddressLocation loc = shelter.getShelterLocation();
 
         LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
         mMarkerOptionsShelterLocation = new MarkerOptions();
