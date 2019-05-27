@@ -55,7 +55,6 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, KnnCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
     private final int MAX_NUM_OF_TRIES = 7;
-    private final String KNN_SERVICE_URL = "https://us-central1-sprfinalproject.cloudfunctions.net/knnService";
     private boolean mFirstAsk = true, mIsLoading, mIsShow;
 
     private ShelterInstance mShelterInfo;
@@ -373,7 +372,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onKnnServiceRequestOnSuccess(String agentUid) {
-        doneLoadingPage();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                doneLoadingPage();
+            }
+        });
         Log.e(TAG, "onKnnServiceRequestOnSuccess, agentUID = " + agentUid);
         Intent intent = new Intent(MainActivity.this, MessagingActivity.class);
         intent.putExtra("AGENT_UID",agentUid);
@@ -383,17 +387,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onKnnServiceRequestFailed() {
-        if(counter <= MAX_NUM_OF_TRIES){
-            counter++;
-            try{
-                startChatHelper();
-                return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                doneLoadingPage();
             }
-            catch(JSONException e){
-                e.printStackTrace();
-            }
-        }
-        doneLoadingPage();
+        });
         Log.e(TAG, "onKnnServiceRequestFailed");
         this.mAlertTittle.setText("No Agent found");
         this.mAlertText.setText("There is no agent available for now, please try later");
