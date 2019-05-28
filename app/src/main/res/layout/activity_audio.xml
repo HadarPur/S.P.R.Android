@@ -14,10 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/relLayout2"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -69,6 +65,13 @@
             android:visibility="invisible"
             android:layout_height="270dp"
             android:layout_width="350dp"/>
+
+
+        <include
+            layout="@layout/loading_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 

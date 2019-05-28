@@ -3,6 +3,7 @@ package com.example.hpur.spr.UI.Utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -14,14 +15,17 @@ import com.example.hpur.spr.Logic.AddressLocation;
 import com.example.hpur.spr.Logic.Models.AgentModel;
 import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.Logic.Queries.KnnCallback;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class KnnServiceUtil {
     private final String mHttpUrl = "https://us-central1-sprfinalproject.cloudfunctions.net/knnService";
@@ -105,5 +109,28 @@ public class KnnServiceUtil {
         }
 
         return jsonArray;
+    }
+
+
+    public void sendCallNotification(FirebaseFirestore firebaseFirestore, final Context ctx, String name, String message, String uid, String agentUid, String type, String activityName) {
+        HashMap<String, Object> notificationMessage = new HashMap();
+        notificationMessage.put("activityType", type);
+        notificationMessage.put("activityNameAction", activityName);
+        notificationMessage.put("name", name);
+        notificationMessage.put("message", message);
+        notificationMessage.put("from", uid);
+        notificationMessage.put("to", agentUid);
+
+        firebaseFirestore.collection("Users").document(uid).collection("Notifications-Chats").add(notificationMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Log.d("Notification", "Notification sent");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("Notification", "Error: "+e.getMessage());
+            }
+        });
     }
 }

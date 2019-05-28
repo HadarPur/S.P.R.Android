@@ -33,8 +33,11 @@ import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.Logic.Queries.AvailableAgentsCallback;
 import com.example.hpur.spr.Logic.Queries.KnnCallback;
 import com.example.hpur.spr.Logic.ShelterInstance;
+import com.example.hpur.spr.Logic.Types.ActivityType;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Utils.KnnServiceUtil;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
 
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private LinearLayout mAlertView;
     private RelativeLayout mLoadingBack;
+    private FirebaseFirestore mFirebaseFirestore;
 
     private TextView mAlertTittle;
     private TextView mAlertText;
@@ -69,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private KnnServiceUtil mKnnServiceUtil = null;
 
     private AgentModel availableAgents;
+    private FirebaseAuth mAuth;
+    private String mUID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +84,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.mKnnServiceUtil = new KnnServiceUtil(this);
         this.mUserModel = new UserModel();
         this.availableAgents = new AgentModel();
+        this.mFirebaseFirestore = FirebaseFirestore.getInstance();
 
+        this.mAuth = FirebaseAuth.getInstance();
+        this.mUID = this.mAuth.getCurrentUser().getUid();
+        
         findViews();
         initNavigationDrawer();
         setupOnClick();
@@ -371,6 +382,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void startChat(String agentUid) {
         doneLoadingPage();
+
+        // send push to the agent
+        String name = new UserModel().readLocalObj(this).getNickname();
+        String message = "You have a new match with "+name+", Please make yourself available to talk";
+        mKnnServiceUtil.sendCallNotification(mFirebaseFirestore, this, name, message, mUID, agentUid, ActivityType.MAIN.toString(),"android.intent.action.MainActivity");
+
         Intent intent = new Intent(MainActivity.this, MessagingActivity.class);
         intent.putExtra("AGENT_UID",agentUid);
         startActivity(intent);

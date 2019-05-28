@@ -1,6 +1,7 @@
 package com.example.hpur.spr.UI;
 
 import android.Manifest;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.Logic.Queries.TokBoxServerSDKCallback;
@@ -52,6 +54,8 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
     private FirebaseAuth mAuth;
     private String mUID;
     private String mAgentUID;
+    private RelativeLayout mLoadingBack;
+    private TextView mLoadingtv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +83,10 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
         this.mAlertText = findViewById(R.id.msg);
         this.mAlertOkBtn = findViewById(R.id.alert_def_btn);
 
+        this.mLoadingBack = findViewById(R.id.load);
+        this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
+        this.mLoadingtv = mLoadingBack.findViewById(R.id.loadingtv);
+        this.mLoadingtv.setText("Connecting...");
     }
 
     public void setOnClick() {
@@ -119,6 +127,7 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
             // initialize and connect to the session
+            loadingPage();
             mOpenTok.tokboxHttpJsonRequest(this);
 
         } else {
@@ -152,6 +161,7 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
 
         Log.i(TAG, "Stream Received");
         if (mSubscriber == null) {
+            doneLoadingPage();
             mSubscriber = new Subscriber.Builder(this, stream).build();
             mSession.subscribe(mSubscriber);
         }
@@ -163,6 +173,7 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
 
         if (mSubscriber != null) {
             mSubscriber = null;
+            onBackPressed();
         }
     }
 
@@ -210,8 +221,8 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
 
         // send push to the agent
         String name = new UserModel().readLocalObj(this).getNickname();
-        String message = "New incoming video call from "+name;
-        mOpenTok.sendCallNotification(mFirebaseFirestore, this, name, message, mUID, mAgentUID, apiKey, sessionId, tokenPublisher, tokenSubscriber, tokenModerator, ActivityType.AUDIO.toString(),"android.intent.action.VideoActivity");
+        String message = "New incoming audio call from "+name;
+        mOpenTok.sendCallNotification(mFirebaseFirestore, this, name, message, mUID, mAgentUID, apiKey, sessionId, tokenPublisher, tokenSubscriber, tokenModerator, ActivityType.AUDIO.toString(),"android.intent.action.AudioActivity");
 
     }
 
@@ -231,5 +242,15 @@ public class AudioActivity extends AppCompatActivity implements Session.SessionL
                 onBackPressed();
             }
         });
+    }
+
+    //start loading view for the callback
+    private void loadingPage() {
+        this.mLoadingBack.setVisibility(View.VISIBLE);
+    }
+
+    //finish loading view for the callback
+    private void doneLoadingPage() {
+        this.mLoadingBack.setVisibility(View.GONE);
     }
 }
