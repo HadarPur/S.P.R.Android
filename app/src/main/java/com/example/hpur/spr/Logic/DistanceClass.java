@@ -1,10 +1,8 @@
 package com.example.hpur.spr.Logic;
 
 import android.app.Activity;
-
 import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.Logic.Queries.CallableDistArr;
-
 import java.util.ArrayList;
 
 public class DistanceClass implements Runnable{

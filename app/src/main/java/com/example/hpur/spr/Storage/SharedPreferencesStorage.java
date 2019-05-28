@@ -1,12 +1,6 @@
 package com.example.hpur.spr.Storage;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import com.example.hpur.spr.Logic.Models.ShelterModel;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 
 public class SharedPreferencesStorage {
     private final String FILE = "SPR";
@@ -30,7 +24,6 @@ public class SharedPreferencesStorage {
         android.content.SharedPreferences sharedPreferences = this.mContext.getSharedPreferences(FILE, Context.MODE_PRIVATE);
         String readVal = sharedPreferences.getString(sharedPreferencesKey, defaultValue);
         return readVal;
-
     }
 
     // read last user's email from shared preferences

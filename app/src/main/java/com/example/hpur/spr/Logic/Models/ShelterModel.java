@@ -1,15 +1,8 @@
 package com.example.hpur.spr.Logic.Models;
 
 import android.app.Activity;
-import android.location.Address;
-import android.location.Geocoder;
-import android.util.Log;
-
 import com.example.hpur.spr.Logic.AddressLocation;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
-
-import java.io.IOException;
-import java.util.List;
 
 public class ShelterModel {
     private static final String TAG ="SHELTER";

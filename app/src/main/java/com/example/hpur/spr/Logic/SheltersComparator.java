@@ -1,7 +1,6 @@
 package com.example.hpur.spr.Logic;
 
 import com.example.hpur.spr.Logic.Models.ShelterModel;
-
 import java.util.Comparator;
 
 public class SheltersComparator implements Comparator<ShelterModel> {

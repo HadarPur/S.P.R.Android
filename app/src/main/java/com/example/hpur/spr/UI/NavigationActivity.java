@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class NavigationActivity extends AppCompatActivity {
+
     private static final String TAG = NavigationActivity.class.getSimpleName();
     private boolean mFirstAsk =false, mIsLoading;
     private double mLatitude, mLongitude;

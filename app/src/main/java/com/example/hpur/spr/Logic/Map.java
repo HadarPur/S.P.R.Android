@@ -4,7 +4,6 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
-
 import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.UI.NavigationActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,16 +19,12 @@ import java.util.List;
 
 public class Map implements OnMapReadyCallback {
     private static final String TAG = "Map";
-    private static final int RADIUS = 200;
-    private static final String HOSPITAL = "hospital";
-    private static final String POLICE = "police";
+;
     private double mLatitude, mLongitude;
     private SupportMapFragment mMapFragment;
     private GoogleMap mMap;
     private Geocoder mGeocoder;
     private MarkerOptions mMarkerOptionsMyLocation;
-    private MarkerOptions mMarkerOptionsKindLocation;
-
 
     public Map(SupportMapFragment mapFragment, double latitude, double longitude, Context context) {
         this.mMapFragment = mapFragment;

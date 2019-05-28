@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-
 import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.Logic.Queries.CallableDistArr;
 import com.example.hpur.spr.UI.NavigationActivity;

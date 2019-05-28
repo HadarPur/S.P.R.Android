@@ -11,9 +11,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-
 import com.example.hpur.spr.Logic.AddressLocation;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,10 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UtilitiesFunc {
+
     //SDF to generate a unique name for the compressed file.
     public static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss", Locale.getDefault());
-    public UtilitiesFunc() {
-    }
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);

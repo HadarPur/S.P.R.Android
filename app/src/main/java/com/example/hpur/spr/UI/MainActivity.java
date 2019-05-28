@@ -1,6 +1,5 @@
 package com.example.hpur.spr.UI;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,7 +10,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,23 +27,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.example.hpur.spr.Logic.GPSTracker;
-import com.example.hpur.spr.Logic.Map;
 import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.Logic.Queries.KnnCallback;
 import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
-import com.example.hpur.spr.Storage.SharedPreferencesStorage;
 import com.example.hpur.spr.UI.Utils.KnnServiceUtil;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
 import org.json.JSONException;
 
@@ -54,7 +41,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, KnnCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private final int MAX_NUM_OF_TRIES = 7;
+
     private boolean mFirstAsk = true, mIsLoading, mIsShow;
 
     private ShelterInstance mShelterInfo;
@@ -72,14 +59,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView mAlertText;
 
     private GPSTracker mGpsTracker;
-    private SharedPreferencesStorage mSharedPreferences;
 
     private ActionBarDrawerToggle mToggle;
     private DrawerLayout mDrawerLayout;
 
-    private int counter;
-    private UserModel user;
-
+    private UserModel mUserModel;
     private KnnServiceUtil mKnnServiceUtil = null;
 
 
@@ -88,9 +72,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
         this.mKnnServiceUtil = new KnnServiceUtil(this);
-        this.counter = 0;
+        this.mUserModel = new UserModel();
 
         findViews();
         initNavigationDrawer();
@@ -183,7 +166,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 if (mIsLoading == false) {
-                    mSharedPreferences.saveData("false", "SignedIn");
+
+                    mUserModel.setUserLocalDataByKeyAndValue(getApplicationContext(),"false", "SignedIn");
+                    mUserModel.setUserLocalDataByKeyAndValue(getApplicationContext(),"false", "Available");
 
                     Intent intent = new Intent(MainActivity.this, SignInActivity.class);
                     startActivity(intent);
@@ -364,8 +349,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void  startChatHelper() throws JSONException {
-        if(this.user == null)
-             this.user = new UserModel().readLocalObj(MainActivity.this);
+        UserModel user = new UserModel().readLocalObj(MainActivity.this);
         loadingPage();
         mKnnServiceUtil.knnServiceJsonRequest(MainActivity.this, user, MainActivity.this);
     }
@@ -391,20 +375,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void run() {
                 doneLoadingPage();
+                mAlertTittle.setText("No Agent found");
+                mAlertText.setText("There is no agent available for now, please try later");
+                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+                mAlertView.startAnimation(aniFade);
+                mAlertView.setVisibility(View.VISIBLE);
+
+                mAlertOkBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mAlertView.setVisibility(View.GONE);
+                    }
+                });
             }
         });
         Log.e(TAG, "onKnnServiceRequestFailed");
-        this.mAlertTittle.setText("No Agent found");
-        this.mAlertText.setText("There is no agent available for now, please try later");
-        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
-        this.mAlertView.startAnimation(aniFade);
-        this.mAlertView.setVisibility(View.VISIBLE);
-
-        this.mAlertOkBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAlertView.setVisibility(View.GONE);
-            }
-        });
     }
 }

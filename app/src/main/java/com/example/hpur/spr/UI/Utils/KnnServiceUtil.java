@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class KnnServiceUtil {
+
     private final String mHttpUrl = "https://us-central1-sprfinalproject.cloudfunctions.net/knnService";
     private final String mAgentUidKey = "agent_uid";
     private Context mCtx;
@@ -64,13 +65,19 @@ public class KnnServiceUtil {
 
             @Override
             public void onResponse(Response response) throws IOException {
-                try {
-                    JSONObject jsonObject = new JSONObject(response.body().string());
-                    mAgentUid = jsonObject.getString(mAgentUidKey);
-                    Log.d("OkHttp", "agent: " + mAgentUid);
-                    callback.onKnnServiceRequestOnSuccess(mAgentUid);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        mAgentUid = jsonObject.getString(mAgentUidKey);
+                        Log.d("OkHttp isSuccessful", "agent: " + mAgentUid);
+                        callback.onKnnServiceRequestOnSuccess(mAgentUid);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    String errorBodyString = response.body().string();
+                    Log.d("OkHttp !isSuccessful", "error: " + errorBodyString);
+                    callback.onKnnServiceRequestFailed();
                 }
             }
         });
