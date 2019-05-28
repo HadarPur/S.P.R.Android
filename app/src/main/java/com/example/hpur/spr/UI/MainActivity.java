@@ -356,12 +356,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onKnnServiceRequestOnSuccess(String agentUid) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                doneLoadingPage();
-            }
-        });
+        doneLoadingPage();
         Log.e(TAG, "onKnnServiceRequestOnSuccess, agentUID = " + agentUid);
         Intent intent = new Intent(MainActivity.this, MessagingActivity.class);
         intent.putExtra("AGENT_UID",agentUid);
@@ -371,24 +366,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onKnnServiceRequestFailed() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                doneLoadingPage();
-                mAlertTittle.setText("No Agent found");
-                mAlertText.setText("There is no agent available for now, please try later");
-                Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
-                mAlertView.startAnimation(aniFade);
-                mAlertView.setVisibility(View.VISIBLE);
+        Log.e(TAG, "onKnnServiceRequestFailed");
+        doneLoadingPage();
+        mAlertTittle.setText("No Agent found");
+        mAlertText.setText("There is no agent available for now, please try later");
+        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+        mAlertView.startAnimation(aniFade);
+        mAlertView.setVisibility(View.VISIBLE);
 
-                mAlertOkBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mAlertView.setVisibility(View.GONE);
-                    }
-                });
+        mAlertOkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAlertView.setVisibility(View.GONE);
             }
         });
-        Log.e(TAG, "onKnnServiceRequestFailed");
     }
 }
