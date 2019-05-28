@@ -11,10 +11,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.hpur.spr.Logic.AddressLocation;
+import com.example.hpur.spr.Logic.Models.AgentModel;
 import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.Logic.Queries.KnnCallback;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class KnnServiceUtil {
     private final String mHttpUrl = "https://us-central1-sprfinalproject.cloudfunctions.net/knnService";
@@ -29,20 +36,9 @@ public class KnnServiceUtil {
         this.mRequestQueue = Volley.newRequestQueue(mCtx);
     }
 
-    public void knnServiceJsonRequest(final KnnCallback callback, UserModel userModel, Activity activity) throws JSONException {
-
-        JSONObject jsonBody = new JSONObject();
-
-        String[] separated = userModel.getBirthday().split("/");
-        int age = UtilitiesFunc.convertDateToAge(Integer.parseInt(separated[2]),Integer.parseInt(separated[1]),Integer.parseInt(separated[0]));
-        AddressLocation addressLocation = UtilitiesFunc.getLocation(userModel.getLiving(), activity);
-
-        jsonBody.put("age",age);
-        jsonBody.put("gender",userModel.getGenderType().name());
-        jsonBody.put("sector",userModel.getSectorType().name());
-        jsonBody.put("sex",userModel.getSexType().name());
-        jsonBody.put("latitude",String.valueOf(addressLocation.getLatitude()));
-        jsonBody.put("longitude",String.valueOf(addressLocation.getLongitude()));
+    public void knnServiceJsonRequest(final KnnCallback callback, UserModel userModel, ArrayList<AgentModel> agents, Activity activity) throws JSONException {
+        JSONArray jsonArray = getAgentsJsonArray(activity , agents);
+        JSONObject jsonBody = getJsonBody(activity, userModel, jsonArray);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, mHttpUrl, jsonBody,
                 new Response.Listener<JSONObject>() {
@@ -50,6 +46,7 @@ public class KnnServiceUtil {
                     public void onResponse(JSONObject response) {
                         try{
                             mAgentUid = response.getString(mAgentUidKey);
+                            Log.d("knnServiceJsonRequest", "agent_uid = " + mAgentUid);
                             callback.onKnnServiceRequestOnSuccess(mAgentUid);
                         }
                         catch(JSONException e){
@@ -64,5 +61,49 @@ public class KnnServiceUtil {
             }
         });
         mRequestQueue.add(jsonObjectRequest);
+    }
+
+    private JSONObject getJsonBody(Activity activity, UserModel userModel, JSONArray jsonArray) throws JSONException {
+        JSONObject jsonBody = new JSONObject();
+
+        String[] separated = userModel.getBirthday().split("/");
+        int age = UtilitiesFunc.convertDateToAge(Integer.parseInt(separated[2]),Integer.parseInt(separated[1]),Integer.parseInt(separated[0]));
+        AddressLocation addressLocation = UtilitiesFunc.getLocation(userModel.getLiving(), activity);
+
+        jsonBody.put("age",age);
+        jsonBody.put("gender",userModel.getGenderType().name());
+        jsonBody.put("sector",userModel.getSectorType().name());
+        jsonBody.put("sex",userModel.getSexType().name());
+        jsonBody.put("latitude",String.valueOf(addressLocation.getLatitude()));
+        jsonBody.put("longitude",String.valueOf(addressLocation.getLongitude()));
+
+        jsonBody.put("onlineAgents", jsonArray);
+
+        return jsonBody;
+    }
+
+    private JSONArray getAgentsJsonArray(Activity activity , ArrayList<AgentModel> agents) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+
+        for (AgentModel agentModel:agents) {
+            JSONObject jsonObject = new JSONObject();
+
+            String[] separated = agentModel.getBirthday().split("/");
+            int age = UtilitiesFunc.convertDateToAge(Integer.parseInt(separated[2]),Integer.parseInt(separated[1]),Integer.parseInt(separated[0]));
+            AddressLocation addressLocation = UtilitiesFunc.getLocation(agentModel.getLiving(), activity);
+
+
+            jsonObject.put("age",age);
+            jsonObject.put("gender",agentModel.getGenderType().name());
+            jsonObject.put("sector",agentModel.getSectorType().name());
+            jsonObject.put("sex",agentModel.getSexType().name());
+            jsonObject.put("latitude",String.valueOf(addressLocation.getLatitude()));
+            jsonObject.put("longitude",String.valueOf(addressLocation.getLongitude()));
+            jsonObject.put("uid",agentModel.getAgentUID());
+
+            jsonArray.put(jsonObject);
+        }
+
+        return jsonArray;
     }
 }

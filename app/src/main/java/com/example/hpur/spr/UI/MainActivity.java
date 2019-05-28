@@ -27,8 +27,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.example.hpur.spr.Logic.GPSTracker;
+import com.example.hpur.spr.Logic.Models.AgentModel;
 import com.example.hpur.spr.Logic.Models.ShelterModel;
 import com.example.hpur.spr.Logic.Models.UserModel;
+import com.example.hpur.spr.Logic.Queries.AvailableAgentsCallback;
 import com.example.hpur.spr.Logic.Queries.KnnCallback;
 import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.R;
@@ -39,7 +41,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, KnnCallback {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, KnnCallback, AvailableAgentsCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private boolean mFirstAsk = true, mIsLoading, mIsShow;
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private UserModel mUserModel;
     private KnnServiceUtil mKnnServiceUtil = null;
 
-
+    private AgentModel availableAgents;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         this.mKnnServiceUtil = new KnnServiceUtil(this);
         this.mUserModel = new UserModel();
+        this.availableAgents = new AgentModel();
 
         findViews();
         initNavigationDrawer();
@@ -131,11 +134,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 if (mIsLoading == false) {
-                    try {
-                        startChatHelper();
-                    }  catch (Throwable t) {
-                        Log.e(TAG, "Could not parse malformed JSON:");
-                    }
+                    loadingPage();
+                    new AgentModel().getAvailableAgentsUID(MainActivity.this, MainActivity.this);
                 }
             }
         });
@@ -350,23 +350,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void  startChatHelper() throws JSONException {
         UserModel user = new UserModel().readLocalObj(MainActivity.this);
-        loadingPage();
-        mKnnServiceUtil.knnServiceJsonRequest(MainActivity.this, user, MainActivity.this);
+        mKnnServiceUtil.knnServiceJsonRequest(MainActivity.this, user, this.availableAgents.getAvailableAgentsArray(), MainActivity.this);
     }
 
-    @Override
-    public void onKnnServiceRequestOnSuccess(String agentUid) {
-        doneLoadingPage();
-        Log.e(TAG, "onKnnServiceRequestOnSuccess, agentUID = " + agentUid);
-        Intent intent = new Intent(MainActivity.this, MessagingActivity.class);
-        intent.putExtra("AGENT_UID",agentUid);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-    }
-
-    @Override
-    public void onKnnServiceRequestFailed() {
-        Log.e(TAG, "onKnnServiceRequestFailed");
+    private void noAgentAlert() {
         doneLoadingPage();
         mAlertTittle.setText("No Agent found");
         mAlertText.setText("There is no agent available for now, please try later");
@@ -380,5 +367,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mAlertView.setVisibility(View.GONE);
             }
         });
+    }
+
+    private void startChat(String agentUid) {
+        doneLoadingPage();
+        Intent intent = new Intent(MainActivity.this, MessagingActivity.class);
+        intent.putExtra("AGENT_UID",agentUid);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    /////////////////////////// Callback Func //////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onKnnServiceRequestOnSuccess(String agentUid) {
+        Log.e(TAG, "onKnnServiceRequestOnSuccess, agentUID = " + agentUid);
+        startChat(agentUid);
+    }
+
+    @Override
+    public void onKnnServiceRequestFailed() {
+        Log.e(TAG, "onKnnServiceRequestFailed");
+        noAgentAlert();
+    }
+
+    @Override
+    public void availableAgents(ArrayList<AgentModel> availableAgentsArray) {
+        try {
+            this.availableAgents.setAvailableAgentsArray(availableAgentsArray);
+            startChatHelper();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void availableAgentsUID(ArrayList<String> availableAgentsUIDArray) {
+        this.availableAgents.setAvailableAgentsArrayUID(availableAgentsUIDArray);
+        if (availableAgentsUIDArray.size() > 1)
+            new AgentModel().getAvailableAgents(this, availableAgentsUIDArray, this);
+        else
+            startChat(availableAgentsUIDArray.get(0));
+    }
+
+    @Override
+    public void noAvailableAgentsUID() {
+        noAgentAlert();
     }
 }

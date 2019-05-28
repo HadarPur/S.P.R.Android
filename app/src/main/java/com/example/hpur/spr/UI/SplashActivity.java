@@ -64,9 +64,6 @@ public class SplashActivity extends AppCompatActivity {
             }
         }, SPLASH_OUT);
 
-        //TODO: Are we need to activate the finish function for to force the android system to call to onDestroy() callback?
-        //finish()
-
         this.mLoading.startAnimation(mRotate);
     }
 
