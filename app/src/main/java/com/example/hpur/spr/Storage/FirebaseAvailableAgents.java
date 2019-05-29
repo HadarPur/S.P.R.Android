@@ -1,6 +1,7 @@
 package com.example.hpur.spr.Storage;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.hpur.spr.Logic.Models.AgentModel;
 import com.example.hpur.spr.Logic.Queries.AvailableAgentsCallback;
@@ -34,15 +35,11 @@ public class FirebaseAvailableAgents {
                 while(itr.hasNext()) {
                     agentsUID.add(itr.next().getKey());
                 }
-
-                if (dataSnapshot.exists())
-                    queryCallback.availableAgentsUID(agentsUID);
-                else
-                    queryCallback.noAvailableAgentsUID();
+                queryCallback.availableAgentsUID(agentsUID);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                queryCallback.noAvailableAgentsUID();
             }
         });
     }

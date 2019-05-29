@@ -367,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void noAgentAlert() {
         doneLoadingPage();
         mAlertTittle.setText("No Agent found");
-        mAlertText.setText("There is no agent available for now, please try later");
+        mAlertText.setText("There is no agent that available for now, please try again later");
         Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
         mAlertView.startAnimation(aniFade);
         mAlertView.setVisibility(View.VISIBLE);
