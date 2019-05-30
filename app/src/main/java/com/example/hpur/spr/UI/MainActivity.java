@@ -383,6 +383,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void startChat(String agentUid) {
         doneLoadingPage();
 
+        Log.d(TAG, "UID = " +agentUid);
         // send push to the agent
         String name = new UserModel().readLocalObj(this).getNickname();
         String message = "You have a new match with "+name+", Please make yourself available to talk";

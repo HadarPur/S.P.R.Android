@@ -188,6 +188,7 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
         if (mSubscriber != null) {
             mSubscriber = null;
             mSubscriberViewContainer.removeAllViews();
+            onBackPressed();
         }
     }
 
