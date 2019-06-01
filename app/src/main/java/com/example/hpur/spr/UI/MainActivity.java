@@ -1,12 +1,9 @@
 package com.example.hpur.spr.UI;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -36,6 +33,7 @@ import com.example.hpur.spr.Logic.ShelterInstance;
 import com.example.hpur.spr.Logic.Types.ActivityType;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Utils.KnnServiceUtil;
+import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -95,15 +93,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         this.mGpsTracker = new GPSTracker(this, mFirstAsk);
 
-        if(!this.mGpsTracker.getGPSEnable()){
-            showSettingsAlert();
-        }
-
-        if(!isNetworkAvailable(this)) {
+        if(!UtilitiesFunc.haveNetworkConnection(this)) {
             showConnectionInternetFailed();
-        }
-        else {
+        } else if(!this.mGpsTracker.getGPSEnable()){
+            showSettingsAlert();
+        } else {
             singletonShelters();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!UtilitiesFunc.haveNetworkConnection(this)) {
+            showConnectionInternetFailed();
+        } else if(!this.mGpsTracker.getGPSEnable()){
+            showSettingsAlert();
         }
     }
 
@@ -124,14 +129,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.mAlertTittle = findViewById(R.id.alerttittle);
         this.mAlertText = findViewById(R.id.msg);
         this.mAlertOkBtn = findViewById(R.id.alert_def_btn);
-
-        this.mAlertTittle.setText("Pay attention");
-        this.mAlertText.setText("You must permit location and network connection for this app");
-        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
-        this.mAlertView.startAnimation(aniFade);
-        this.mAlertView.setVisibility(View.VISIBLE);
-        this.mIsShow = true;
-        disableButtons();
 
         this.mLoadingBack = findViewById(R.id.load);
         this.mLoadingBack.setBackgroundColor(Color.argb(200, 206,117,126));
@@ -209,23 +206,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         loadingPage();
         this.mShelterInfo.readData(new ShelterInstance.Callback() {
             @Override
-            public void onCallback(ArrayList<ShelterModel>[] cloudData) {
+            public void onCallbackSucceed(ArrayList<ShelterModel>[] cloudData) {
                 mShelterInfo.setData(cloudData);
                 doneLoadingPage();
+                showGeneralAlert();
+            }
+
+            @Override
+            public void onCallbackFailed() {
+                doneLoadingPage();
+                showDBAlert();
             }
         }, cities);
     }
 
     //alert network not available
     private void showConnectionInternetFailed() {
+        disableButtons();
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Network Connection Failed");
         alertDialog.setMessage("Network is not enabled." +
                 "\n"+
                 "If you want to use this app you need a connection to the network");
-        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                startActivity(intent);
+                finish();
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
                 finish();
             }
         });
@@ -263,6 +278,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //alert for GPS connection
     private void showSettingsAlert() {
+        disableButtons();
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("GPS is settings");
         alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
@@ -290,20 +306,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         alertDialog.show();
-    }
-
-    //check network connection
-    private static boolean isNetworkAvailable(Context ctx) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if ((connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE) != null
-                && connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED)
-                || (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI) != null
-                && connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED)) {
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 
     private void disableButtons(){
@@ -395,6 +397,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
+    private void showGeneralAlert() {
+        this.mAlertTittle.setText("Pay attention");
+        this.mAlertText.setText("You must permit location and network connection for this app");
+        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+        this.mAlertView.startAnimation(aniFade);
+        this.mAlertView.setVisibility(View.VISIBLE);
+        this.mIsShow = true;
+        disableButtons();
+    }
+
+    private void showDBAlert() {
+        this.mAlertTittle.setText("DB failed");
+        this.mAlertText.setText("There is an unknown issue to read data from DB");
+        Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
+        this.mAlertView.startAnimation(aniFade);
+        this.mAlertView.setVisibility(View.VISIBLE);
+        this.mIsShow = true;
+        this.mAlertOkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        disableButtons();
+    }
     ////////////////////////////////////////////////////////////////////////
     /////////////////////////// Callback Func //////////////////////////////
     ////////////////////////////////////////////////////////////////////////
@@ -434,4 +461,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void noAvailableAgentsUID() {
         noAgentAlert();
     }
+
 }
