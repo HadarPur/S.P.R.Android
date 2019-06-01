@@ -61,7 +61,7 @@ public class NavigationActivity extends AppCompatActivity {
 
         if(!UtilitiesFunc.haveNetworkConnection(this)) {
             showConnectionInternetFailed();
-        } else if(!this.mGpsTracker.getGPSEnable() && mGpsTracker.getPosition()!=null){
+        } else if(!this.mGpsTracker.getGPSEnable() || mGpsTracker.getPosition()==null){
             showSettingsAlert();
         } else {
             this.mLatitude = this.mGpsTracker.getPosition().getLatitude();

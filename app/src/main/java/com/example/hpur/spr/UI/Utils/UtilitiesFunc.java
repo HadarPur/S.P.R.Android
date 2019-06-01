@@ -46,12 +46,12 @@ public class UtilitiesFunc {
 
     public static File getCompressed(Context context, String path) throws IOException {
 
-        if(context == null)
+        if (context == null)
             throw new NullPointerException("Context must not be null.");
         //getting device external cache directory, might not be available on some devices,
         // so our code fall back to internal storage cache directory, which is always available but in smaller quantity
         File cacheDir = context.getExternalCacheDir();
-        if(cacheDir == null)
+        if (cacheDir == null)
             //fall back
             cacheDir = context.getCacheDir();
 
@@ -59,11 +59,11 @@ public class UtilitiesFunc {
         File root = new File(rootDir);
 
         //Create ImageCompressor folder if it doesnt already exists.
-        if(!root.exists())
+        if (!root.exists())
             root.mkdirs();
 
         //decode and resize the original bitmap from @param path.
-        Bitmap bitmap = decodeImageFromFiles(path,300, 300);
+        Bitmap bitmap = decodeImageFromFiles(path, 300, 300);
 
         //create placeholder for the compressed image file
         File compressed = new File(root, SDF.format(new Date()) + ".jpg");
@@ -104,8 +104,8 @@ public class UtilitiesFunc {
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
 
-        while(true) {
-            if(width_tmp / 2 < requiredSize || height_tmp / 2 < requiredSize)
+        while (true) {
+            if (width_tmp / 2 < requiredSize || height_tmp / 2 < requiredSize)
                 break;
             width_tmp /= 2;
             height_tmp /= 2;
@@ -124,23 +124,23 @@ public class UtilitiesFunc {
         return Uri.parse(path);
     }
 
-    public static String capitalize(String capString){
+    public static String capitalize(String capString) {
         StringBuffer capBuffer = new StringBuffer();
         Matcher capMatcher = Pattern.compile("([a-z])([a-z]*)", Pattern.CASE_INSENSITIVE).matcher(capString);
-        while (capMatcher.find()){
+        while (capMatcher.find()) {
             capMatcher.appendReplacement(capBuffer, capMatcher.group(1).toUpperCase() + capMatcher.group(2).toLowerCase());
         }
 
         return capMatcher.appendTail(capBuffer).toString();
     }
 
-    public static int convertDateToAge(int year, int month, int day){
+    public static int convertDateToAge(int year, int month, int day) {
         Calendar dob = Calendar.getInstance();
         Calendar today = Calendar.getInstance();
         dob.set(year, month, day);
         int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
 
-        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }
 
@@ -197,4 +197,5 @@ public class UtilitiesFunc {
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
+
 }

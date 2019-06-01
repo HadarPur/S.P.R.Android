@@ -260,7 +260,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
             @Override
             public void onClick(View v) {
                 mMenu.close(true);
-                UtilitiesPermissions.verifyStoragePermissions(MessagingActivity.this,MessagingActivity.this);
+                UtilitiesPermissions.verifyPermissions(MessagingActivity.this,MessagingActivity.this);
             }
         });
     }
@@ -329,6 +329,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
         String nomeFoto = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
         mFilePathImageCamera = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), nomeFoto+"camera.jpg");
         Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
         Uri photoURI = FileProvider.getUriForFile(MessagingActivity.this, BuildConfig.APPLICATION_ID + ".provider", mFilePathImageCamera);
         it.putExtra(MediaStore.EXTRA_OUTPUT,photoURI);
         startActivityForResult(it, IMAGE_CAMERA_REQUEST);
