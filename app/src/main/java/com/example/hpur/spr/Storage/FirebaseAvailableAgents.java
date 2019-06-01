@@ -1,8 +1,6 @@
 package com.example.hpur.spr.Storage;
 
 import android.content.Context;
-import android.util.Log;
-
 import com.example.hpur.spr.Logic.Models.AgentModel;
 import com.example.hpur.spr.Logic.Queries.AvailableAgentsCallback;
 import com.google.firebase.database.DataSnapshot;
@@ -10,7 +8,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 

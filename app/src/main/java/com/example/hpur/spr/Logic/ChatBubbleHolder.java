@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.hpur.spr.Logic.Models.ChatBubbleModel;
 import com.example.hpur.spr.Logic.Queries.OnMessageModelClickedCallback;
 import com.example.hpur.spr.R;

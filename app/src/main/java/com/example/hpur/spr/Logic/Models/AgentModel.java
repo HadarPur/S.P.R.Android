@@ -1,13 +1,11 @@
 package com.example.hpur.spr.Logic.Models;
 
 import android.content.Context;
-
 import com.example.hpur.spr.Logic.Queries.AvailableAgentsCallback;
 import com.example.hpur.spr.Logic.Types.GenderType;
 import com.example.hpur.spr.Logic.Types.SectorType;
 import com.example.hpur.spr.Logic.Types.SexType;
 import com.example.hpur.spr.Storage.FirebaseAvailableAgents;
-
 import java.util.ArrayList;
 
 public class AgentModel {

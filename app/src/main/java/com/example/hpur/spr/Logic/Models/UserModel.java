@@ -1,7 +1,6 @@
 package com.example.hpur.spr.Logic.Models;
 
 import android.content.Context;
-
 import com.example.hpur.spr.Logic.Queries.CheckUserCallbacks;
 import com.example.hpur.spr.Logic.Types.GenderType;
 import com.example.hpur.spr.Logic.Types.SectorType;

@@ -36,9 +36,7 @@ import com.example.hpur.spr.UI.Utils.KnnServiceUtil;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
