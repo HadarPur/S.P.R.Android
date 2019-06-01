@@ -1,7 +1,6 @@
 package com.example.hpur.spr.Storage;
 
 import android.content.Context;
-
 import com.example.hpur.spr.Logic.Queries.CheckUserCallbacks;
 import com.example.hpur.spr.Logic.Models.UserModel;
 import com.google.firebase.database.DataSnapshot;
@@ -13,6 +12,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 public class FireBaseAuthenticationUsers implements Serializable {
+
     private final int RESET=0, SIGN=1;
     private DatabaseReference mRef;
 

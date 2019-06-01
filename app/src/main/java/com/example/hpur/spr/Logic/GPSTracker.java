@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 public class GPSTracker extends Service implements LocationListener {
+
         private static final String TAG = GPSTracker.class.getSimpleName();
         private final int PERMISSION_LOCATION_CODE = 1234;
         private final Activity mActivity;

@@ -17,8 +17,6 @@ import android.widget.Toast;
 import com.example.hpur.spr.Logic.Queries.CheckUserCallbacks;
 import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.R;
-import com.example.hpur.spr.Storage.FireBaseAuthenticationUsers;
-import com.example.hpur.spr.Storage.SharedPreferencesStorage;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,13 +24,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 
 public class SignInActivity extends AppCompatActivity implements CheckUserCallbacks {
     private static final String KEY = "connect", IS_FIRST_INSTALLATION = "false";
     private static final String TAG = SignInActivity.class.getSimpleName();
     
-    private final int MIN_PASS_LEN = 6;
+    private final int MIN_PASS_LEN = 7;
     private final int RESET=0, SIGN=1;
 
     private String mEmail;
@@ -55,10 +52,9 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     private LinearLayout mLoadingView;
 
     private FirebaseAuth mFirebaseAuth;
-    private FireBaseAuthenticationUsers mUsers;
     private FirebaseUser mCurrentUser;
-    private UtilitiesFunc mUtils;
-    private SharedPreferencesStorage mSharedPreferences;
+
+    private UserModel mUserModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +64,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mFirebaseAuth = FirebaseAuth.getInstance();
         this.mCurrentUser = mFirebaseAuth.getCurrentUser();
 
-        this.mUsers = new FireBaseAuthenticationUsers();
-
-        this.mSharedPreferences = new SharedPreferencesStorage(getApplicationContext());
         this.mForgetPassword = false;
-
-        this.mUtils = new UtilitiesFunc();
+        this.mUserModel = new UserModel();
 
         findViews();
         setupOnClick();
@@ -99,8 +91,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         this.mLoadingView = findViewById(R.id.loadingview);
         this.mLoadingViewText = findViewById(R.id.progress_dialog_text);
 
-        this.mEmailEditText.setText(mSharedPreferences.readData("Email"), TextView.BufferType.EDITABLE);
-        this.mEmailReset.setText(mSharedPreferences.readData("Email"), TextView.BufferType.EDITABLE);
+        this.mEmailEditText.setText(mUserModel.getUserLocalDataByKey(getApplicationContext(),"Email"), TextView.BufferType.EDITABLE);
+        this.mEmailReset.setText(mUserModel.getUserLocalDataByKey(getApplicationContext(),"Email"), TextView.BufferType.EDITABLE);
     }
 
     // setup all button events when they clicked
@@ -172,7 +164,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         }
 
         showProgressDialog("Please wait...");
-        this.mUsers.checkUser(this,RESET, this.mEmail, SignInActivity.this);
+
+        mUserModel.readUserFromFirebase(this,RESET, this.mEmail, SignInActivity.this);
     }
 
     // log in a user to app
@@ -203,14 +196,14 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                            mUsers.checkUser(SignInActivity.this,SIGN, user.getEmail(), SignInActivity.this);
+
+                            mUserModel.readUserFromFirebase(SignInActivity.this,SIGN, user.getEmail(), SignInActivity.this);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.e(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         hideProgressDialog();
-
                     }
                 });
     }
@@ -228,7 +221,8 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
             @Override
             public void onSuccess(Object o) {
                 if (mCurrentUser.isEmailVerified()) {
-                    mUsers.writeUserToDataBase(mCurrentUser.getUid(), new UserModel().readLocalObj(SignInActivity.this));
+                    UserModel user = new UserModel().readLocalObj(SignInActivity.this);
+                    user.saveUserToFirebase(mCurrentUser.getUid());
                 }
                 else {
                     Toast.makeText(SignInActivity.this, "Email verification failed.", Toast.LENGTH_SHORT).show();
@@ -250,7 +244,7 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
     }
 
     private void showProgressDialog(final String msg) {
-        this.mUtils.hideKeyboard(this);
+        UtilitiesFunc.hideKeyboard(this);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -287,10 +281,10 @@ public class SignInActivity extends AppCompatActivity implements CheckUserCallba
         if (result) {
             Log.d(TAG, "Intent intent = new Intent(SignInActivity.this, MainActivity.class)");
 
-            this.mSharedPreferences.saveData(IS_FIRST_INSTALLATION, KEY);
-            this.mSharedPreferences.saveData(this.mEmail, "Email");
-            this.mSharedPreferences.saveData("true", "SignedIn");
-            this.mSharedPreferences.saveData(mFirebaseAuth.getCurrentUser().getUid(), "UID");
+            mUserModel.setUserLocalDataByKeyAndValue(getApplicationContext(), IS_FIRST_INSTALLATION, KEY);
+            mUserModel.setUserLocalDataByKeyAndValue(getApplicationContext(), this.mEmail, "Email");
+            mUserModel.setUserLocalDataByKeyAndValue(getApplicationContext(), "true", "SignedIn");
+            mUserModel.setUserLocalDataByKeyAndValue(getApplicationContext(), mFirebaseAuth.getCurrentUser().getUid(), "UID");
 
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
             startActivity(intent);

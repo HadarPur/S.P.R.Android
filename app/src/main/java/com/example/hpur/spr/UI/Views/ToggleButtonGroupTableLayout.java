@@ -4,15 +4,10 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.autofill.AutofillManager;
 import android.widget.RadioButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
-/**
- * @author diego
- *
- */
 public class ToggleButtonGroupTableLayout extends TableLayout  implements OnClickListener {
 
     private static final String TAG = "ToggleButtonGroupTableLayout";

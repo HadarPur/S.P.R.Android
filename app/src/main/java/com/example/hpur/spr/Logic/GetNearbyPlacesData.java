@@ -19,6 +19,7 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
     public GetNearbyPlacesData(String kind) {
         this.mKind = kind;
     }
+
     @Override //get info from URL
     protected String doInBackground(Object... params) {
         try {

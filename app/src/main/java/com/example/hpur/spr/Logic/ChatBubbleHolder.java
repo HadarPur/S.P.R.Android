@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.example.hpur.spr.Logic.Models.ChatBubbleModel;
 import com.example.hpur.spr.Logic.Queries.OnMessageModelClickedCallback;
 import com.example.hpur.spr.R;
 import com.github.ybq.android.spinkit.SpinKitView;
@@ -28,7 +29,7 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
     private ImageView mImageMessage;
 
     private Context mContext;
-    private ChatBubble mChatBubble;
+    private ChatBubbleModel mChatBubble;
     private SpinKitView mProgressBar = null;
 
 
@@ -51,7 +52,7 @@ public class ChatBubbleHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void bindChatBubble(ChatBubble chatBubble, final OnMessageModelClickedCallback callback){
+    public void bindChatBubble(ChatBubbleModel chatBubble, final OnMessageModelClickedCallback callback){
         this.mChatBubble = chatBubble;
         if (mChatBubble.getmMapModel() != null) {
             setMapMessage(callback);

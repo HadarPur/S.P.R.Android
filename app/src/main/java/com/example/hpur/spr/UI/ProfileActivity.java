@@ -31,7 +31,6 @@ import com.example.hpur.spr.Logic.Types.SectorType;
 import com.example.hpur.spr.Logic.Types.SexType;
 import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.R;
-import com.example.hpur.spr.Storage.FireBaseAuthenticationUsers;
 import com.example.hpur.spr.UI.Utils.UtilitiesFunc;
 import com.example.hpur.spr.UI.Views.ToggleButtonGroupTableLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +44,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+    final Calendar myCalendar = Calendar.getInstance();
 
     private ActionBarDrawerToggle mToggle;
     private DrawerLayout mDrawerLayout;
@@ -72,13 +72,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private EditText mBirthdayEditText;
     private AutoCompleteTextView mCityAutoCompleteTextView;
 
-
-    final Calendar myCalendar = Calendar.getInstance();
     private List<String> cities;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mCurrentUser;
-    private FireBaseAuthenticationUsers mUsers;
-
+    private UserModel mUserModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +89,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         this.mFirebaseAuth = FirebaseAuth.getInstance();
         this.mCurrentUser = mFirebaseAuth.getCurrentUser();
-        this.mUsers = new FireBaseAuthenticationUsers();
 
         cities = new ArrayList<>();
         cities = Arrays.asList(getResources().getStringArray(R.array.cities_array));
@@ -141,13 +137,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     }
 
     private void setupViews() {
-        UserModel user = new UserModel().readLocalObj(ProfileActivity.this);
-        this.mNickNameTextView.setText("Nickname: "+ user.getNickname());
-        this.mResidenceTextView.setText("Residence: "+ user.getLiving());
-        this.mSexTextView.setText("Male / Female: "+ UtilitiesFunc.capitalize(user.getSexType().toString().toLowerCase()));
-        this.mBDTextView.setText("B-Day: "+ user.getBirthday());
-        this.mSectorNameTextView.setText("Sector: "+UtilitiesFunc.capitalize(user.getSectorType().toString().toLowerCase()));
-        this.mGenderNameTextView.setText("Gender: "+UtilitiesFunc.capitalize(user.getGenderType().toString().toLowerCase()));
+        this. mUserModel = new UserModel().readLocalObj(ProfileActivity.this);
+
+        this.mNickNameTextView.setText("Nickname: "+ mUserModel.getNickname());
+        this.mResidenceTextView.setText("Residence: "+ mUserModel.getLiving());
+        this.mSexTextView.setText("Male / Female: "+ UtilitiesFunc.capitalize(mUserModel.getSexType().toString().toLowerCase()));
+        this.mBDTextView.setText("B-Day: "+ mUserModel.getBirthday());
+        this.mSectorNameTextView.setText("Sector: "+UtilitiesFunc.capitalize(mUserModel.getSectorType().toString().toLowerCase()));
+        this.mGenderNameTextView.setText("Gender: "+UtilitiesFunc.capitalize(mUserModel.getGenderType().toString().toLowerCase()));
     }
 
     private void setupOnClick() {
@@ -305,17 +302,16 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             Toast.makeText(this, "Please check your gender", Toast.LENGTH_LONG).show();
             return;
         }
-
         updateFB();
-
     }
 
     private void updateFB() {
         String email = new  UserModel().readLocalObj(this).getEmail();
         UserModel user = new UserModel(email, mNickName, SexType.valueOf(mSex.toUpperCase()),mCity, SectorType.valueOf(mSector.toUpperCase()), mAge, GenderType.valueOf(mGender.toUpperCase()));
-        user.saveLocalObj(ProfileActivity.this);
 
-        this.mUsers.writeUserToDataBase(mCurrentUser.getUid(), new UserModel().readLocalObj(ProfileActivity.this));
+        user.saveLocalObj(ProfileActivity.this);
+        user.saveUserToFirebase(mCurrentUser.getUid());
+
         setupViews();
 
         Animation aniFade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);

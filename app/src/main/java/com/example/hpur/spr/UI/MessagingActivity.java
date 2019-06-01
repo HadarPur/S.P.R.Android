@@ -24,7 +24,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.example.hpur.spr.BuildConfig;
-import com.example.hpur.spr.Logic.ChatBubble;
+import com.example.hpur.spr.Logic.Models.ChatBubbleModel;
 import com.example.hpur.spr.Logic.ChatBubbleAdapter;
 import com.example.hpur.spr.Logic.GPSTracker;
 import com.example.hpur.spr.Logic.Models.ImageModel;
@@ -65,7 +65,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
 
     private final String TAG = "MessagingActivity:";
 
-    private List<ChatBubble> mChatBubbles;
+    private List<ChatBubbleModel> mChatBubbles;
     private String mUserName = "AnonymousTeenager";
 
     private RelativeLayout mLoadingBack;
@@ -90,22 +90,27 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
 
     private FloatingActionMenu mMenu;
 
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseStorage mStorage;
 
     //File
-    private File filePathImageCamera;
+    private File mFilePathImageCamera;
 
 
     private String mAgentUserId;
+    private UserModel mUserModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging);
 
         this.mFirebaseDatabase = FirebaseDatabase.getInstance();
-        UserModel user = new UserModel().readLocalObj(this);
-        this.mAgentUserId = "8j1CLGt6n3g1JvheexOSlW95mM43";
-        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference("SPRApp/Messages/"+mAgentUserId).child(user.getNickname());
+        this.mStorage = FirebaseStorage.getInstance();
+
+        this.mUserModel = new UserModel().readLocalObj(this);
+
+        this.mAgentUserId = getIntent().getStringExtra("AGENT_UID");
+        this.mMessagesDatabaseReference = mFirebaseDatabase.getReference("SPRApp/Messages/"+mAgentUserId).child(mUserModel.getNickname());
         this.mChatBubbles = new ArrayList<>();
 
         findViews();
@@ -228,7 +233,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
                     Toast.makeText(MessagingActivity.this, "Please input some text...", Toast.LENGTH_SHORT).show();
                 } else {
                     //add message to list
-                    ChatBubble chatBubble = new ChatBubble(mEditText.getText().toString(), mUserName, MessageType.USER_CHAT_MESSAGE);
+                    ChatBubbleModel chatBubble = new ChatBubbleModel(mEditText.getText().toString(), mUserName, MessageType.USER_CHAT_MESSAGE);
                     mMessagesDatabaseReference.push().setValue(chatBubble);
                     mEditText.setText("");
                 }
@@ -255,7 +260,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
             @Override
             public void onClick(View v) {
                 mMenu.close(true);
-                UtilitiesPermissions.verifyStoragePermissions(MessagingActivity.this,MessagingActivity.this);
+                UtilitiesPermissions.verifyPermissions(MessagingActivity.this,MessagingActivity.this);
             }
         });
     }
@@ -277,7 +282,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        StorageReference storageRef = storage.getReferenceFromUrl("gs://sprfinalproject.appspot.com").child("SPRApp/PhotoMessages");
+        StorageReference storageRef = mStorage.getReferenceFromUrl("gs://sprfinalproject.appspot.com").child("SPRApp/PhotoMessages");
 
         if (requestCode == IMAGE_GALLERY_REQUEST && resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
@@ -293,17 +298,17 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
             }
 
         } else if (requestCode == IMAGE_CAMERA_REQUEST && resultCode == RESULT_OK) {
-            if (filePathImageCamera != null && filePathImageCamera.exists()) {
+            if (mFilePathImageCamera != null && mFilePathImageCamera.exists()) {
                 try {
-                    StorageReference imageCameraRef = storageRef.child(filePathImageCamera.getName() + "_camera");
-                    sendFileFirebase(imageCameraRef, UtilitiesFunc.getCompressed(this, filePathImageCamera.getPath()));
+                    StorageReference imageCameraRef = storageRef.child(mFilePathImageCamera.getName() + "_camera");
+                    sendFileFirebase(imageCameraRef, UtilitiesFunc.getCompressed(this, mFilePathImageCamera.getPath()));
                 } catch (Throwable t) {
                     Log.e(TAG, "Error compressing file." + t.toString());
                     t.printStackTrace();
                 }
 
             } else {
-                Log.e(TAG, "filePathImageCamera == null");
+                Log.e(TAG, "mFilePathImageCamera == null");
             }
         }
     }
@@ -322,9 +327,10 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
 
     private void photoCameraIntent() {
         String nomeFoto = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
-        filePathImageCamera = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), nomeFoto+"camera.jpg");
+        mFilePathImageCamera = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), nomeFoto+"camera.jpg");
         Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Uri photoURI = FileProvider.getUriForFile(MessagingActivity.this, BuildConfig.APPLICATION_ID + ".provider", filePathImageCamera);
+
+        Uri photoURI = FileProvider.getUriForFile(MessagingActivity.this, BuildConfig.APPLICATION_ID + ".provider", mFilePathImageCamera);
         it.putExtra(MediaStore.EXTRA_OUTPUT,photoURI);
         startActivityForResult(it, IMAGE_CAMERA_REQUEST);
     }
@@ -338,7 +344,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
             gpsTracker.initLocation();
 
             MapModel mapModel = new MapModel(latitude+"",longitude+"");
-            ChatBubble chatBubble = new ChatBubble(mapModel, mUserName, MessageType.USER_MAP_MESSAGE);
+            ChatBubbleModel chatBubble = new ChatBubbleModel(mapModel, mUserName, MessageType.USER_MAP_MESSAGE);
             mMessagesDatabaseReference.push().setValue(chatBubble);
             mEditText.setText("");
         }
@@ -356,7 +362,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     //Called in the start for each child in the node + every time a child inserted to the DB
-                    ChatBubble curBubbleMessage = dataSnapshot.getValue(ChatBubble.class);
+                    ChatBubbleModel curBubbleMessage = dataSnapshot.getValue(ChatBubbleModel.class);
                     //chat bubble layout decision depends on the source of the message.
                     if (!(curBubbleMessage.getmUserName().equals(mUserName))) {
                         Log.d(TAG, "another user message");
@@ -448,7 +454,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
                     if (task.isSuccessful()) {
                         Uri downloadUrl = task.getResult();
                         ImageModel imageModel = new ImageModel("img", downloadUrl.toString(), name, "");
-                        ChatBubble chatBubble = new ChatBubble(imageModel, mUserName, MessageType.USER_IMAGE_MESSAGE);
+                        ChatBubbleModel chatBubble = new ChatBubbleModel(imageModel, mUserName, MessageType.USER_IMAGE_MESSAGE);
                         mMessagesDatabaseReference.push().setValue(chatBubble);
                     } else {
                         Log.d(TAG,"Handle failures");
@@ -481,7 +487,7 @@ public class MessagingActivity extends AppCompatActivity implements OnMessageMod
                     if (task.isSuccessful()) {
                         Uri downloadUrl = task.getResult();
                         ImageModel imageModel = new ImageModel("img", downloadUrl.toString(), file.getName(),file.length()+"");
-                        ChatBubble chatBubble = new ChatBubble(imageModel, mUserName, MessageType.USER_IMAGE_MESSAGE);
+                        ChatBubbleModel chatBubble = new ChatBubbleModel(imageModel, mUserName, MessageType.USER_IMAGE_MESSAGE);
                         mMessagesDatabaseReference.push().setValue(chatBubble);
                     } else {
                         Log.e(TAG,"Handle failures");

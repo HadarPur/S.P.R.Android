@@ -47,7 +47,9 @@ public class ShelterInstance {
 
     //interface for the callback
     public interface Callback {
-        void onCallback(ArrayList<ShelterModel>[] cloudData);
+        void onCallbackSucceed(ArrayList<ShelterModel>[] cloudData);
+        void onCallbackFailed();
+
     }
 
     //reading mData from the cloud

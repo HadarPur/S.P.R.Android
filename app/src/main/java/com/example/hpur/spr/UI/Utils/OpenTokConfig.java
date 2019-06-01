@@ -1,34 +1,26 @@
 package com.example.hpur.spr.UI.Utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.Logic.Queries.TokBoxServerSDKCallback;
-import com.example.hpur.spr.UI.VideoActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
-
 
 public class OpenTokConfig {
 
-    private RequestQueue requestQueue;
+    private RequestQueue mRequestQueue;
     private Context mCtx;
     private String mApiKey;
     private String mSessionId;
@@ -38,7 +30,7 @@ public class OpenTokConfig {
 
     public OpenTokConfig(Context ctx) {
         this.mCtx = ctx;
-        requestQueue = Volley.newRequestQueue(ctx);
+        mRequestQueue = Volley.newRequestQueue(ctx);
     }
 
     public void tokboxHttpJsonRequest(final TokBoxServerSDKCallback callback) {
@@ -76,7 +68,7 @@ public class OpenTokConfig {
         );
 
         // Adds the JSON object request "obreq" to the request queue
-        requestQueue.add(obreq);
+        mRequestQueue.add(obreq);
     }
 
     public void sendCallNotification(FirebaseFirestore firebaseFirestore, final Context ctx, String name, String message, String uid, String agentUid, String apiKey, String sessionId, String tokenPublisher, String tokenSubscriber, String tokenModerator, String type, String activityName) {

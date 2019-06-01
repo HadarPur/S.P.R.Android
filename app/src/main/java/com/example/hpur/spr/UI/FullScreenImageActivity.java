@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Views.TouchImageView;
 import com.github.ybq.android.spinkit.SpinKitView;
@@ -17,14 +16,14 @@ public class FullScreenImageActivity extends AppCompatActivity {
     private TouchImageView mImageView;
     private SpinKitView mProgressBar = null;
     private ImageButton mBack;
-    private int angle = 0;
+    private int mAngle = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
         findViews();
-        setValues(angle);
+        setValues(mAngle);
     }
 
 
@@ -55,9 +54,9 @@ public class FullScreenImageActivity extends AppCompatActivity {
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                angle = angle + 90;
-                if (angle == 360) angle = 0;
-                setValues(angle);
+                mAngle = mAngle + 90;
+                if (mAngle == 360) mAngle = 0;
+                setValues(mAngle);
             }
         });
     }

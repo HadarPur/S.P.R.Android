@@ -1,8 +1,6 @@
 package com.example.hpur.spr.UI;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,19 +13,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.hpur.spr.Logic.Map;
 import com.example.hpur.spr.Logic.Models.UserModel;
 import com.example.hpur.spr.Logic.Queries.TokBoxServerSDKCallback;
 import com.example.hpur.spr.Logic.Types.ActivityType;
 import com.example.hpur.spr.R;
 import com.example.hpur.spr.UI.Utils.OpenTokConfig;
 import com.github.ybq.android.spinkit.SpinKitView;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
@@ -35,9 +27,6 @@ import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
-
-import java.util.HashMap;
-
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -197,6 +186,7 @@ public class VideoActivity extends AppCompatActivity implements Session.SessionL
         if (mSubscriber != null) {
             mSubscriber = null;
             mSubscriberViewContainer.removeAllViews();
+            onBackPressed();
         }
     }
 

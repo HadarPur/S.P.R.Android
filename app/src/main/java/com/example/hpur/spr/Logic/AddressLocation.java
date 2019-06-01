@@ -1,11 +1,11 @@
 package com.example.hpur.spr.Logic;
 
-public class ShelterLocation {
+public class AddressLocation {
 
     private double longitude, latitude;
 
     //c'tor
-    public ShelterLocation(double latitude, double longitude){
+    public AddressLocation(double latitude, double longitude){
         this.latitude = latitude;
         this.longitude = longitude;
     }

@@ -65,7 +65,7 @@ public class FireBaseCitiesData implements Serializable {
                     }
 
                     if (calllback != null) {
-                        calllback.onCallback(mCloudData);
+                        calllback.onCallbackSucceed(mCloudData);
                     }
 
                     Log.d(TAG, "City: "+ mCities[index].trim() + " mCloudData[index].size() : " + mCloudData[index].size());
@@ -73,6 +73,7 @@ public class FireBaseCitiesData implements Serializable {
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    calllback.onCallbackFailed();
                 }
             });
         }
