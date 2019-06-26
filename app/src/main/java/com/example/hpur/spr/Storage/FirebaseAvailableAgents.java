@@ -31,6 +31,7 @@ public class FirebaseAvailableAgents {
                 ArrayList<String> agentsUID = new ArrayList<>();
                 while(itr.hasNext()) {
                     agentsUID.add(itr.next().getKey());
+
                 }
                 queryCallback.availableAgentsUID(agentsUID);
             }
